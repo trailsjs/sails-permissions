@@ -1,4 +1,23 @@
-sails-user-permissions
-======================
+sails-permissions
+=====================
 
-Comprehensive sails.js user permission/privilege framework that allows granting and restricting access to models and attributes based on object ownership and relationships with other users and roles
+[![NPM version][npm-image]][npm-url]
+[![Build status][travis-image]][travis-url]
+[![Dependency Status][daviddm-image]][daviddm-url]
+
+## Install
+```sh
+$ npm install sails-permissions --save
+```
+
+## Usage
+
+## License
+MIT
+
+[npm-image]: https://img.shields.io/npm/v/sails-permissions.svg?style=flat
+[npm-url]: https://npmjs.org/package/sails-permissions
+[travis-image]: https://img.shields.io/travis/tjwebb/sails-permissions.svg?style=flat
+[travis-url]: https://travis-ci.org/tjwebb/sails-permissions
+[daviddm-image]: http://img.shields.io/david/tjwebb/sails-permissions.svg?style=flat
+[daviddm-url]: https://david-dm.org/tjwebb/sails-permissions
