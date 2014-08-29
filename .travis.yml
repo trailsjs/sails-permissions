@@ -2,3 +2,16 @@ language: node_js
 node_js:
   - '0.10'
   - '0.11'
+
+notifications:
+  email: false
+
+deploy:
+  provider: npm
+  email: me@traviswebb.com
+  api_key:
+    secure: XkUxb/VgRRKBhbu/gl1piyKPK0O4v1f8+dN173FzWmP9zTmtWYywsJDmoFSuUOjZURsmuwNrDWLVR7SKRa/q5VfBZ0pO2roasgMqlufMaKqMESxTy8BaVE71UlUNhmuCUNIqBKP5yqVmOVb1QdhKLY478FK7OlUepEIhmDm9uXg=
+  on:
+    tags: true
+    repo: tjwebb/sails-permissions
+    all_branches: true
