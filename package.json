@@ -27,5 +27,13 @@
   "bugs": {
     "url": "https://github.com/tjwebb/sails-permissions/issues"
   },
-  "homepage": "https://github.com/tjwebb/sails-permissions"
+  "homepage": "https://github.com/tjwebb/sails-permissions",
+  "devDependencies": {
+    "mocha": "^1.21.4",
+    "xtuple-api": "0.0.6"
+  },
+  "dependencies": {
+    "congruence": "^1.6.4",
+    "lodash": "^2.4.1"
+  }
 }
