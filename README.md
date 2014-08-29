@@ -1,4 +1,4 @@
-# <img src="http://cdn.tjw.io/images/sails-logo.png" height=48 /> permissions
+# <img src="http://cdn.tjw.io/images/sails-logo.png" height=42 /> permissions
 
 
 [![NPM version][npm-image]][npm-url]
@@ -11,6 +11,8 @@ $ npm install sails-permissions --save
 ```
 
 ## Usage
+
+
 
 ## License
 MIT
