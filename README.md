@@ -1,4 +1,4 @@
-# [![sails.js logo][sails-logo]][sails-url] permissions
+<img src="http://cdn.tjw.io/images/sails-logo.png" style="height: 10px;"/>
 
 
 [![NPM version][npm-image]][npm-url]
