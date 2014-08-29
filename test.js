@@ -1,0 +1,4 @@
+describe('sails-permissions', function () {
+
+
+});
