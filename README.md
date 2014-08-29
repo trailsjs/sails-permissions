@@ -1,4 +1,4 @@
-<img src="http://cdn.tjw.io/images/sails-logo.png" style="height: 10px;"/>
+# <img src="http://cdn.tjw.io/images/sails-logo.png" height=48 /> permissions
 
 
 [![NPM version][npm-image]][npm-url]
