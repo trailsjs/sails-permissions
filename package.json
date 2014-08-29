@@ -20,7 +20,8 @@
     "restriction",
     "passport",
     "grant",
-    "roles"
+    "roles",
+    "xtuple"
   ],
   "author": "Travis Webb <me@traviswebb.com>",
   "license": "MIT",
