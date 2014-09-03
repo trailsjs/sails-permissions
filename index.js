@@ -5,6 +5,7 @@ var injector = require('sails-inject');
 
 module.exports = function (sails) {
   return {
+
     /**
      * Inject models into the sails.js app
      */
