@@ -9,6 +9,10 @@
   "esnext": true,
   "globals": {
     "_": true,
-    "sails": true
+    "sails": true,
+    "describe": true,
+    "it": true,
+    "before": true,
+    "Permission": true
   }
 }

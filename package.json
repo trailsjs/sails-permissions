@@ -31,9 +31,11 @@
   "homepage": "https://github.com/tjwebb/sails-permissions",
   "devDependencies": {
     "mocha": "^1.21.4",
+    "sails-rigged": "^0.10.4",
     "xtuple-api": "0.0.6"
   },
   "dependencies": {
+    "congruence": "^1.6.4",
     "lodash": "^2.4.1",
     "sails-inject-models": "0.0.2"
   }
