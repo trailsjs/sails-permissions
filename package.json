@@ -37,6 +37,7 @@
   "dependencies": {
     "congruence": "^1.6.4",
     "lodash": "^2.4.1",
+    "sails-inject": "^0.10.4",
     "sails-inject-models": "0.0.2"
   }
 }
