@@ -13,9 +13,8 @@
  * http://sailsjs.org/#!documentation/
  */
 module.exports.policies = {
-  '/': [ 'UserPolicy', 'AuthorizationPolicy' ],
-  'api/*': [ 'ModelPolicy', 'UserPolicy', 'AuthorizationPolicy' ],
-  create: [ 'ModelPolicy', 'UserPolicy', 'AuthorizationPolicy', 'OwnerPolicy' ],
+  'api/*': [ 'ModelPolicy' ],
+  create: [ 'ModelPolicy', 'OwnerPolicy' ],
 
   AuthorizationController: {
     '*': true

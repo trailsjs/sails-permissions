@@ -36,7 +36,10 @@
   },
   "dependencies": {
     "congruence": "^1.6.4",
+    "dotenv": "^0.4.0",
     "lodash": "^2.4.1",
-    "sails-inject": "^0.10.4"
+    "sails": "^0.10.5",
+    "sails-authentication": "0.0.0",
+    "sails-inject": "^0.10.5"
   }
 }
