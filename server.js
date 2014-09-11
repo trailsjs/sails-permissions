@@ -6,5 +6,10 @@ var SailsApp = require('sails').Sails;
 require('dotenv').load();
 
 rigger.extend([
-  'sails-authentication'
-]);
+    'sails-authentication'
+  ])
+  .then(function (sails) {
+    //sails.lift();
+    //c
+    //onsole.log(sails);
+  });
