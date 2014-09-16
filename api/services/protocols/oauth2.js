@@ -1,33 +1,25 @@
-/**
- * OAuth 2.0 Authentication Protocol
- *
- * OAuth 2.0 is the successor to OAuth 1.0, and is designed to overcome
- * perceived shortcomings in the earlier version. The authentication flow is
- * essentially the same. The user is first redirected to the service provider
- * to authorize access. After authorization has been granted, the user is
- * redirected back to the application with a code that can be exchanged for an
- * access token. The application requesting access, known as a client, is iden-
- * tified by an ID and secret.
- *
- * For more information on OAuth in Passport.js, check out:
- * http://passportjs.org/guide/oauth/
- *
- * @param {Object}   req
- * @param {string}   accessToken
- * @param {string}   refreshToken
- * @param {Object}   profile
- * @param {Function} next
- */
-module.exports = function (req, accessToken, refreshToken, profile, next) {
-  var query    = {
-      identifier : profile.id
-    , protocol   : 'oauth2'
-    , tokens     : { accessToken: accessToken }
-    };
+// api/services/protocols/oauth2.js
 
-  if (refreshToken !== undefined) {
-    query.tokens.refreshToken = refreshToken;
-  }
+var _ = require('lodash');
+var _super = require('sails-auth/api/services/protocols/oauth2');
 
-  passport.connect(req, query, profile, next);
-};
+function protocols () { }
+
+protocols.prototype = Object.create(_super);
+_.extend(protocols.prototype, {
+
+  // Extend with custom logic here by adding additional fields and methods,
+  // and/or overriding methods in the superclass.
+
+  /**
+   * For example:
+   *
+   * foo: function (bar) {
+   *   bar.x = 1;
+   *   bar.y = 2;
+   *   return _super.foo.call(this, bar);
+   * }
+   */
+});
+
+module.exports = new protocols();

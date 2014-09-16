@@ -1,25 +1,25 @@
-/**
- * OpenID Authentication Protocol
- *
- * OpenID is an open standard for federated authentication. When visiting a
- * website, users present their OpenID to sign in. The user then authenticates
- * with their chosen OpenID provider, which issues an assertion to confirm the
- * user's identity. The website verifies this assertion in order to sign the
- * user in.
- *
- * For more information on OpenID in Passport.js, check out:
- * http://passportjs.org/guide/openid/
- *
- * @param {Object}   req
- * @param {string}   identifier
- * @param {Object}   profile
- * @param {Function} next
- */
-module.exports = function (req, identifier, profile, next) {
-  var query    = {
-      identifier : identifier
-    , protocol   : 'openid'
-    };
+// api/services/protocols/openid.js
 
-  passport.connect(req, query, profile, next);
-};
+var _ = require('lodash');
+var _super = require('sails-auth/api/services/protocols/openid');
+
+function protocols () { }
+
+protocols.prototype = Object.create(_super);
+_.extend(protocols.prototype, {
+
+  // Extend with custom logic here by adding additional fields and methods,
+  // and/or overriding methods in the superclass.
+
+  /**
+   * For example:
+   *
+   * foo: function (bar) {
+   *   bar.x = 1;
+   *   bar.y = 2;
+   *   return _super.foo.call(this, bar);
+   * }
+   */
+});
+
+module.exports = new protocols();

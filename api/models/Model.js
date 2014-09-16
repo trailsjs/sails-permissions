@@ -1,4 +1,9 @@
 /**
+ * filename: <% filename %>
+ * generator: <% generatorName %>
+ * id: <% id %>
+ * entity: <% entity %>
+ *
  * @module Model
  *
  * @description

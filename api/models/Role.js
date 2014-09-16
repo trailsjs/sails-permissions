@@ -30,13 +30,11 @@ module.exports = {
     },
     users: {
       collection: 'User',
-      via: 'roles',
-      dominant: true
+      via: 'roles'
     },
     permissions: {
       collection: 'Permission',
-      via: 'role',
-      dominant: true
+      via: 'role'
     },
 
     /**

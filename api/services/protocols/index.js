@@ -1,19 +1,25 @@
-/**
- * Authentication Protocols
- *
- * Protocols where introduced to patch all the little inconsistencies between
- * the different authentication APIs. While the local authentication strategy
- * is as straigt-forward as it gets, there are some differences between the
- * services that expose an API for authentication.
- *
- * For example, OAuth 1.0 and OAuth 2.0 both handle delegated authentication
- * using tokens, but the tokens have changed between the two versions. This
- * is accomodated by having a single `token` object in the Passport model that
- * can contain any combination of tokens issued by the authentication API.
- */
-module.exports = {
-  local  : require('./local')
-, oauth  : require('./oauth')
-, oauth2 : require('./oauth2')
-, openid : require('./openid')
-};
+// api/services/protocols/index.js
+
+var _ = require('lodash');
+var _super = require('sails-auth/api/services/protocols/index');
+
+function protocols () { }
+
+protocols.prototype = Object.create(_super);
+_.extend(protocols.prototype, {
+
+  // Extend with custom logic here by adding additional fields and methods,
+  // and/or overriding methods in the superclass.
+
+  /**
+   * For example:
+   *
+   * foo: function (bar) {
+   *   bar.x = 1;
+   *   bar.y = 2;
+   *   return _super.foo.call(this, bar);
+   * }
+   */
+});
+
+module.exports = new protocols();

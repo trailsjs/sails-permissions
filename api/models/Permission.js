@@ -14,8 +14,8 @@ module.exports = {
     model: {
       model: 'Model',
       required: true,
-      primaryKey: true,
-      unique: false
+      //primaryKey: true,
+      //unique: false
     },
 
     /**
@@ -23,9 +23,9 @@ module.exports = {
      */
     role: {
       model: 'Role',
-      via: 'permissions',
-      primaryKey: true,
-      unique: false
+      required: true
+      //primaryKey: true,
+      //unique: false
     },
 
     /**

@@ -1,5 +1,8 @@
-/** @module User */
-module.exports = {
+var _ = require('lodash');
+var _super = require('sails-auth/api/models/Passport');
+
+_.merge(exports, _super);
+_.merge(exports, {
 
   autoPK: true,
   autoCreatedAt: true,
@@ -28,9 +31,6 @@ module.exports = {
     roles: {
       collection: 'Role',
       via: 'users'
-    },
-    contact: {
-      model: 'Contact'
     }
   }
-};
+});

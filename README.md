@@ -10,8 +10,9 @@ $ npm install sails-permissions --save
 ```
 
 ## Usage
-
-
+```sh
+$ sails generate permissions-api
+```
 
 ## License
 MIT

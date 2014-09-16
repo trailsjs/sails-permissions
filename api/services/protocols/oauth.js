@@ -1,32 +1,25 @@
-/**
- * OAuth Authentication Protocol
- *
- * OAuth 1.0 is a delegated authentication strategy that involves multiple
- * steps. First, a request token must be obtained. Next, the user is redirected
- * to the service provider to authorize access. Finally, after authorization has
- * been granted, the user is redirected back to the application and the request
- * token can be exchanged for an access token. The application requesting access,
- * known as a consumer, is identified by a consumer key and consumer secret.
- *
- * For more information on OAuth in Passport.js, check out:
- * http://passportjs.org/guide/oauth/
- *
- * @param {Object}   req
- * @param {string}   token
- * @param {string}   tokenSecret
- * @param {Object}   profile
- * @param {Function} next
- */
-module.exports = function (req, token, tokenSecret, profile, next) {
-  var query    = {
-      identifier : profile.id
-    , protocol   : 'oauth'
-    , tokens     : { token: token }
-    };
+// api/services/protocols/oauth.js
 
-  if (tokenSecret !== undefined) {
-    query.tokens.tokenSecret = tokenSecret;
-  }
+var _ = require('lodash');
+var _super = require('sails-auth/api/services/protocols/oauth');
 
-  passport.connect(req, query, profile, next);
-};
+function protocols () { }
+
+protocols.prototype = Object.create(_super);
+_.extend(protocols.prototype, {
+
+  // Extend with custom logic here by adding additional fields and methods,
+  // and/or overriding methods in the superclass.
+
+  /**
+   * For example:
+   *
+   * foo: function (bar) {
+   *   bar.x = 1;
+   *   bar.y = 2;
+   *   return _super.foo.call(this, bar);
+   * }
+   */
+});
+
+module.exports = new protocols();
