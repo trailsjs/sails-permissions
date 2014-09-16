@@ -11,12 +11,12 @@ exports.createModels = function () {
     return model && model.globalId && model.identity && {
       name: model.globalId,
       identity: model.identity,
-      description: model.description,
       attributes: model.attributes
     };
   }));
 
   return Promise.map(models, function (model) {
+      sails.log('creating', model.name);
       return Model.create(model);
     });
 };

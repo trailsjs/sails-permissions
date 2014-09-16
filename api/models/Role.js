@@ -32,6 +32,10 @@ module.exports = {
       collection: 'User',
       via: 'roles'
     },
+    active: {
+      type: 'boolean',
+      index: true
+    },
     permissions: {
       collection: 'Permission',
       via: 'role'

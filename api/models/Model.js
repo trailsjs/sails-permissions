@@ -28,8 +28,7 @@ module.exports = {
     },
     permissions: {
       collection: 'Permission',
-      via: 'model',
-      dominant: true
+      via: 'model'
     }
   }
 };

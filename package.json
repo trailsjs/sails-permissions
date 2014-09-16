@@ -31,13 +31,11 @@
   "homepage": "https://github.com/tjwebb/sails-permissions",
   "devDependencies": {
     "mocha": "^1.21.4",
-    "xtuple-api": "0.0.6"
+    "xtuple-api": "*"
   },
   "dependencies": {
-    "congruence": "^1.6.4",
     "lodash": "^2.4.1",
     "pluralize": "^1.0.1",
-    "sails": "^0.10.5",
     "sails-generate-entities": "^0.10.3"
   }
 }

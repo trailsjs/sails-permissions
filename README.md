@@ -14,6 +14,12 @@ $ npm install sails-permissions --save
 $ sails generate permissions-api
 ```
 
+The permissions api creates a default 'admin **User** in the datastore. It
+requires that the following values are set:
+- `sails.config.permissions.adminEmail`
+- `sails.config.permissions.adminPassword`
+
+
 ## License
 MIT
 

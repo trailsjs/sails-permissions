@@ -4,12 +4,18 @@
  */
 exports.create = function (roles, model, next) {
   sails.log('Installing admin User');
-  sails.log('roles', roles);
   sails.log('model', model);
+
+  if (_.isEmpty(sails.config.permissions.adminPassword)) {
+    throw new Error('sails.config.permissions.adminPassword is not set');
+  }
+  if (_.isEmpty(sails.config.permissions.adminEmail)) {
+    throw new Error('sails.config.permissions.adminEmail is not set');
+  }
   return sails.services.passport.protocols.local.createUser({
     username: 'admin',
-    password: process.env.xtuple_admin_password,
-    email: process.env.xtuple_admin_email,
+    password: sails.config.permissions.adminPassword,
+    email: sails.config.permissions.adminEmail,
     roles: [ roles.admin.id ],
     owner: -1,
     model: model.id

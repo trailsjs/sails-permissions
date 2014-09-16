@@ -6,26 +6,29 @@ module.exports = function (sails) {
 
     },
     initialize: function (next) {
-      var models = _.filter(sails.controllers, function (controller, name) {
-        var model = sails.models[name];
-        return model && model.globalId && model.identity;
-      });
 
-      Model.count()
-        .then(function (count) {
-          if (count < models.length) {
-            sails.log('Expecting', models.length, 'models, found', count);
-            sails.log('Installing fixtures');
-            initializeFixtures(next);
-          }
-          else {
-            next();
-          }
-        })
-        .catch(function (error) {
-          sails.log.error(error);
-          next(error);
+      sails.after('hook:orm:loaded', function () {
+        var models = _.filter(sails.controllers, function (controller, name) {
+          var model = sails.models[name];
+          return model && model.globalId && model.identity;
         });
+
+        Model.count()
+          .then(function (count) {
+            if (count < models.length) {
+              sails.log('Expecting', models.length, 'models, found', count);
+              sails.log('Installing fixtures');
+              initializeFixtures(next);
+            }
+            else {
+              next();
+            }
+          })
+          .catch(function (error) {
+            sails.log.error(error);
+            next(error);
+          });
+      });
     }
   };
 };
@@ -41,7 +44,6 @@ function initializeFixtures (next) {
   require('../../../config/fixtures/model').createModels()
     .then(function (_models) {
       models = _models;
-      sails.log('Creating roles');
       return require('../../../config/fixtures/role').create();
     })
     .then(function (_roles) {
