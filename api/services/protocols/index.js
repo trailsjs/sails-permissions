@@ -1,15 +1,11 @@
-// api/services/protocols/index.js
 
 var _ = require('lodash');
 var _super = require('sails-auth/api/services/protocols/index');
 
-function protocols () { }
+_.merge(exports, _super);
+_.merge(exports, {
 
-protocols.prototype = Object.create(_super);
-_.extend(protocols.prototype, {
-
-  // Extend with custom logic here by adding additional fields and methods,
-  // and/or overriding methods in the superclass.
+  // Extend with custom logic here by adding additional fields, methods, etc.
 
   /**
    * For example:
@@ -17,9 +13,7 @@ _.extend(protocols.prototype, {
    * foo: function (bar) {
    *   bar.x = 1;
    *   bar.y = 2;
-   *   return _super.foo.call(this, bar);
+   *   return _super.foo(bar);
    * }
    */
 });
-
-module.exports = new protocols();
