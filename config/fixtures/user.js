@@ -4,6 +4,8 @@
  */
 exports.create = function (roles, model, next) {
   sails.log('Installing admin User');
+  sails.log('roles', roles);
+  sails.log('model', model);
   return sails.services.passport.protocols.local.createUser({
     username: 'admin',
     password: process.env.xtuple_admin_password,

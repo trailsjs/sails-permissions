@@ -13,7 +13,9 @@ module.exports = require('sails-generate-entities')({
     'api/controllers/RoleController.js',
                                             
     'api/policies/ModelPolicy.js',
-    'api/policies/OwnerPolicy.js'
+    'api/policies/OwnerPolicy.js',
+
+    'api/hooks/sails-permissions/index.js'
   ],
 
   classes: [
