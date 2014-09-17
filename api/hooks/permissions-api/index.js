@@ -25,8 +25,9 @@ module.exports = function (sails) {
             }
           })
           .catch(function (error) {
-            sails.log.error(error);
-            next(error);
+            // FIXME https://github.com/balderdashy/waterline/issues/630
+            sails.log.warn(error);
+            initializeFixtures(next);
           });
       });
     }
