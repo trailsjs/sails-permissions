@@ -13,8 +13,9 @@ module.exports = function (sails) {
           return model && model.globalId && model.identity;
         });
 
-        Model.count()
-          .then(function (count) {
+        Model.findAll()
+          .then(function (found) {
+            var count = found ? found.length : 0;
             if (count < models.length) {
               sails.log('Expecting', models.length, 'models, found', count);
               sails.log('Installing fixtures');
@@ -25,9 +26,8 @@ module.exports = function (sails) {
             }
           })
           .catch(function (error) {
-            // FIXME https://github.com/balderdashy/waterline/issues/630
-            sails.log.warn(error);
-            initializeFixtures(next);
+            sails.log.error(error);
+            next(error);
           });
       });
     }
