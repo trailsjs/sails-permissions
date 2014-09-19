@@ -13,7 +13,7 @@ module.exports = function (sails) {
           return model && model.globalId && model.identity;
         });
 
-        Model.findAll()
+        Model.find({ limit: 999 })
           .then(function (found) {
             var count = found ? found.length : 0;
             if (count < models.length) {
