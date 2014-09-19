@@ -3,10 +3,17 @@ var _ = require('lodash');
 module.exports = function (sails) {
   return {
     configure: function () {
+      if (!_.isObject(sails.config.permissions)) sails.config.permissions = { };
+
+      // setup some necessary globals
+      global.Promise = require('bluebird');
+      global._ = require('lodash');
+      _.mixin(require('congruence'));
+
+  
 
     },
     initialize: function (next) {
-
       sails.after('hook:orm:loaded', function () {
         var models = _.filter(sails.controllers, function (controller, name) {
           var model = sails.models[name];

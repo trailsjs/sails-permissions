@@ -4,7 +4,6 @@
  */
 exports.create = function (roles, model, next) {
   sails.log('Installing admin User');
-  sails.log('model', model);
 
   if (_.isEmpty(sails.config.permissions.adminPassword)) {
     throw new Error('sails.config.permissions.adminPassword is not set');
