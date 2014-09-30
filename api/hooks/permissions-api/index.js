@@ -28,7 +28,7 @@ module.exports = function (sails) {
               next();
             }
           })
-          .fail(function (error) {
+          .catch(function (error) {
             sails.log.error(error);
             next(error);
           });
@@ -70,7 +70,7 @@ function initializeFixtures (next) {
             sails.log('admin user done. next...');
             next();
           })
-          .fail(function (error) {
+          .catch(function (error) {
             sails.log('admin user fail');
             sails.log.error(error);
             next(error);
