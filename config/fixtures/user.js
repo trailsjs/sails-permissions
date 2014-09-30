@@ -3,7 +3,6 @@
  * @param adminRole - the admin role which grants all permissions
  */
 exports.create = function (roles, model, next) {
-  sails.log('Installing admin User');
 
   if (_.isEmpty(sails.config.permissions.adminPassword)) {
     throw new Error('sails.config.permissions.adminPassword is not set');

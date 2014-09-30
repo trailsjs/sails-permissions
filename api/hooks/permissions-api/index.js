@@ -1,5 +1,3 @@
-var _ = require('lodash');
-
 module.exports = function (sails) {
   return {
     configure: function () {
@@ -9,8 +7,6 @@ module.exports = function (sails) {
       global.Promise = require('bluebird');
       global._ = require('lodash');
       _.mixin(require('congruence'));
-
-  
 
     },
     initialize: function (next) {
@@ -32,7 +28,7 @@ module.exports = function (sails) {
               next();
             }
           })
-          .catch(function (error) {
+          .fail(function (error) {
             sails.log.error(error);
             next(error);
           });
@@ -63,11 +59,22 @@ function initializeFixtures (next) {
       var model = _.find(models, { name: 'User' });
       sails.log('Creating admin user');
       return require('../../../config/fixtures/user').create(roles, model, function (err, user) {
-        if (err) return next(err);
+        if (err) {
+          sails.log.error(err);
+          return next(err);
+        }
+        sails.log('admin user created. setting owner...');
         user.owner = user.id;
-        user.save().then(function (user) {
-          next();
-        });
+        user.save()
+          .then(function (user) {
+            sails.log('admin user done. next...');
+            next();
+          })
+          .fail(function (error) {
+            sails.log('admin user fail');
+            sails.log.error(error);
+            next(error);
+          });
       });
     })
     .catch(function (error) {
