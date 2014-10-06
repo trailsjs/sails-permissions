@@ -9,9 +9,9 @@ exports.create = function (roles, model, next) {
   if (_.isEmpty(sails.config.permissions.adminEmail)) {
     throw new Error('sails.config.permissions.adminEmail is not set');
   }
-  User.find({ username: 'admin' })
+  User.findOne({ username: 'admin' })
     .then(function (user) {
-      if (user) return next();
+      if (user) return next(null, user);
 
       sails.log('admin user does not exist; creating...');
       return sails.services.passport.protocols.local.createUser({
