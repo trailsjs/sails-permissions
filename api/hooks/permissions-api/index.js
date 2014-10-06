@@ -52,12 +52,10 @@ function initializeFixtures (next) {
     })
     .then(function (_roles) {
       roles = _roles;
-      sails.log('Creating permissions');
       return require('../../../config/fixtures/permission').create(roles, models);
     })
     .then(function (permissions) {
       var model = _.find(models, { name: 'User' });
-      sails.log('Creating admin user');
       return require('../../../config/fixtures/user').create(roles, model, function (err, user) {
         if (err) {
           sails.log.error(err);

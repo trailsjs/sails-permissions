@@ -34,7 +34,8 @@ module.exports = {
     },
     active: {
       type: 'boolean',
-      index: true
+      index: true,
+      defaultsTo: true
     },
     permissions: {
       collection: 'Permission',

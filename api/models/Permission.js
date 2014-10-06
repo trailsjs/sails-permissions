@@ -1,4 +1,5 @@
 var EventEmitter = require('events').EventEmitter;
+
 /**
  * @module Permission
  *
@@ -14,7 +15,6 @@ module.exports = {
     model: {
       model: 'Model',
       required: true,
-      //primaryKey: true,
       //unique: false
     },
 
@@ -23,8 +23,7 @@ module.exports = {
      */
     role: {
       model: 'Role',
-      required: true
-      //primaryKey: true,
+      required: true,
       //unique: false
     },
 
@@ -45,7 +44,7 @@ module.exports = {
       return _.find([ 'owner', 'role', 'others' ], function (ownership) {
         return this.grant[ownership][action.attribute][action.method];
       }, this);
-    },
+    }
   },
 
   beforeValidate: function (permission, next) {
@@ -54,6 +53,7 @@ module.exports = {
       role: { },
       others: { }
     });
+
     var emitter = new EventEmitter();
     var valid = _.similar(Permission.grantTemplate, permission.grant, emitter);
     emitter.on('invalid:keys', function (error) {
