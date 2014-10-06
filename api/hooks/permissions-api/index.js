@@ -62,7 +62,6 @@ function initializeFixtures (next) {
           return next(err);
         }
         sails.log('admin user created. setting owner...');
-        sails.log(user);
         user.owner = user.id;
         user.save()
           .then(function (user) {
