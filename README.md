@@ -15,7 +15,8 @@ $ npm install sails-permissions --save
 ```json
 {
   "generators": {
-    "permissions-api": "sails-permissions"
+    "permissions-api": "sails-permissions",
+    "auth-api": "sails-auth"
   }
 }
 ```
