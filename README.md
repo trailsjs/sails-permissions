@@ -11,7 +11,7 @@ $ npm install sails-permissions --save
 
 ## Usage
 
-#### 1. .sailsrc
+#### 1. update .sailsrc
 ```json
 {
   "generators": {
