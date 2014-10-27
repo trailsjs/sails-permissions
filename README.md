@@ -10,6 +10,17 @@ $ npm install sails-permissions --save
 ```
 
 ## Usage
+
+#### 1. .sailsrc
+```json
+{
+  "generators": {
+    "permissions-api": "sails-permissions"
+  }
+}
+```
+
+#### 2. run generator
 ```sh
 $ sails generate permissions-api
 ```
