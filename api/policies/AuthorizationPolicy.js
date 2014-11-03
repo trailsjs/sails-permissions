@@ -17,7 +17,7 @@
  */
 module.exports = function AuthorizationPolicy (req, res, next, error) {
   if (!req.isAuthenticated()) {
-    return res.badRequest(req.__('401.not.authenticated'));
+    return res.send(400, 'not authenticated');
   }
   var user = req.user;
   var model = req.model;
@@ -29,16 +29,14 @@ module.exports = function AuthorizationPolicy (req, res, next, error) {
     })
     .then(function (permissions) {
       if (permissions.length === 0) {
-        error = req.__('401.permission.missing', user.username, model.name);
         sails.log('AuthorizationPolicy:', msg);
-        return res.badRequest(error);
+        return res.send(501, 'no permission found');
       }
 
       var valid = PermissionService.isValid(method, permissions);
       if (!valid) {
-        error = req.__('401.permission.denied', user.username, method, model.name);
         sails.log('AuthorizationPolicy:', msg);
-        return res.badRequest(error);
+        return res.send(400, 'permission denied');
       }
       next();
     })

@@ -11,7 +11,23 @@ $ npm install sails-auth sails-permissions --save
 
 ## Usage
 
-#### 1. update .sailsrc
+### 1. run generator
+
+```sh
+$ sails generate auth-api
+$ sails generate permissions-api
+```
+
+### 2. Set environment variables
+
+| variable | description |
+|:---|:---|
+| `ADMIN_EMAIL` | admin user email address |
+| `ADMIN_PASSWORD` | admin user password |
+
+### 2. update configs
+
+#### .sailsrc
 ```json
 {
   "generators": {
@@ -21,17 +37,26 @@ $ npm install sails-auth sails-permissions --save
 }
 ```
 
-#### 2. run generator
-```sh
-$ sails generate auth-api
-$ sails generate permissions-api
+#### config/policies.js
+```js
+  '*': [ 'passport', 'sessionAuth', 'ModelPolicy', 'OwnerPolicy', 'AuthorizationPolicy' ],
+
+  AuthController: {
+    '*': true
+  }
 ```
 
-The permissions api creates a default 'admin **User** in the datastore. It
-requires that the following values are set:
-- `sails.config.permissions.adminEmail`
-- `sails.config.permissions.adminPassword`
+### 3. extend models to support ownership
 
+#### api/models/Foo.js
+```js
+var Foo = {
+  // model definition
+};
+
+_.merge(Foo, require('sails-permissions/src/models/HasOwner.js'));
+module.exports = Foo;
+```
 
 ## License
 MIT

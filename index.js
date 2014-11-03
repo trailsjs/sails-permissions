@@ -11,13 +11,14 @@ module.exports = require('sails-generate-entities')({
     'api/controllers/PermissionController.js',
     'api/controllers/RoleController.js',
                                             
-    'api/policies/ModelPolicy.js',
-    'api/policies/OwnerPolicy.js',
+    'config/permissions.js'
   ],
   classes: [
     'api/services/ModelService.js'
   ],
   functions: [
-    'api/hooks/permissions-api/index.js'
+    'api/hooks/permissions-api/index.js',
+    'api/policies/ModelPolicy.js',
+    'api/policies/OwnerPolicy.js'
   ]
 });

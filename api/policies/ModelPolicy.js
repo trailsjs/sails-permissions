@@ -4,10 +4,11 @@
 module.exports = function ModelPolicy (req, res, next) {
   var modelName = ModelService.getTargetModelName(req);
 
-  Model.findOne({ name: modelName })
+  Model.findOne({ identity: modelName })
     .then(function (model) {
       if (_.isObject(model)) {
-        req.locals.model = model;
+        // TODO probably only one of these is needed
+        req.model = model;
         next();
       }
       else {
