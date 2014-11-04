@@ -104,5 +104,5 @@ function logModelOwnership (models) {
   if (warnings.length) {
     sails.log.warn('the following models do not support ownership:', warnings);
   }
-  sails.warn('these models do not support the permissions-api');
+  sails.log.warn('these models do not support the permissions-api');
 }
