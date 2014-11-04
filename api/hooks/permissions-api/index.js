@@ -1,6 +1,7 @@
 module.exports = function (sails) {
   return {
     configure: function () {
+      sails.log('configuring sails-permissions...');
       if (!_.isObject(sails.config.permissions)) sails.config.permissions = { };
 
       // setup some necessary globals
@@ -11,22 +12,24 @@ module.exports = function (sails) {
     },
     initialize: function (next) {
       sails.after('hook:orm:loaded', function () {
+        sails.log('initializing sails-permissions...');
+
         var models = _.filter(sails.controllers, function (controller, name) {
           var model = sails.models[name];
           return model && model.globalId && model.identity;
         });
 
         Model.find({ limit: 999 })
-          .then(function (found) {
-            var count = found ? found.length : 0;
+          .then(function (models) {
+            var count = models ? models.length : 0;
             if (count < models.length) {
               sails.log('Expecting', models.length, 'models, found', count);
               sails.log('Installing fixtures');
-              initializeFixtures(next);
+              return initializeFixtures(next);
             }
-            else {
-              next();
-            }
+
+            logModelOwnership(models);
+            next();
           })
           .catch(function (error) {
             sails.log.error(error);
@@ -79,4 +82,27 @@ function initializeFixtures (next) {
       sails.log.error(error);
       next(error);
     });
+}
+
+/**
+ * Log the models that do not support user ownership
+ */
+function logModelOwnership (models) {
+  var ignoreModels = [
+    'BackboneModel',
+    'Model',
+    'Role',
+    'Passport',
+    'Permission',
+    'User'
+  ];
+  var missingOwner = _.filter(models, function (model) {
+    return _.isUndefined(sails.models[model.identity].attributes.owner);
+  });
+  var warnings = _.difference(_.pluck(missingOwner, 'name'), ignoreModels);
+
+  if (warnings.length) {
+    sails.log.warn('the following models do not support ownership:', warnings);
+  }
+  sails.warn('these models do not support the permissions-api');
 }
