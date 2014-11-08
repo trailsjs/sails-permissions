@@ -41,13 +41,18 @@ module.exports = {
      * @param action.attribute
      */
     permits: function (action) {
-      return _.find([ 'owner', 'role', 'others' ], function (ownership) {
+      return !!_.find([ 'owner', 'role', 'others' ], function (ownership) {
         return this.grant[ownership][action.attribute][action.method];
       }, this);
     }
   },
 
-  beforeValidate: function (permission, next) {
+  /**
+   * Perform deep-validation of grant object
+   */
+  afterValidate: function (permission, next) {
+    _.isObject(permission.grant) || (permission.grant = { });
+
     _.defaults(permission.grant, {
       owner: { },
       role: { },
@@ -56,10 +61,10 @@ module.exports = {
 
     var emitter = new EventEmitter();
     var valid = _.similar(Permission.grantTemplate, permission.grant, emitter);
-    emitter.on('invalid:keys', function (error) {
+    emitter.once('invalid:keys', function (error) {
       next(new Error('the grant object is missing a required key'));
     });
-    emitter.on('invalid:value', function (error) {
+    emitter.once('invalid:value', function (error) {
       next(new Error('grant key ' + error.key + ' is invalid'));
     });
 

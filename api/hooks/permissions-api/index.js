@@ -11,6 +11,8 @@ module.exports = function (sails) {
 
     },
     initialize: function (next) {
+      installModelOwnership(sails.models);
+
       sails.after('hook:orm:loaded', function () {
         sails.log('initializing sails-permissions...');
 
@@ -28,7 +30,6 @@ module.exports = function (sails) {
               return initializeFixtures(next);
             }
 
-            logModelOwnership(models);
             next();
           })
           .catch(function (error) {
@@ -88,6 +89,19 @@ function initializeFixtures (next) {
  * Log the models that do not support user ownership
  */
 function logModelOwnership (models) {
+  var missingOwner = _.filter(models, function (model) {
+    return _.isUndefined(sails.models[model.identity].attributes.owner);
+  });
+  var warnings = _.difference(_.pluck(missingOwner, 'name'), ignoreModels);
+
+  if (warnings.length) {
+    sails.log.warn('these models do not support ownership, and are unusable by the permissions-api:', warnings);
+  }
+}
+
+function installModelOwnership (models) {
+  if (sails.config.permissions.enableOwnership === false) return;
+
   var ignoreModels = [
     'BackboneModel',
     'Model',
@@ -96,13 +110,17 @@ function logModelOwnership (models) {
     'Permission',
     'User'
   ];
-  var missingOwner = _.filter(models, function (model) {
-    return _.isUndefined(sails.models[model.identity].attributes.owner);
-  });
-  var warnings = _.difference(_.pluck(missingOwner, 'name'), ignoreModels);
 
-  if (warnings.length) {
-    sails.log.warn('the following models do not support ownership:', warnings);
-  }
-  sails.log.warn('these models do not support the permissions-api');
+  _.each(models, function (model) {
+    if (model.enableOwnership === false) return;
+    if (_.contains(ignoreModels, model.globalId)) return;
+
+    _.defaults(model.attributes, {
+      owner: {
+        model: 'User',
+        index: true,
+        notNull: true
+      }
+    });
+  });
 }

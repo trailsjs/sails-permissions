@@ -35,6 +35,7 @@
     "xtuple-api": "*"
   },
   "dependencies": {
+    "a.b": "^1.0.1",
     "bluebird": "^2.3.6",
     "congruence": "^1.6.4",
     "fnv-plus": "^1.2.9",

@@ -1,10 +1,11 @@
 /**
  * AuthorizationPolicy
  *
- * Verifications:
- * 1. User is logged in
- * 2. User has Permission to perform method on Model
- * 3. User has Permission to perform method on Attribute (if applicable)
+ * In order to proceed to the controller, the following verifications
+ * must pass:
+ * 1. User is logged in (handled previously by sails-auth sessionAuth policy)
+ * 2. User has Permission to perform action on Model
+ * 3. User has Permission to perform action on Attribute (if applicable)
  * 4. User is satisfactorily related to the Object's owner (if applicable)
  *
  * This policy verifies #1-3 here, before any controller is invoked. However

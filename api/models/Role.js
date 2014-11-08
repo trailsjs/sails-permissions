@@ -54,7 +54,7 @@ module.exports = {
      *    });
      */
     grant: function (permissions) {
-      var grant = PermissionService.createGrant(permisisons);
+      var grant = PermissionService.createGrant(permissions);
 
       return Permission
         .findOne({ model: permissions.model, role: this.id })
@@ -90,9 +90,8 @@ module.exports = {
         .then(function (permission) {
           if (!permission) return false;
 
-          return permission.permits(action.method, action.attribute);
+          return permission.permits(action);
         });
     }
-  },
-
+  }
 };
