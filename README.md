@@ -46,18 +46,6 @@ $ sails generate permissions-api
   }
 ```
 
-### 3. extend models to support ownership
-
-#### api/models/Foo.js
-```js
-var Foo = {
-  // model definition
-};
-
-_.merge(Foo, require('sails-permissions/src/models/HasOwner.js'));
-module.exports = Foo;
-```
-
 ## License
 MIT
 
