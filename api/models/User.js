@@ -16,14 +16,14 @@ _.merge(exports, {
      * and has no roles in common with the owner of the object, then return
      * 'none'.
      *
-     * @return Promise that resolves to 'owner', 'role', or 'none'
+     * @return Promise that resolves to 0, 1, or -1
      */
     getOwnershipRelation: function (object) {
       if (!object.owner) {
-        return 'none';
+        return -1;
       }
       if (object.owner === this.id) {
-        return 'owner';
+        return 0;
       }
 
       // query roles for this and object.owner and see if there are any in
@@ -39,10 +39,10 @@ _.merge(exports, {
             _.pluck(owner.roles, 'id')
           );
           if (intersection.length > 0) {
-            return 'role';
+            return 1;
           }
           else {
-            return 'none';
+            return -1;
           }
         });
     }

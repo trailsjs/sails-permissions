@@ -16,7 +16,7 @@ module.exports = function (sails) {
       sails.after('hook:orm:loaded', function () {
         sails.log('initializing sails-permissions...');
 
-        var models = _.filter(sails.controllers, function (controller, name) {
+        var sailsModels = _.filter(sails.controllers, function (controller, name) {
           var model = sails.models[name];
           return model && model.globalId && model.identity;
         });
@@ -24,8 +24,8 @@ module.exports = function (sails) {
         Model.find({ limit: 999 })
           .then(function (models) {
             var count = models ? models.length : 0;
-            if (count < models.length) {
-              sails.log('Expecting', models.length, 'models, found', count);
+            if (count < sailsModels.length) {
+              sails.log('Expecting', sailsModels.length, 'models, found', count);
               sails.log('Installing fixtures');
               return initializeFixtures(next);
             }

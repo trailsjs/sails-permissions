@@ -21,5 +21,6 @@ module.exports = require('sails-generate-entities')({
     'api/hooks/permissions-api/index.js',
     'api/policies/ModelPolicy.js',
     'api/policies/OwnerPolicy.js'
+    'api/policies/PermissionPolicy.js'
   ]
 });

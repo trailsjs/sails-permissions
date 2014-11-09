@@ -1,5 +1,9 @@
+var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
+
 /**
- * AuthorizationPolicy
+ * PermissionPolicy
+ * @depends OwnerPolicy
+ * @depends ModelPolicy
  *
  * In order to proceed to the controller, the following verifications
  * must pass:
@@ -16,13 +20,15 @@
  * @param {Object}   res
  * @param {Function} next
  */
-module.exports = function AuthorizationPolicy (req, res, next, error) {
+module.exports = function PermissionPolicy (req, res, next, error) {
   if (!req.isAuthenticated()) {
     return res.send(400, 'not authenticated');
   }
-  var user = req.user;
+  var user = req.owner;
   var model = req.model;
-  var method = PermissionService.getMethodFromRequest(req);
+  var method = req.options.action;
+
+  sails.log(user.roles);
 
   Permission.find({
       model: model.id,
@@ -30,13 +36,14 @@ module.exports = function AuthorizationPolicy (req, res, next, error) {
     })
     .then(function (permissions) {
       if (permissions.length === 0) {
-        sails.log('AuthorizationPolicy:', msg);
-        return res.send(501, 'no permission found');
+        sails.log.warn('AuthorizationPolicy:', 'no permission found');
+        sails.log.warn('AuthorizationPolicy:', 'model:', model.identity, '; user:', user.username);
+        return res.send(400, 'no permission found');
       }
 
       var valid = PermissionService.isValid(method, permissions);
       if (!valid) {
-        sails.log('AuthorizationPolicy:', msg);
+        sails.log('AuthorizationPolicy:', 'permission denied');
         return res.send(400, 'permission denied');
       }
       next();
