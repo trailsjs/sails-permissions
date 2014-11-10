@@ -14,7 +14,7 @@ module.exports = function OwnerPolicy (req, res, next) {
     .populate('roles')
     .then(function (user) {
       if (!user) {
-        return next('could not find user with id "' + req.user.id + '" in database');
+        return next(new Error('could not find user with id "' + req.user.id + '" in database'));
       }
 
       req.owner = user;

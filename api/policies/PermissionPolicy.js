@@ -21,14 +21,18 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
  * @param {Function} next
  */
 module.exports = function PermissionPolicy (req, res, next, error) {
+  sails.log(req.options);
   if (!req.isAuthenticated()) {
-    return res.send(400, 'not authenticated');
+    return next(new Error('not authenticated'));
   }
+  if (req.options.ignoreModel) {
+    return next();
+  }
+
   var user = req.owner;
   var model = req.model;
   var method = req.options.action;
 
-  sails.log(user.roles);
 
   Permission.find({
       model: model.id,
@@ -38,13 +42,13 @@ module.exports = function PermissionPolicy (req, res, next, error) {
       if (permissions.length === 0) {
         sails.log.warn('AuthorizationPolicy:', 'no permission found');
         sails.log.warn('AuthorizationPolicy:', 'model:', model.identity, '; user:', user.username);
-        return res.send(400, 'no permission found');
+        return next(new Error('no permission found'));
       }
 
       var valid = PermissionService.isValid(method, permissions);
       if (!valid) {
         sails.log('AuthorizationPolicy:', 'permission denied');
-        return res.send(400, 'permission denied');
+        return next(new Error('permission denied'));
       }
       next();
     })

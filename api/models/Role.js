@@ -16,7 +16,8 @@ module.exports = {
     name: {
       type: 'string',
       index: true,
-      notNull: true
+      notNull: true,
+      unique: true
     },
     children: {
       collection: 'Role',

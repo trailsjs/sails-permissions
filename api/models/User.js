@@ -46,5 +46,28 @@ _.merge(exports, {
           }
         });
     }
+  },
+
+  /**
+   * Attach default Role to a new User
+   */
+  afterCreate: function (_user, next) {
+    var user;
+    sails.log('user afterCreate');
+    User.findOne(_user.id)
+      .populate('roles')
+      .then(function (_user) {
+        user = _user;
+        return Role.findOne({ name: 'registered' });
+      })
+      .then(function (role) {
+        user.roles.add(role.id);
+        return user.save();
+      })
+      .then(function (updatedUser) {
+        sails.log('role "registered" attached to user', user.username);
+        next();
+      })
+      .catch(next);
   }
 });
