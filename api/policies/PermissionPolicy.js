@@ -33,7 +33,6 @@ module.exports = function PermissionPolicy (req, res, next, error) {
   var model = req.model;
   var method = req.options.action;
 
-
   Permission.find({
       model: model.id,
       role: _.pluck(user.roles, 'id')
