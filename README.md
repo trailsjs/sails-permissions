@@ -46,6 +46,9 @@ $ sails generate permissions-api
   }
 ```
 
+Currently, sails-permissions does not validated the permissions of associations. Until this
+is implemented, ensure that `sails.config.blueprints.populate` is set to `false`.
+
 ## License
 MIT
 
