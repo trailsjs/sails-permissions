@@ -4,12 +4,20 @@
 module.exports = function OwnerPolicy (req, res, next) {
   if (!req.user || !req.user.id) return next(new Error('req.user is not set'));
 
-  // set owner on newly created object
-  if (req.options.action === 'create') {
+  if (req.options.modelName === 'user') {
+    req.body = req.body || { };
+    req.body.id = req.user.id;
+    req.query.id = req.user.id;
+  }
+  else if (!req.options.ignoreOwnership) {
     req.body = req.body || { };
     req.body.owner = req.user.id;
+    req.query.owner = req.user.id;
   }
 
+  next();
+
+  /*
   User.findOne(req.user.id)
     .populate('roles')
     .then(function (user) {
@@ -21,4 +29,5 @@ module.exports = function OwnerPolicy (req, res, next) {
       next();
     })
     .catch(next);
+  */
 };

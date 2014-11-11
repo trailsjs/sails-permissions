@@ -21,7 +21,6 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
  * @param {Function} next
  */
 module.exports = function PermissionPolicy (req, res, next, error) {
-  sails.log(req.options);
   if (!req.isAuthenticated()) {
     return next(new Error('not authenticated'));
   }
@@ -31,7 +30,7 @@ module.exports = function PermissionPolicy (req, res, next, error) {
 
   var user = req.owner;
   var model = req.model;
-  var method = req.options.action;
+  var method = PermissionService.getMethod(req);
 
   Permission.find({
       model: model.id,

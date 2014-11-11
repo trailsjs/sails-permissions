@@ -6,8 +6,8 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 module.exports = function ModelPolicy (req, res, next) {
   req.options.modelName = actionUtil.parseModel(req).identity;
 
-  if (_.contains(sails.config.permissions.ignoreModels, req.options.modelName)) {
-    req.options.ignoreModel = true;
+  if (_.contains(sails.config.permissions.ignoreOwnership, req.options.modelName)) {
+    req.options.ignoreOwnership = true;
     return next();
   }
 

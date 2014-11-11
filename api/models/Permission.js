@@ -37,13 +37,29 @@ module.exports = {
     },
 
     /**
-     * @param action.method
-     * @param action.attribute
+     * @param ownership
+     * @param method
+     *
+     * permission.grant is a permission mapping for a particular model, e.g.
+     *  {
+     *    owner: {
+     *      '*': true
+     *    },
+     *    role: {
+     *      '*': true,
+     *      update: false
+     *    },
+     *    none: {
+     *      // '*': false by default
+     *    }
+     *
+     *  }
      */
-    permits: function (action) {
-      return !!_.find([ 'owner', 'role', 'others' ], function (ownership) {
-        return this.grant[ownership][action.attribute][action.method];
-      }, this);
+    permits: function (ownership, method) {
+      var permittedOwnership = _.dot(this.grant, [ ownership, '*' ]);
+      var permittedMethod = _.dot(this.grant, [ ownership, action ]);
+
+      return permittedMethod || (permittedOwnership && permittedMethod !== false);
     }
   },
 

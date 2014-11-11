@@ -115,6 +115,7 @@ function installModelOwnership (models) {
     if (model.enableOwnership === false) return;
     if (_.contains(ignoreModels, model.globalId)) return;
 
+    sails.log('enabling ownership on', model.globalId);
     _.defaults(model.attributes, {
       owner: {
         model: 'User',

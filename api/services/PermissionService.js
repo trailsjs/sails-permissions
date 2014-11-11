@@ -1,3 +1,11 @@
+var actionMethodMap = {
+  find: 'read',
+  findOne: 'read',
+  create: 'create',
+  update: 'update',
+  delete: 'delete'
+};
+
 module.exports = {
   /**
    * Query the ownership relationship between a user and an object.
@@ -9,5 +17,12 @@ module.exports = {
    */
   getOwnership: function (user, object) {
     return user.getOwnershipRelation(object);
+  },
+
+  /**
+   * Given an action, return the CRUD method it maps to.
+   */
+  getMethod: function (req) {
+    return actionMethodMap[req.options.action];
   }
 };
