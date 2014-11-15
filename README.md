@@ -6,7 +6,7 @@
 
 ## Install
 ```sh
-$ npm install sails-auth sails-permissions --save
+$ npm install lodash sails-auth sails-permissions --save
 ```
 
 ## Usage
