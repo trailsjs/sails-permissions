@@ -7,7 +7,8 @@ module.exports.permissions = {
 
   ignoreOwnership: [
     'model',
-    'backbonemodel'
+    'backbonemodel',
+    'role'
   ]
 };
 

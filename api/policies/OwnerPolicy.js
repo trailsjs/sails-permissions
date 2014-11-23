@@ -4,9 +4,6 @@
 module.exports = function OwnerPolicy (req, res, next) {
   if (!req.user || !req.user.id) return next(new Error('req.user is not set'));
 
-  sails.log(req.query);
-  sails.log(req.params);
-
   if (req.options.modelName === 'user') {
     req.body = req.body || { };
     req.body.id = req.user.id;
