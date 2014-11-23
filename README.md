@@ -6,28 +6,13 @@
 
 ## Install
 ```sh
-$ npm install sails-auth sails-permissions --save
+$ npm install lodash sails-auth sails-permissions --save
 ```
 
 ## Usage
 
-### 1. run generator
+### 1. configure sailsrc
 
-```sh
-$ sails generate auth-api
-$ sails generate permissions-api
-```
-
-### 2. Set environment variables
-
-| variable | description |
-|:---|:---|
-| `ADMIN_EMAIL` | admin user email address |
-| `ADMIN_PASSWORD` | admin user password |
-
-### 2. update configs
-
-#### .sailsrc
 ```json
 {
   "generators": {
@@ -36,6 +21,22 @@ $ sails generate permissions-api
   }
 }
 ```
+
+### 2. run generator
+
+```sh
+$ sails generate auth-api
+$ sails generate permissions-api
+```
+
+### 3. Set environment variables
+
+| variable | description |
+|:---|:---|
+| `ADMIN_EMAIL` | admin user email address |
+| `ADMIN_PASSWORD` | admin user password |
+
+#### 4. update configs
 
 #### config/policies.js
 ```js
