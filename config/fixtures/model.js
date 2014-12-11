@@ -11,7 +11,7 @@ exports.createModels = function () {
     return model && model.globalId && model.identity && {
       name: model.globalId,
       identity: model.identity,
-      attributes: model.attributes
+      attributes: _.omit(model.attributes, _.functions(model.attributes))
     };
   }));
 

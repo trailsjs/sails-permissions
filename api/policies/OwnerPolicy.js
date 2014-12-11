@@ -2,7 +2,10 @@
  * Ensure that the 'owner' property of an Object is set upon creation.
  */
 module.exports = function OwnerPolicy (req, res, next) {
-  if (!req.user || !req.user.id) return next(new Error('req.user is not set'));
+  if (!req.user || !req.user.id) {
+    req.logout();
+    return res.send(500, new Error('req.user is not set'));
+  }
 
   if (req.options.modelName === 'user') {
     req.body = req.body || { };
@@ -21,18 +24,4 @@ module.exports = function OwnerPolicy (req, res, next) {
   }
 
   next();
-
-  /*
-  User.findOne(req.user.id)
-    .populate('roles')
-    .then(function (user) {
-      if (!user) {
-        return next(new Error('could not find user with id "' + req.user.id + '" in database'));
-      }
-
-      req.owner = user;
-      next();
-    })
-    .catch(next);
-  */
 };
