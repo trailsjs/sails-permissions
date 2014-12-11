@@ -1,6 +1,6 @@
 {
   "name": "sails-permissions",
-  "version": "0.10.21",
+  "version": "0.10.22",
   "description": "Comprehensive sails.js user permission/privilege framework that allows granting and restricting access to models and attributes based on object ownership and relationships with other users and roles",
   "main": "index.js",
   "scripts": {
