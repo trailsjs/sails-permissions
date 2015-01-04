@@ -16,8 +16,10 @@ $ npm install lodash sails-auth sails-permissions --save
 ```json
 {
   "generators": {
-    "permissions-api": "sails-permissions",
-    "auth-api": "sails-auth"
+    "modules": {
+      "permissions-api": "sails-permissions",
+      "auth-api": "sails-auth"
+    }
   }
 }
 ```
