@@ -9,14 +9,14 @@ describe.skip('sails-permissions', function () {
   var app = new SailsApp();
 
   var config = {
-    appPath: path.dirname(require.resolve('xtuple-api')),
+    appPath: path.dirname(require.resolve('hashware-api')),
     hooks: {
       grunt: false
     }
   };
 
   before(function (done) {
-    this.timeout(10000);
+    this.timeout(30000);
     app.load(config, function (error, sails) {
       app = sails;
       done();
