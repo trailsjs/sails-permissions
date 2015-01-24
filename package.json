@@ -21,7 +21,8 @@
     "passport",
     "grant",
     "roles",
-    "xtuple"
+    "xtuple",
+    "security"
   ],
   "author": "Travis Webb <me@traviswebb.com>",
   "license": "MIT",
@@ -32,7 +33,7 @@
   "devDependencies": {
     "mocha": "^1.21.4",
     "sails": "^0.10.5",
-    "xtuple-api": "*"
+    "hashware-api": "*"
   },
   "dependencies": {
     "a.b": "^1.0.1",
