@@ -3,8 +3,9 @@
 var path = require('path');
 var assert = require('assert');
 var SailsApp = require('sails').Sails;
+var request = require('request');
 
-describe.skip('sails-permissions', function () {
+describe('sails-permissions', function () {
   var sp = require('./');
   var app = new SailsApp();
 
@@ -18,20 +19,18 @@ describe.skip('sails-permissions', function () {
   before(function (done) {
     this.timeout(30000);
     app.load(config, function (error, sails) {
+      if (error) return done(error);
       app = sails;
       done();
     });
 
   });
 
-  describe('Permission', function () {
+  describe.skip('Permission', function () {
     describe('#permits()', function () {
       describe('@instance', function () {
         var permission;
         before(function (done) {
-          permission = Permission.create({
-
-          });
           done();
         });
         it('should return the correct owner if the action is permitted', function (done) {

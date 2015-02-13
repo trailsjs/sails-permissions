@@ -3,6 +3,9 @@
  * @param adminRole - the admin role which grants all permissions
  */
 exports.create = function (roles, model, next) {
+  if (_.isEmpty(sails.config.permissions.adminUsername)) {
+    throw new Error('sails.config.permissions.adminUsername is not set');
+  }
   if (_.isEmpty(sails.config.permissions.adminPassword)) {
     throw new Error('sails.config.permissions.adminPassword is not set');
   }
@@ -15,7 +18,7 @@ exports.create = function (roles, model, next) {
 
       sails.log('admin user does not exist; creating...');
       return sails.services.passport.protocols.local.createUser({
-        username: 'admin',
+        username: sails.config.permissions.adminUsername,
         password: sails.config.permissions.adminPassword,
         email: sails.config.permissions.adminEmail,
         roles: [ roles.admin.id ],

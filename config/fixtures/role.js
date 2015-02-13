@@ -16,9 +16,9 @@ exports.create = function () {
     .then(function (_root) {
       root = _root;
       return [
-        Role.create({ name: 'public', parents: [ root.id ] }),
-        Role.create({ name: 'registered', parents: [ root.id ] }),
-        Role.create({ name: 'admin', parents: [ root.id ] })
+        Role.create({ name: 'public', parent: root.id }),
+        Role.create({ name: 'registered', parent: root.id }),
+        Role.create({ name: 'admin', parent: root.id })
       ];
     })
     .spread(function (publicRole, registeredRole, adminRole) {

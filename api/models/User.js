@@ -6,7 +6,8 @@ _.merge(exports, {
   attributes: {
     roles: {
       collection: 'Role',
-      via: 'users'
+      via: 'users',
+      dominant: true
     },
 
     /**
@@ -16,14 +17,20 @@ _.merge(exports, {
      * and has no roles in common with the owner of the object, then return
      * 'none'.
      *
-     * @return Promise that resolves to 0, 1, or -1
+     * @return Promise that resolves to 'none', 'owner', or 'role'
      */
     getOwnershipRelation: function (object) {
       if (!object.owner) {
-        return -1;
+        return {
+          relation: 'none',
+          object: object
+        };
       }
       if (object.owner === this.id) {
-        return 0;
+        return {
+          relation: 'owner',
+          object: object
+        };
       }
 
       // query roles for this and object.owner and see if there are any in
@@ -39,10 +46,16 @@ _.merge(exports, {
             _.pluck(owner.roles, 'id')
           );
           if (intersection.length > 0) {
-            return 1;
+            return {
+              relation: 'role',
+              object: object
+            };
           }
           else {
-            return -1;
+            return {
+              relation: 'none',
+              object: object
+            };
           }
         });
     }

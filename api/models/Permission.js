@@ -7,6 +7,8 @@ var EventEmitter = require('events').EventEmitter;
  *   The actions a Role is granted on a particular Model and its attributes
  */
 module.exports = {
+  enableOwnership: false,
+
   attributes: {
 
     /**
@@ -23,7 +25,7 @@ module.exports = {
      */
     role: {
       model: 'Role',
-      required: true,
+      required: true
       //unique: false
     },
 
@@ -52,12 +54,11 @@ module.exports = {
      *    none: {
      *      // '*': false by default
      *    }
-     *
      *  }
      */
     permits: function (ownership, method) {
       var permittedOwnership = _.dot(this.grant, [ ownership, '*' ]);
-      var permittedMethod = _.dot(this.grant, [ ownership, action ]);
+      var permittedMethod = _.dot(this.grant, [ ownership, method ]);
 
       return permittedMethod || (permittedOwnership && permittedMethod !== false);
     }
@@ -72,7 +73,7 @@ module.exports = {
     _.defaults(permission.grant, {
       owner: { },
       role: { },
-      others: { }
+      none: { }
     });
 
     var emitter = new EventEmitter();
@@ -90,6 +91,6 @@ module.exports = {
   grantTemplate: {
     owner: _.isObject,
     role: _.isObject,
-    others: _.isObject
+    none: _.isObject
   }
 };

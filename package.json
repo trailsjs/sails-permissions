@@ -31,9 +31,10 @@
   },
   "homepage": "https://github.com/tjwebb/sails-permissions",
   "devDependencies": {
+    "hashware-api": "*",
     "mocha": "^1.21.4",
-    "sails": "^0.10.5",
-    "hashware-api": "*"
+    "request": "^2.53.0",
+    "sails": "^0.10.5"
   },
   "dependencies": {
     "a.b": "^1.0.1",

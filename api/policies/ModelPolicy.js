@@ -5,11 +5,13 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
  */
 module.exports = function ModelPolicy (req, res, next) {
   req.options.modelName = actionUtil.parseModel(req).identity;
+  req.options.model = sails.models[req.options.modelName];
 
   //console.log('model globalId', actionUtil.parseModel(req).globalId);
   //console.log('ignoreOwnership list', sails.config.permissions.ignoreOwnership);
 
-  if (_.contains(sails.config.permissions.ignoreOwnership, req.options.modelName)) {
+  if (_.contains(sails.config.permissions.ignoreOwnership, req.options.modelName) ||
+      req.options.model.enableOwnership === false) {
     req.options.ignoreOwnership = true;
     return next();
   }

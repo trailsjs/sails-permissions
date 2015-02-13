@@ -7,6 +7,7 @@ var actionMethodMap = {
 };
 
 module.exports = {
+
   /**
    * Query the ownership relationship between a user and an object.
    *
@@ -24,5 +25,8 @@ module.exports = {
    */
   getMethod: function (req) {
     return actionMethodMap[req.options.action];
+  },
+
+  checkPermissions: function (user, model, method) {
   }
 };

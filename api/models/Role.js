@@ -21,13 +21,10 @@ module.exports = {
     },
     children: {
       collection: 'Role',
-      via: 'parents',
-      dominant: true
+      via: 'parent'
     },
-    parents: {
-      collection: 'Role',
-      via: 'children',
-      dominant: true
+    parent: {
+      model: 'Role'
     },
     users: {
       collection: 'User',

@@ -20,7 +20,12 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
  * @param {Object}   res
  * @param {Function} next
  */
-module.exports = function PermissionPolicy (req, res, next, error) {
+module.exports = getPermissions;
+
+/**
+ * Query all Permissions that are relevant to this User and the target Model
+ */
+function getPermissions (req, res, next) {
   if (!req.isAuthenticated()) {
     return next(new Error('not authenticated'));
   }
@@ -40,15 +45,59 @@ module.exports = function PermissionPolicy (req, res, next, error) {
       if (permissions.length === 0) {
         sails.log.warn('AuthorizationPolicy:', 'no permission found');
         sails.log.warn('AuthorizationPolicy:', 'model:', model.identity, '; user:', user.username);
-        return next(new Error('no permission found'));
+        return next(new Error('no permissions found for model ' + model.name));
       }
 
-      var valid = PermissionService.isValid(method, permissions);
-      if (!valid) {
-        sails.log('AuthorizationPolicy:', 'permission denied');
-        return next(new Error('permission denied'));
-      }
+      req.permissions = permissions;
+      bindResponsePolicy(req, res);
       next();
     })
     .catch(next);
-};
+}
+
+function bindResponsePolicy (req, res) {
+  res._ok = res.ok;
+
+  res.ok = _.bind(responsePolicy, {
+    req: req,
+    res: res
+  });
+}
+
+function responsePolicy (_data, options) {
+  sails.log('responsePolicy');
+  var req = this.req;
+  var res = this.res;
+  var user = req.owner;
+  var method = PermissionService.getMethod(req);
+
+  var data = _.isArray(_data) ? _data : [_data];
+
+  sails.log('data', _data);
+  sails.log('options', options);
+
+  // TODO search populated associations
+  Promise.bind(this)
+    .map(data, function (object) {
+      return user.getOwnershipRelation(data);
+    })
+    .then(function (results) {
+      sails.log('results', results);
+      var permitted = _.filter(results, function (result) {
+        return _.any(req.permissions, function (permission) {
+          return permission.permits(result.relation, method);
+        });
+      });
+
+      if (permitted.length === 0) {
+        sails.log('permitted.length === 0');
+        return res.send(404);
+      }
+      else if (_.isArray(_data)) {
+        return res._ok(permitted, options);
+      }
+      else {
+        res._ok(permitted[0], options);
+      }
+    });
+}

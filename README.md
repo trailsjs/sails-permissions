@@ -57,9 +57,9 @@ MIT
 
 [sails-logo]: http://cdn.tjw.io/images/sails-logo.png
 [sails-url]: https://sailsjs.org
-[npm-image]: https://img.shields.io/npm/v/sails-permissions.svg?style=flat
+[npm-image]: https://img.shields.io/npm/v/sails-permissions.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/sails-permissions
-[travis-image]: https://img.shields.io/travis/tjwebb/sails-permissions.svg?style=flat
+[travis-image]: https://img.shields.io/travis/tjwebb/sails-permissions.svg?style=flat-square
 [travis-url]: https://travis-ci.org/tjwebb/sails-permissions
-[daviddm-image]: http://img.shields.io/david/tjwebb/sails-permissions.svg?style=flat
+[daviddm-image]: http://img.shields.io/david/tjwebb/sails-permissions.svg?style=flat-square
 [daviddm-url]: https://david-dm.org/tjwebb/sails-permissions
