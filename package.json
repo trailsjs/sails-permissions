@@ -34,14 +34,14 @@
     "hashware-api": "*",
     "mocha": "^1.21.4",
     "request": "^2.53.0",
-    "sails": "^0.10.5"
+    "sails": "^0.11"
   },
   "dependencies": {
     "a.b": "^1.0.1",
     "bluebird": "^2.3.6",
     "congruence": "^1.6.4",
     "fnv-plus": "^1.2.9",
-    "lodash": "^2.4.1",
+    "lodash": "^3.2",
     "pluralize": "^1.0.1",
     "sails-auth": "latest",
     "sails-generate-entities": "latest"
