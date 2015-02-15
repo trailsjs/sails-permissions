@@ -15,6 +15,10 @@ describe('sails-permissions', function () {
     }
   };
 
+  process.env.ADMIN_USERNAME = 'admin';
+  process.env.ADMIN_PASSWORD = 'admin1234';
+  process.env.ADMIN_EMAIL = 'admin@traviswebb.com';
+
   before(function (done) {
     this.timeout(30000);
     app.load(config, function (error, sails) {
