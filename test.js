@@ -10,7 +10,7 @@ describe('sails-permissions', function () {
   var app = new SailsApp();
 
   var config = {
-    appPath: path.dirname(require.resolve('hashware-api')),
+    //appPath: 
     hooks: {
       grunt: false
     }

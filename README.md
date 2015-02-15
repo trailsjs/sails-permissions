@@ -28,15 +28,16 @@ $ npm install lodash sails-auth sails-permissions --save
 
 ```sh
 $ sails generate auth-api
-$ sails generate permissions-api
+$ sails generate permissions-api -f
 ```
 
 ### 3. Set environment variables
 
-| variable | description |
-|:---|:---|
-| `ADMIN_EMAIL` | admin user email address |
-| `ADMIN_PASSWORD` | admin user password |
+| variable | description | default |
+|:---|:---|:---|
+| `ADMIN_USERNAME` | admin username | `admin` |
+| `ADMIN_EMAIL` | admin user email address | *unset* |
+| `ADMIN_PASSWORD` | admin user password | *unset* |
 
 #### 4. update configs
 
@@ -49,7 +50,7 @@ $ sails generate permissions-api
   }
 ```
 
-Currently, sails-permissions does not validated the permissions of associations. Until this
+Currently, sails-permissions does not validate the permissions of associations. Until this
 is implemented, ensure that `sails.config.blueprints.populate` is set to `false`.
 
 ## License
