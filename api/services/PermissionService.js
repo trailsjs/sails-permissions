@@ -1,12 +1,32 @@
-var actionMethodMap = {
-  find: 'read',
-  findOne: 'read',
-  create: 'create',
-  update: 'update',
-  delete: 'delete'
+var methodMap = {
+  POST: 'create',
+  GET: 'read',
+  PUT: 'update',
+  DELETE: 'delete'
 };
 
 module.exports = {
+  /**
+   * Find all roles that permit the specified method on the specified model.
+   */
+  findPrivilegedRoles: function (options) {
+    var permissionCriteria = {
+      model: options.model.id
+    };
+    permissionCriteria[methodMap[options.method]] = true;
+
+    return Role
+      .find({ user: options.user.id })
+      .populate('permissions', { where: permissionCriteria });
+  },
+  /**
+   * Return true if the specified model supports the ownership policy; false
+   * otherwise.
+   */
+  hasOwnershipPolicy: function (model) {
+    var ignorePermission = _.contains(sails.config.permissions.ignore, model.globalId);
+    return ignorePermission || (model.autoCreatedBy === false);
+  },
 
   /**
    * Query the ownership relationship between a user and an object.

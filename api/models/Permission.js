@@ -43,15 +43,6 @@ module.exports = {
     },
 
     /**
-     * Grant object. Defines the actions this permission grants on each
-     * attribute of a particular model.
-     */
-    grant: {
-      type: 'json',
-      defaultsTo: { }
-    },
-
-    /**
      * @param ownership
      * @param method
      *

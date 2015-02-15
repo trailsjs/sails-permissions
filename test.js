@@ -6,8 +6,16 @@ var SailsApp = require('sails').Sails;
 var request = require('request');
 
 describe('sails-permissions', function () {
-  var sp = require('./');
+  process.env.ADMIN_USERNAME = 'admin';
+  process.env.ADMIN_PASSWORD = 'admin1234';
+  process.env.ADMIN_EMAIL = 'admin@traviswebb.com';
+
+  var authHeader = {
+    Authorization: 'Basic YWRtaW46YWRtaW4xMjM0'
+  };
+  var url = 'http://localhost:1337';
   var app = new SailsApp();
+  var sails;
 
   var config = {
     hooks: {
@@ -15,21 +23,46 @@ describe('sails-permissions', function () {
     }
   };
 
-  process.env.ADMIN_USERNAME = 'admin';
-  process.env.ADMIN_PASSWORD = 'admin1234';
-  process.env.ADMIN_EMAIL = 'admin@traviswebb.com';
 
   before(function (done) {
-    this.timeout(30000);
-    app.load(config, function (error, sails) {
+    app.lift(config, function (error, _sails) {
       if (error) {
         console.error(error);
         return done(error);
       }
-      app = sails;
+      sails = _sails;
       done();
     });
+  });
 
+  describe('Models', function () {
+    var options = {
+      url: url + '/model',
+      json: true
+    };
+    it('should deny unauthenticated request', function (done) {
+      request(options, function (err, res, body) {
+        assert(_.isString(body.error));
+        done(err);
+      });
+    });
+    it('should return models to authenticated "admin" user', function (done) {
+      var url = _.extend({ headers: authHeader }, options);
+      console.log(url);
+      request(url, function (err, res, body) {
+        console.log(body);
+
+        done(err || body.error);
+      });
+
+    });
+  });
+
+  describe('PermissionService', function () {
+    it('should exist', function () {
+      assert.ok(sails.services.permissionservice);
+      assert.ok(global.PermissionService);
+    });
   });
 
   describe.skip('Permission', function () {
@@ -60,11 +93,6 @@ describe('sails-permissions', function () {
       });
 
     });
-
-  });
-
-  describe.skip('Role', function () {
-    var Role = sp.Role;
 
   });
 

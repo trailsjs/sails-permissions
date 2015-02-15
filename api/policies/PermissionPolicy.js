@@ -20,40 +20,24 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
  * @param {Object}   res
  * @param {Function} next
  */
-module.exports = getPermissions;
-
-/**
- * Query all Permissions that are relevant to this User and the target Model
- */
-function getPermissions (req, res, next) {
+module.exports = function (req, res, next) {
   if (!req.isAuthenticated()) {
-    return next(new Error('not authenticated'));
-  }
-  if (req.options.ignoreModel) {
-    return next();
+    return next(new Error('request not authenticated; bailing out of Permissions policy'));
   }
 
-  var user = req.owner;
-  var model = req.model;
-  var method = PermissionService.getMethod(req);
-
-  Permission.find({
-      model: model.id,
-      role: _.pluck(user.roles, 'id')
+  PermissionService.findPrivilegedRoles({
+      model: req.model,
+      method: req.method,
+      user: req.user
     })
-    .then(function (permissions) {
-      if (permissions.length === 0) {
-        sails.log.warn('AuthorizationPolicy:', 'no permission found');
-        sails.log.warn('AuthorizationPolicy:', 'model:', model.identity, '; user:', user.username);
-        return next(new Error('no permissions found for model ' + model.name));
+    .then(function (roles) {
+      sails.log(roles);
+
+      if (roles.length > 0) {
+        next();
       }
-
-      req.permissions = permissions;
-      bindResponsePolicy(req, res);
-      next();
-    })
-    .catch(next);
-}
+    });
+};
 
 function bindResponsePolicy (req, res) {
   res._ok = res.ok;
