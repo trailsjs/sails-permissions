@@ -43,7 +43,8 @@ $ sails generate permissions-api -f
 
 #### config/policies.js
 ```js
-  '*': [ 'passport', 'sessionAuth', 'ModelPolicy', 'OwnerPolicy', 'AuthorizationPolicy' ],
+  '*': [ 'passport', 'sessionAuth', 'ModelPolicy', 'OwnerPolicy',
+  'PermissionPolicy' ],
 
   AuthController: {
     '*': true

@@ -10,7 +10,6 @@ describe('sails-permissions', function () {
   var app = new SailsApp();
 
   var config = {
-    //appPath: 
     hooks: {
       grunt: false
     }
@@ -19,7 +18,10 @@ describe('sails-permissions', function () {
   before(function (done) {
     this.timeout(30000);
     app.load(config, function (error, sails) {
-      if (error) return done(error);
+      if (error) {
+        console.error(error);
+        return done(error);
+      }
       app = sails;
       done();
     });
