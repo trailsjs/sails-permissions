@@ -1,5 +1,3 @@
-var EventEmitter = require('events').EventEmitter;
-
 /**
  * @module Permission
  *
@@ -7,7 +5,7 @@ var EventEmitter = require('events').EventEmitter;
  *   The actions a Role is granted on a particular Model and its attributes
  */
 module.exports = {
-  enableOwnership: false,
+  autoCreatedBy: false,
 
   attributes: {
 
@@ -16,8 +14,7 @@ module.exports = {
      */
     model: {
       model: 'Model',
-      required: true,
-      //unique: false
+      required: true
     },
 
     /**
@@ -26,12 +23,28 @@ module.exports = {
     role: {
       model: 'Role',
       required: true
-      //unique: false
+    },
+
+    create: {
+      type: 'boolean',
+      defaultsTo: false
+    },
+    read: {
+      type: 'boolean',
+      defaultsTo: false
+    },
+    update: {
+      type: 'boolean',
+      defaultsTo: false
+    },
+    delete: {
+      type: 'boolean',
+      defaultsTo: false
     },
 
     /**
      * Grant object. Defines the actions this permission grants on each
-     * attribute of a particular model, as well as on the model itself.
+     * attribute of a particular model.
      */
     grant: {
       type: 'json',
@@ -57,16 +70,17 @@ module.exports = {
      *  }
      */
     permits: function (ownership, method) {
+      /*
       var permittedOwnership = _.dot(this.grant, [ ownership, '*' ]);
       var permittedMethod = _.dot(this.grant, [ ownership, method ]);
 
       return permittedMethod || (permittedOwnership && permittedMethod !== false);
+      */
     }
   },
 
   /**
    * Perform deep-validation of grant object
-   */
   afterValidate: function (permission, next) {
     _.isObject(permission.grant) || (permission.grant = { });
 
@@ -93,4 +107,5 @@ module.exports = {
     role: _.isObject,
     none: _.isObject
   }
+   */
 };

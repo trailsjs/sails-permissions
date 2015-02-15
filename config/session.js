@@ -13,12 +13,5 @@
  */
 
 module.exports.session = {
-  //secret: process.env.xtuple_session_secret || '00000000000000000000000000000000',
-  secret: '6533f2d3ee51b0f4e9573c4850262c01',
-
-  /*
-  cookie: {
-    maxAge: (process.env.xtuple_session_maxage || 7) * (24 * 60 * 60 * 1000)
-  },
-  */
+  secret: '00000000000000000000000000000000'
 };
