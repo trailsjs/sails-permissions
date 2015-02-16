@@ -9,7 +9,7 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
  * must pass:
  * 1. User is logged in (handled previously by sails-auth sessionAuth policy)
  * 2. User has Permission to perform action on Model
- * 3. User has Permission to perform action on Attribute (if applicable)
+ * 3. User has Permission to perform action on Attribute (if applicable) [TODO]
  * 4. User is satisfactorily related to the Object's owner (if applicable)
  *
  * This policy verifies #1-3 here, before any controller is invoked. However
@@ -22,21 +22,25 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
  */
 module.exports = function (req, res, next) {
   if (!req.isAuthenticated()) {
-    return next(new Error('request not authenticated; bailing out of Permissions policy'));
+    return next(new Error('Request not authenticated; bailing out of PermissionsPolicy'));
   }
 
-  PermissionService.findPrivilegedRoles({
-      model: req.model,
-      method: req.method,
-      user: req.user
-    })
-    .then(function (roles) {
-      sails.log(roles);
+  var options = {
+    model: req.model,
+    method: req.method,
+    user: req.user
+  };
 
+  PermissionService.findPrivilegedRoles(options)
+    .then(function (roles) {
       if (roles.length > 0) {
         next();
       }
-    });
+      else {
+        next(new Error(PermissionService.getErrorMessage(options)));
+      }
+    })
+    .catch(next);
 };
 
 function bindResponsePolicy (req, res) {

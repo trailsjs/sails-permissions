@@ -6,12 +6,8 @@ var SailsApp = require('sails').Sails;
 var request = require('request');
 
 describe('sails-permissions', function () {
-  process.env.ADMIN_USERNAME = 'admin';
-  process.env.ADMIN_PASSWORD = 'admin1234';
-  process.env.ADMIN_EMAIL = 'admin@traviswebb.com';
-
   var authHeader = {
-    Authorization: 'Basic YWRtaW46YWRtaW4xMjM0'
+    Authorization: 'Basic YWRtaW5AZXhhbXBsZS5jb206YWRtaW4xMjM0',
   };
   var url = 'http://localhost:1337';
   var app = new SailsApp();
@@ -23,11 +19,11 @@ describe('sails-permissions', function () {
     }
   };
 
-
   before(function (done) {
+    this.timeout(10000);
     app.lift(config, function (error, _sails) {
       if (error) {
-        console.error(error);
+        sails.log.error(error);
         return done(error);
       }
       sails = _sails;
@@ -48,11 +44,17 @@ describe('sails-permissions', function () {
     });
     it('should return models to authenticated "admin" user', function (done) {
       var url = _.extend({ headers: authHeader }, options);
-      console.log(url);
-      request(url, function (err, res, body) {
-        console.log(body);
+      request(url, function (err, res, models) {
+        assert.ifError(models.error);
+        assert.equal(models.length, 4);
+        assert.equal(_.intersection(_.pluck(models, 'name'), [
+          'Model',
+          'Permission',
+          'Role',
+          'User'
+        ]).length, 4);
 
-        done(err || body.error);
+        done(err || models.error);
       });
 
     });

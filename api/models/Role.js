@@ -21,7 +21,8 @@ module.exports = {
     },
     active: {
       type: 'boolean',
-      defaultsTo: true
+      defaultsTo: true,
+      index: true
     },
     permissions: {
       collection: 'Permission',
