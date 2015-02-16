@@ -4,7 +4,7 @@
 [![Build status][travis-image]][travis-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 
-Comprehensive sails.js user permissions and entitlements system. Supports user authentication with passport.js, role-based permissioning, and row-level security.
+Comprehensive sails.js user permissions and entitlements system. Supports user authentication with passport.js, role-based permissioning, object ownership, and row-level security.
 
 ## Install
 ```sh
