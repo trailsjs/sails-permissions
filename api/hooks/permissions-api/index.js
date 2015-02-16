@@ -9,6 +9,9 @@ module.exports = function (sails) {
       global.Promise = require('bluebird');
       global._ = require('lodash');
       _.mixin(require('congruence'));
+
+
+      sails.config.blueprints.populate = false;
     },
     initialize: function (next) {
       installModelOwnership(sails.models);
@@ -45,24 +48,23 @@ function initializeFixtures () {
     })
     .then(function (roles) {
       this.roles = roles;
-      return require('../../../config/fixtures/permission').create(this.roles, this.models);
-    })
-    .then(function (permissions) {
       var userModel = _.find(this.models, { name: 'User' });
       return require('../../../config/fixtures/user').create(this.roles, userModel);
     })
     .then(function (user) {
-      sails.log('admin user created. setting owner...');
+      sails.log.silly('admin user created. setting owner...');
       user.createdBy = user.id;
       user.owner = user.id;
       return user.save();
     })
-    .then(function (user) {
+    .then(function (admin) {
+      return require('../../../config/fixtures/permission').create(this.roles, this.models, admin);
+    })
+    .then(function (permissions) {
       return null;
     })
     .catch(function (error) {
       sails.log.error(error);
-      next(error);
     });
 }
 

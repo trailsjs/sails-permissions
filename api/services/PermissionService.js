@@ -8,18 +8,42 @@ var methodMap = {
 module.exports = {
 
   /**
-   * Find all roles that permit the specified method on the specified model.
+   * Query Permissions that grant privileges to a role/user on an action for a
+   * model.
+   *
+   * @param options.method
+   * @param options.model
+   * @param options.user
    */
-  findPrivilegedRoles: function (options) {
+  findModelPermissions: function (options) {
+    var action = PermissionService.getMethod(options.method);
     var permissionCriteria = {
-      model: options.model.id
+      model: options.model.id,
+      action: action
     };
-    permissionCriteria[methodMap[options.method]] = true;
 
+    //sails.log('req.user', options.user);
+
+    return User.findOne(options.user.id)
+      .populate('roles')
+      .then(function (user) {
+        return Permission.find({
+          model: options.model.id,
+          action: action,
+          role: _.pluck(user.roles, 'id')
+        });
+      });
+
+    /*
     return Role
       .find({ active: true })
+      .populate('permissions', { where: permissionCriteria })
       .populate('users', { where: { id: options.user.id } })
-      .populate('permissions', { where: permissionCriteria });
+      .then(function (roles) {
+        sails.log('matching roles', roles);
+        return _.flatten(_.pluck(roles, 'permissions'));
+      });
+    */
   },
 
   /**
@@ -27,14 +51,24 @@ module.exports = {
    * otherwise.
    */
   hasOwnershipPolicy: function (model) {
-    var ignorePermission = _.contains(sails.config.permissions.ignore, model.globalId);
-    return ignorePermission || (model.autoCreatedBy === false);
+    //var ignoreModel = _.contains(sails.config.permissions.ignore, model.globalId);
+    return model.autoCreatedBy;
   },
 
+  /**
+   * Build an error message
+   */
   getErrorMessage: function (options) {
     return [
       'User', options.user.email, 'is not permitted to', options.method, options.model.globalId
     ].join(' ');
+  },
+
+  /**
+   * Given an action, return the CRUD method it maps to.
+   */
+  getMethod: function (method) {
+    return methodMap[method];
   }
 
 };

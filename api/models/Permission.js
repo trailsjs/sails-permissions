@@ -5,8 +5,6 @@
  *   The actions a Role is granted on a particular Model and its attributes
  */
 module.exports = {
-  autoCreatedBy: false,
-
   attributes: {
 
     /**
@@ -18,85 +16,76 @@ module.exports = {
     },
 
     /**
-     * The Role that this Permission grants privileges to
+     * id of particular object/record (of type 'model') that this Permission
+     * applies to.
+     *
+     * TODO dormant. enable in future release
+     */
+    object: {
+      type: 'integer',
+      defaultsTo: -1,
+      index: true
+    },
+
+    /**
+     * attribute of model that this Permission governs.
+     *
+     * TODO dormant. enable in future release
+     */
+    attribute: {
+      type: 'string',
+      defaultsTo: null,
+      index: true
+    },
+
+    action: {
+      type: 'string',
+      index: true,
+      notNull: true,
+      enum: [
+        'create',
+        'read',
+        'update',
+        'delete'
+      ]
+    },
+
+    /**
+     * controller service that this permission governs.
+     *
+     * TODO dormant. enable in future release
+     */
+    service: {
+      type: 'string',
+      defaultsTo: null
+    },
+
+    relation: {
+      type: 'string',
+      enum: [
+        'role',
+        'owner'
+      ],
+      defaultsTo: 'role',
+      index: true
+    },
+
+    /**
+     * The Role to which this Permission grants create, read, update, and/or
+     * delete privileges.
      */
     role: {
       model: 'Role',
       required: true
-    },
-
-    create: {
-      type: 'boolean',
-      defaultsTo: false
-    },
-    read: {
-      type: 'boolean',
-      defaultsTo: false
-    },
-    update: {
-      type: 'boolean',
-      defaultsTo: false
-    },
-    delete: {
-      type: 'boolean',
-      defaultsTo: false
-    },
-
-    /**
-     * @param ownership
-     * @param method
-     *
-     * permission.grant is a permission mapping for a particular model, e.g.
-     *  {
-     *    owner: {
-     *      '*': true
-     *    },
-     *    role: {
-     *      '*': true,
-     *      update: false
-     *    },
-     *    none: {
-     *      // '*': false by default
-     *    }
-     *  }
-     */
-    permits: function (ownership, method) {
-      /*
-      var permittedOwnership = _.dot(this.grant, [ ownership, '*' ]);
-      var permittedMethod = _.dot(this.grant, [ ownership, method ]);
-
-      return permittedMethod || (permittedOwnership && permittedMethod !== false);
-      */
     }
   },
 
-  /**
-   * Perform deep-validation of grant object
-  afterValidate: function (permission, next) {
-    _.isObject(permission.grant) || (permission.grant = { });
-
-    _.defaults(permission.grant, {
-      owner: { },
-      role: { },
-      none: { }
-    });
-
-    var emitter = new EventEmitter();
-    var valid = _.similar(Permission.grantTemplate, permission.grant, emitter);
-    emitter.once('invalid:keys', function (error) {
-      next(new Error('the grant object is missing a required key'));
-    });
-    emitter.once('invalid:value', function (error) {
-      next(new Error('grant key ' + error.key + ' is invalid'));
-    });
-
-    if (valid) return next();
-  },
-
-  grantTemplate: {
-    owner: _.isObject,
-    role: _.isObject,
-    none: _.isObject
-  }
-   */
+  afterValidate: [
+    function validateOwnerCreateTautology (permission, next) {
+      if (permission.relation == 'owner' && permission.action == 'create') {
+        next(new Error('Creating a Permission with relation=owner and action=create is tautological'));
+      }
+      next();
+    }
+  ]
 };

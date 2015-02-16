@@ -1,5 +1,3 @@
-var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
-
 /**
  * PermissionPolicy
  * @depends OwnerPolicy
@@ -25,20 +23,33 @@ module.exports = function (req, res, next) {
     return next(new Error('Request not authenticated; bailing out of PermissionsPolicy'));
   }
 
+  //sails.log('PermissionPolicy req.model', req.model);
+
   var options = {
     model: req.model,
     method: req.method,
     user: req.user
   };
 
-  PermissionService.findPrivilegedRoles(options)
-    .then(function (roles) {
-      if (roles.length > 0) {
-        next();
+  PermissionService.findModelPermissions(options)
+    .then(function (permissions) {
+      sails.log.silly('PermissionPolicy:', permissions.length, 'permissions grant', req.method, 'on', req.model.name, 'for', req.user.username);
+
+      if (!permissions || permissions.length === 0) {
+        return res.badRequest({ error: PermissionService.getErrorMessage(options) });
       }
-      else {
-        next(new Error(PermissionService.getErrorMessage(options)));
+
+      req.permissions = permissions;
+      req.permissionRelations = _.groupBy(permissions, 'relation');
+
+      if (_.isEmpty(req.permissionRelations.role)) {
+        // if the id of the thing I want to do stuff to is not owned by me than bail out
+        //if (req.
+        req.query.owner = req.user.id;
+        _.isObject(req.body) && (req.body.owner = req.user.id);
       }
+
+      next();
     })
     .catch(next);
 };
@@ -53,7 +64,6 @@ function bindResponsePolicy (req, res) {
 }
 
 function responsePolicy (_data, options) {
-  sails.log('responsePolicy');
   var req = this.req;
   var res = this.res;
   var user = req.owner;
@@ -61,8 +71,8 @@ function responsePolicy (_data, options) {
 
   var data = _.isArray(_data) ? _data : [_data];
 
-  sails.log('data', _data);
-  sails.log('options', options);
+  //sails.log('data', _data);
+  //sails.log('options', options);
 
   // TODO search populated associations
   Promise.bind(this)

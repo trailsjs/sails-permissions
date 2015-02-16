@@ -4,7 +4,7 @@
   "description": "Comprehensive sails.js user permission/privilege framework that allows granting and restricting access to models and attributes based on object ownership and relationships with other users and roles",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "rm -rf .tmp && mocha --reporter spec"
   },
   "repository": {
     "type": "git",

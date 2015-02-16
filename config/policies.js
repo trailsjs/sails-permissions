@@ -24,15 +24,6 @@ module.exports.policies = {
   AuthController: {
     '*': true
   },
-  PermissionController: {
-    '*': true
-  },
-  RoleController: {
-    '*': true
-  },
-  UserController: {
-    '*': true
-  },
 
   /***************************************************************************
   *                                                                          *
