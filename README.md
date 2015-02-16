@@ -4,6 +4,8 @@
 [![Build status][travis-image]][travis-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 
+Comprehensive sails.js user permissions and entitlements system. Supports user authentication with passport.js, role-based permissioning, and row-level security.
+
 ## Install
 ```sh
 $ npm install lodash sails-auth sails-permissions --save
