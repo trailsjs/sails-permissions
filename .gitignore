@@ -1,6 +1,6 @@
-api/policies/basicAuth.js
-api/policies/sessionAuth.js
-api/services/protocols/basic.js
+#api/policies/basicAuth.js
+#api/policies/sessionAuth.js
+#api/services/protocols/basic.js
 
 .tmp
 *.sw*
