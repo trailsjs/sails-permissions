@@ -10,18 +10,20 @@
  * 3. User has Permission to perform action on Attribute (if applicable) [TODO]
  * 4. User is satisfactorily related to the Object's owner (if applicable)
  *
- * This policy verifies #1-3 here, before any controller is invoked. However
+ * This policy verifies #1-2 here, before any controller is invoked. However
  * it is not generally possible to determine ownership relationship until after
- * the object has been queried. Verification of #4 
+ * the object has been queried. Verification of #4 occurs in RolePolicy.
  *
  * @param {Object}   req
  * @param {Object}   res
  * @param {Function} next
  */
 module.exports = function (req, res, next) {
+  /*
   if (!req.isAuthenticated()) {
     return next(new Error('Request not authenticated; bailing out of PermissionsPolicy'));
   }
+  */
 
   //sails.log('PermissionPolicy req.model', req.model);
 
@@ -31,7 +33,8 @@ module.exports = function (req, res, next) {
     user: req.user
   };
 
-  PermissionService.findModelPermissions(options)
+  PermissionService
+    .findModelPermissions(options)
     .then(function (permissions) {
       sails.log.silly('PermissionPolicy:', permissions.length, 'permissions grant', req.method, 'on', req.model.name, 'for', req.user.username);
 
@@ -40,18 +43,9 @@ module.exports = function (req, res, next) {
       }
 
       req.permissions = permissions;
-      req.permissionRelations = _.groupBy(permissions, 'relation');
-
-      if (_.isEmpty(req.permissionRelations.role)) {
-        // if the id of the thing I want to do stuff to is not owned by me than bail out
-        //if (req.
-        req.query.owner = req.user.id;
-        _.isObject(req.body) && (req.body.owner = req.user.id);
-      }
 
       next();
-    })
-    .catch(next);
+    });
 };
 
 function bindResponsePolicy (req, res) {
@@ -80,7 +74,7 @@ function responsePolicy (_data, options) {
       return user.getOwnershipRelation(data);
     })
     .then(function (results) {
-      sails.log('results', results);
+      //sails.log('results', results);
       var permitted = _.filter(results, function (result) {
         return _.any(req.permissions, function (permission) {
           return permission.permits(result.relation, method);
@@ -88,7 +82,7 @@ function responsePolicy (_data, options) {
       });
 
       if (permitted.length === 0) {
-        sails.log('permitted.length === 0');
+        //sails.log('permitted.length === 0');
         return res.send(404);
       }
       else if (_.isArray(_data)) {

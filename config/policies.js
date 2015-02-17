@@ -16,10 +16,17 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.policies.html
  */
 
-
 module.exports.policies = {
 
-  '*': [ 'basicAuth', 'passport', 'sessionAuth', 'ModelPolicy', 'OwnerPolicy', 'PermissionPolicy' ],
+  '*': [
+    'basicAuth',
+    'passport',
+    'sessionAuth',
+    'ModelPolicy',
+    'OwnerPolicy',
+    'PermissionPolicy',
+    'RolePolicy'
+  ],
 
   AuthController: {
     '*': true

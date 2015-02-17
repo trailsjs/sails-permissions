@@ -11,6 +11,7 @@
     "url": "https://github.com/tjwebb/sails-permissions.git"
   },
   "keywords": [
+    "balderdash",
     "sails",
     "sails.js",
     "permissions",
@@ -21,7 +22,6 @@
     "passport",
     "grant",
     "roles",
-    "xtuple",
     "security"
   ],
   "author": "Travis Webb <me@traviswebb.com>",

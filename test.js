@@ -40,6 +40,13 @@ describe('sails-permissions', function () {
     });
   });
 
+  describe('PermissionService', function () {
+    it('should exist', function () {
+      assert.ok(sails.services.permissionservice);
+      assert.ok(global.PermissionService);
+    });
+  });
+
   describe('Roles', function () {
     var newUserId = -1;
     var adminUserId = -1;
@@ -160,13 +167,6 @@ describe('sails-permissions', function () {
           done(err);
         });
       });
-    });
-  });
-
-  describe('PermissionService', function () {
-    it('should exist', function () {
-      assert.ok(sails.services.permissionservice);
-      assert.ok(global.PermissionService);
     });
   });
 
