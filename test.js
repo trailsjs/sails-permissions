@@ -154,13 +154,25 @@ describe('sails-permissions', function () {
           done(err);
         });
       });
+      it('should be ALLOWED to #read Permission', function (done) {
+        var options = {
+          url: url + '/permission',
+          json: true,
+          headers: registeredAuth
+        };
+        request(options, function (err, res, permissions) {
+          assert.ifError(permissions.error);
+          //assert.equal(models.length, 4);
+
+          done(err || permissions.error);
+        });
+      });
     });
     describe('@public', function () {
       it('should be NOT ALLOWED to #read Model', function (done) {
         var options = {
           url: url + '/model',
-          json: true,
-          headers: registeredAuth
+          json: true
         };
         request(options, function (err, res, body) {
           assert(_.isString(body.error));
@@ -169,5 +181,4 @@ describe('sails-permissions', function () {
       });
     });
   });
-
 });
