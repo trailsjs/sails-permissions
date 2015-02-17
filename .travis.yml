@@ -13,9 +13,6 @@ services:
 notifications:
   email: false
 
-before_script:
-  - sails generate auth-api
-
 deploy:
   provider: npm
   email: me@traviswebb.com
