@@ -8,6 +8,8 @@
  * @see <http://www.postgresql.org/docs/9.3/static/sql-grant.html>
  */
 module.exports = {
+  description: 'Confers `Permission` to `User`',
+
   attributes: {
     name: {
       type: 'string',

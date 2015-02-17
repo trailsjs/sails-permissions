@@ -5,6 +5,12 @@
  *   The actions a Role is granted on a particular Model and its attributes
  */
 module.exports = {
+  description: [
+    'Defines a particular `action` that a `Role` can perform on a `Model`.',
+    'A `User` can perform an `action` on a `Model` by having a `Role` which',
+    'grants the necessary `Permission`.'
+  ].join(' '),
+
   attributes: {
 
     /**

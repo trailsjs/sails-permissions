@@ -2,7 +2,7 @@
 
 ### Model
 
-
+Represents a Waterline collection that a User can create, query, etc.
 
 | config | value |
 |:---|:---|
@@ -50,7 +50,7 @@
 
 ### Permission
 
-
+Defines a particular `action` that a `Role` can perform on a `Model`. A `User` can perform an `action` on a `Model` by having a `Role` which grants the necessary `Permission`.
 
 | config | value |
 |:---|:---|
@@ -78,7 +78,7 @@
 
 ### Role
 
-
+Confers `Permission` to `User`
 
 | config | value |
 |:---|:---|
