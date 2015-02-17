@@ -48,7 +48,8 @@ $ sails generate permissions-api
     'sessionAuth',
     'ModelPolicy',
     'OwnerPolicy',
-    'PermissionPolicy'
+    'PermissionPolicy',
+    'RolePolicy'
   ],
 
   AuthController: {
