@@ -29,7 +29,7 @@ describe('sails-permissions', function () {
   };
 
   before(function (done) {
-    this.timeout(10000);
+    this.timeout(30000);
     app.lift(config, function (error, _sails) {
       if (error) {
         sails.log.error(error);
