@@ -10,6 +10,8 @@
  */
 
 module.exports.models = {
+  autoCreatedBy: true,
+  dynamicFinders: false,
 
   /***************************************************************************
   *                                                                          *

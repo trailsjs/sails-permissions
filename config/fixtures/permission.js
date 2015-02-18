@@ -1,36 +1,95 @@
+var grants = {
+  admin: [
+    { action: 'create' },
+    { action: 'read' },
+    { action: 'update' },
+    { action: 'delete' }
+  ],
+  registered: [
+    { action: 'create' },
+    { action: 'read' }
+  ],
+  public: [
+    { action: 'read' }
+  ]
+};
+
+var modelRestrictions = {
+  registered: [
+    'Role',
+    'Permission',
+    'User',
+    'Passport'
+  ],
+  public: [
+    'Role',
+    'Permission',
+    'User',
+    'Model',
+    'Passport'
+  ]
+};
+
+// TODO let users override this in the actual model definition
+
 /**
  * Create default Role permissions
  */
-exports.create = function (roles, models) {
-  var permissions = _.flatten(_.map(roles, function (role, name) {
-    return _.map(models, function (modelEntity) {
-      var model = sails.models[modelEntity.identity];
-      return {
-        model: modelEntity.id,
-        role: role.id,
-        grant: buildGrantForRole(role.name, model.grant)
-      };
-    });
-  }));
-
-  return Promise.map(permissions, function (permission) {
-    return Permission.create(permission);
+exports.create = function (roles, models, admin) {
+  return Promise.all([
+    grantAdminPermissions(roles, models, admin),
+    grantRegisteredPermissions(roles, models, admin)
+  ])
+  .then(function (permissions) {
+    //sails.log('created', permissions.length, 'permissions');
+    return permissions;
   });
 };
 
-function buildGrantForRole (roleName, grant) {
-  if ('root' === roleName)        return { };
-  if ('registered' === roleName)  return grant;
-  if ('public' === roleName)      return buildPublicGrant(grant);
-  if ('admin' === roleName)       return { create: true, read: true, update: true, delete: true };
+function grantAdminPermissions (roles, models, admin) {
+  var adminRole = _.find(roles, { name: 'admin' });
+  var permissions = _.flatten(_.map(models, function (modelEntity) {
+    var model = sails.models[modelEntity.identity];
+
+    return _.map(grants['admin'], function (permission) {
+      //sails.log.silly('creating permission for role:', role.name, '; model:', model.globalId, '; action:', permission.action);
+
+      return Permission.create({
+        model: modelEntity.id,
+        action: permission.action,
+        role: adminRole.id,
+        createdBy: admin.id
+      });
+    });
+  }));
+
+  return Promise.all(permissions);
 }
 
-function buildPublicGrant (grant) {
-  return _.merge({ }, grant, {
-    others: {
-      create: false,
-      update: false,
-      delete: false
-    }
-  });
+function grantRegisteredPermissions (roles, models, admin) {
+  var registeredRole = _.find(roles, { name: 'registered' });
+  var permissions = [
+    Permission.create({
+      model: _.find(models, { name: 'Permission' }).id,
+      action: 'read',
+      role: registeredRole.id,
+      createdBy: admin.id
+    }),
+    Permission.create({
+      model: _.find(models, { name: 'Model' }).id,
+      action: 'read',
+      role: registeredRole.id,
+      createdBy: admin.id
+    }),
+    Permission.create({
+      model: _.find(models, { name: 'User' }).id,
+      action: 'update',
+      role: registeredRole.id,
+      createdBy: admin.id,
+      relation: 'owner'
+    }),
+
+  ];
+
+  return Promise.all(permissions);
 }

@@ -1,36 +1,29 @@
 module.exports = function (sails) {
   return {
     configure: function () {
-      sails.log('configuring sails-permissions...');
+      sails.log.info('configuring sails-permissions...');
       if (!_.isObject(sails.config.permissions)) sails.config.permissions = { };
 
       // setup some necessary globals
+      // XXX is this really necessary here?
       global.Promise = require('bluebird');
       global._ = require('lodash');
       _.mixin(require('congruence'));
 
+
+      sails.config.blueprints.populate = false;
     },
     initialize: function (next) {
       installModelOwnership(sails.models);
 
       sails.after('hook:orm:loaded', function () {
-        sails.log('initializing sails-permissions...');
+        sails.log.info('initializing sails-permissions...');
 
-        var sailsModels = _.filter(sails.controllers, function (controller, name) {
-          var model = sails.models[name];
-          return model && model.globalId && model.identity;
-        });
+        Model.count()
+          .then(function (count) {
+            if (count == sails.models.length) return next();
 
-        Model.find({ limit: 999 })
-          .then(function (models) {
-            var count = models ? models.length : 0;
-            if (count < sailsModels.length) {
-              sails.log('Expecting', sailsModels.length, 'models, found', count);
-              sails.log('Installing fixtures');
-              return initializeFixtures(next);
-            }
-
-            next();
+            initializeFixtures().then(next);
           })
           .catch(function (error) {
             sails.log.error(error);
@@ -45,78 +38,46 @@ module.exports = function (sails) {
  * Install the application. Sets up default Roles, Users, Models, and
  * Permissions, and creates an admin user.
  */
-function initializeFixtures (next) {
-  var roles, models;
-
-  sails.log('Creating models');
-  require('../../../config/fixtures/model').createModels()
-    .then(function (_models) {
-      models = _models;
+function initializeFixtures () {
+  //sails.log('Initializing sails-permissions fixtures');
+  return require('../../../config/fixtures/model').createModels()
+    .bind({ })
+    .then(function (models) {
+      this.models = models;
       return require('../../../config/fixtures/role').create();
     })
-    .then(function (_roles) {
-      roles = _roles;
-      return require('../../../config/fixtures/permission').create(roles, models);
+    .then(function (roles) {
+      this.roles = roles;
+      var userModel = _.find(this.models, { name: 'User' });
+      return require('../../../config/fixtures/user').create(this.roles, userModel);
+    })
+    .then(function (user) {
+      sails.log.silly('admin user created. setting owner...');
+      user.createdBy = user.id;
+      user.owner = user.id;
+      return user.save();
+    })
+    .then(function (admin) {
+      return require('../../../config/fixtures/permission').create(this.roles, this.models, admin);
     })
     .then(function (permissions) {
-      var model = _.find(models, { name: 'User' });
-      return require('../../../config/fixtures/user').create(roles, model, function (err, user) {
-        if (err) {
-          sails.log.error(err);
-          return next(err);
-        }
-        sails.log('admin user created. setting owner...');
-        user.owner = user.id;
-        user.save()
-          .then(function (user) {
-            sails.log('admin user done. next...');
-            next();
-          })
-          .catch(function (error) {
-            sails.log('admin user fail');
-            sails.log.error(error);
-            next(error);
-          });
-      });
+      return null;
     })
     .catch(function (error) {
       sails.log.error(error);
-      next(error);
     });
 }
 
-/**
- * Log the models that do not support user ownership
- */
-function logModelOwnership (models) {
-  var missingOwner = _.filter(models, function (model) {
-    return _.isUndefined(sails.models[model.identity].attributes.owner);
-  });
-  var warnings = _.difference(_.pluck(missingOwner, 'name'), ignoreModels);
-
-  if (warnings.length) {
-    sails.log.warn('these models do not support ownership, and are unusable by the permissions-api:', warnings);
-  }
-}
-
 function installModelOwnership (models) {
-  if (sails.config.permissions.enableOwnership === false) return;
-
-  var ignoreModels = [
-    'BackboneModel',
-    'Model',
-    'Role',
-    'Passport',
-    'Permission',
-    'User'
-  ];
-
   _.each(models, function (model) {
-    if (model.enableOwnership === false) return;
-    if (_.contains(ignoreModels, model.globalId)) return;
+    if (model.autoCreatedBy === false) return;
 
-    sails.log('enabling ownership on', model.globalId);
     _.defaults(model.attributes, {
+      createdBy: {
+        model: 'User',
+        index: true,
+        notNull: true
+      },
       owner: {
         model: 'User',
         index: true,

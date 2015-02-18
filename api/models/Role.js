@@ -8,9 +8,7 @@
  * @see <http://www.postgresql.org/docs/9.3/static/sql-grant.html>
  */
 module.exports = {
-  autoPK: true,
-  autoCreatedAt: true,
-  autoUpdatedAt: true,
+  description: 'Confers `Permission` to `User`',
 
   attributes: {
     name: {
@@ -19,21 +17,14 @@ module.exports = {
       notNull: true,
       unique: true
     },
-    children: {
-      collection: 'Role',
-      via: 'parent'
-    },
-    parent: {
-      model: 'Role'
-    },
     users: {
       collection: 'User',
       via: 'roles'
     },
     active: {
       type: 'boolean',
-      index: true,
-      defaultsTo: true
+      defaultsTo: true,
+      index: true
     },
     permissions: {
       collection: 'Permission',
@@ -50,7 +41,6 @@ module.exports = {
      *      model: 47,
      *      attribute: 'name'
      *    });
-     */
     grant: function (permissions) {
       var grant = PermissionService.createGrant(permissions);
 
@@ -70,6 +60,7 @@ module.exports = {
           }
         });
     },
+     */
 
     /**
      * Return whether the specified User action is permitted by this Role for
@@ -81,7 +72,6 @@ module.exports = {
      *
      * @return the ownership required to assert the permission, or null if
      * no ownership level grants this User action.
-     */
     permits: function (action) {
       return Permission
         .findOne({ model: action.model, role: this.id })
@@ -91,5 +81,6 @@ module.exports = {
           return permission.permits(action);
         });
     }
+     */
   }
 };

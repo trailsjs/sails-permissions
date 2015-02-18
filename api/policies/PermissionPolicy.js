@@ -1,5 +1,3 @@
-var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
-
 /**
  * PermissionPolicy
  * @depends OwnerPolicy
@@ -9,51 +7,46 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
  * must pass:
  * 1. User is logged in (handled previously by sails-auth sessionAuth policy)
  * 2. User has Permission to perform action on Model
- * 3. User has Permission to perform action on Attribute (if applicable)
+ * 3. User has Permission to perform action on Attribute (if applicable) [TODO]
  * 4. User is satisfactorily related to the Object's owner (if applicable)
  *
- * This policy verifies #1-3 here, before any controller is invoked. However
+ * This policy verifies #1-2 here, before any controller is invoked. However
  * it is not generally possible to determine ownership relationship until after
- * the object has been queried. Verification of #4 
+ * the object has been queried. Verification of #4 occurs in RolePolicy.
  *
  * @param {Object}   req
  * @param {Object}   res
  * @param {Function} next
  */
-module.exports = getPermissions;
-
-/**
- * Query all Permissions that are relevant to this User and the target Model
- */
-function getPermissions (req, res, next) {
+module.exports = function (req, res, next) {
+  /*
   if (!req.isAuthenticated()) {
-    return next(new Error('not authenticated'));
+    return next(new Error('Request not authenticated; bailing out of PermissionsPolicy'));
   }
-  if (req.options.ignoreModel) {
-    return next();
-  }
+  */
 
-  var user = req.owner;
-  var model = req.model;
-  var method = PermissionService.getMethod(req);
+  //sails.log('PermissionPolicy req.model', req.model);
 
-  Permission.find({
-      model: model.id,
-      role: _.pluck(user.roles, 'id')
-    })
+  var options = {
+    model: req.model,
+    method: req.method,
+    user: req.user
+  };
+
+  PermissionService
+    .findModelPermissions(options)
     .then(function (permissions) {
-      if (permissions.length === 0) {
-        sails.log.warn('AuthorizationPolicy:', 'no permission found');
-        sails.log.warn('AuthorizationPolicy:', 'model:', model.identity, '; user:', user.username);
-        return next(new Error('no permissions found for model ' + model.name));
+      sails.log.silly('PermissionPolicy:', permissions.length, 'permissions grant', req.method, 'on', req.model.name, 'for', req.user.username);
+
+      if (!permissions || permissions.length === 0) {
+        return res.badRequest({ error: PermissionService.getErrorMessage(options) });
       }
 
       req.permissions = permissions;
-      bindResponsePolicy(req, res);
+
       next();
-    })
-    .catch(next);
-}
+    });
+};
 
 function bindResponsePolicy (req, res) {
   res._ok = res.ok;
@@ -65,7 +58,6 @@ function bindResponsePolicy (req, res) {
 }
 
 function responsePolicy (_data, options) {
-  sails.log('responsePolicy');
   var req = this.req;
   var res = this.res;
   var user = req.owner;
@@ -73,8 +65,8 @@ function responsePolicy (_data, options) {
 
   var data = _.isArray(_data) ? _data : [_data];
 
-  sails.log('data', _data);
-  sails.log('options', options);
+  //sails.log('data', _data);
+  //sails.log('options', options);
 
   // TODO search populated associations
   Promise.bind(this)
@@ -82,7 +74,7 @@ function responsePolicy (_data, options) {
       return user.getOwnershipRelation(data);
     })
     .then(function (results) {
-      sails.log('results', results);
+      //sails.log('results', results);
       var permitted = _.filter(results, function (result) {
         return _.any(req.permissions, function (permission) {
           return permission.permits(result.relation, method);
@@ -90,7 +82,7 @@ function responsePolicy (_data, options) {
       });
 
       if (permitted.length === 0) {
-        sails.log('permitted.length === 0');
+        //sails.log('permitted.length === 0');
         return res.send(404);
       }
       else if (_.isArray(_data)) {

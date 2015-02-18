@@ -6,66 +6,179 @@ var SailsApp = require('sails').Sails;
 var request = require('request');
 
 describe('sails-permissions', function () {
-  var sp = require('./');
+  var adminAuth = {
+    Authorization: 'Basic YWRtaW5AZXhhbXBsZS5jb206YWRtaW4xMjM0'
+  };
+  var registeredAuth = {
+    Authorization: 'Basic bmV3dXNlcjp1c2VyMTIzNA=='
+  };
+  var newUser = {
+    username: 'newuser',
+    email: 'newuser@example.com',
+    password: 'user1234'
+  };
+  var url = 'http://localhost:1337';
   var app = new SailsApp();
+  var sails;
 
   var config = {
     hooks: {
       grunt: false
-    }
+    },
+    //log: { level: 'warn' }
   };
-
-  process.env.ADMIN_USERNAME = 'admin';
-  process.env.ADMIN_PASSWORD = 'admin1234';
-  process.env.ADMIN_EMAIL = 'admin@traviswebb.com';
 
   before(function (done) {
     this.timeout(30000);
-    app.load(config, function (error, sails) {
+    app.lift(config, function (error, _sails) {
       if (error) {
-        console.error(error);
+        sails.log.error(error);
         return done(error);
       }
-      app = sails;
+      sails = _sails;
       done();
     });
-
   });
 
-  describe.skip('Permission', function () {
-    describe('#permits()', function () {
-      describe('@instance', function () {
-        var permission;
-        before(function (done) {
-          done();
-        });
-        it('should return the correct owner if the action is permitted', function (done) {
-
-          done();
-        });
-        it('should return null if no ownership relation permits the action', function (done) {
-
-          done();
-        });
-      });
-      describe('@static', function () {
-        it('should return the correct owner if the action is permitted', function (done) {
-
-          done();
-        });
-        it('should return null if no ownership relation permits the action', function (done) {
-
-          done();
-        });
-      });
-
+  describe('PermissionService', function () {
+    it('should exist', function () {
+      assert.ok(sails.services.permissionservice);
+      assert.ok(global.PermissionService);
     });
-
   });
 
-  describe.skip('Role', function () {
-    var Role = sp.Role;
+  describe('Roles', function () {
+    var newUserId = -1;
+    var adminUserId = -1;
+    describe('@admin', function () {
+      it('should be ALLOWED to #read User', function (done) {
+        var options = {
+          method: 'GET',
+          url: url + '/user',
+          json: true,
+          headers: adminAuth
+        };
+        request(options, function (err, res, users) {
+          assert.ifError(err);
+          assert.ifError(users.error);
+          assert.equal(users[0].username, 'admin');
+          adminUserId = users[0].id;
+          done(err);
+        });
+      });
+      it('should be ALLOWED to #create User', function (done) {
+        var options = {
+          method: 'POST',
+          url: url + '/user',
+          body: newUser,
+          json: true,
+          headers: adminAuth
+        };
+        request(options, function (err, res, user) {
+          assert.ifError(err);
+          assert.ifError(user.error);
+          newUserId = user.id;
+          assert.equal(user.username, 'newuser');
+          done(err);
+        });
+      });
+      it('should be ALLOWED to #read Model', function (done) {
+        var options = {
+          url: url + '/model',
+          json: true,
+          headers: adminAuth
+        };
+        request(options, function (err, res, models) {
+          assert.ifError(models.error);
+          assert.equal(models.length, 4);
+          assert.equal(_.intersection(_.pluck(models, 'name'), [
+            'Model',
+            'Permission',
+            'Role',
+            'User'
+          ]).length, 4);
 
+          done(err || models.error);
+        });
+      });
+    });
+    describe('@registered', function () {
+      it('should be NOT ALLOWED to #create User', function (done) {
+        var options = {
+          method: 'POST',
+          url: url + '/user',
+          body: {
+            username: 'newuser1',
+            email: 'newuser1@example.com',
+            password: 'lalalal1234'
+          },
+          json: true,
+          headers: registeredAuth
+        };
+        request(options, function (err, res, user) {
+          assert.ifError(err);
+          assert(_.isString(user.error), JSON.stringify(user));
+          done(err);
+        });
+      });
+      it('should be NOT ALLOWED to #update User (username=admin)', function (done) {
+        var options = {
+          method: 'PUT',
+          url: url + '/user/' + adminUserId,
+          body: {
+            email: 'crapadminemail@example.com',
+          },
+          json: true,
+          headers: registeredAuth
+        };
+        request(options, function (err, res, user) {
+          assert.ifError(err);
+          assert(_.isString(user.error), JSON.stringify(user));
+          done(err);
+        });
+      });
+      it('should be ALLOWED to #update User (relation=owner)', function (done) {
+        var options = {
+          method: 'PUT',
+          url: url + '/user/' + newUserId,
+          body: {
+            // the policy will insert owner: newUserId automatically
+            email: 'newuserupdated@example.com'
+          },
+          json: true,
+          headers: registeredAuth
+        };
+        request(options, function (err, res, user) {
+          assert.ifError(err);
+          assert.equal(user.email, 'newuserupdated@example.com');
+          done(err);
+        });
+      });
+      it('should be ALLOWED to #read Permission', function (done) {
+        var options = {
+          url: url + '/permission',
+          json: true,
+          headers: registeredAuth
+        };
+        request(options, function (err, res, permissions) {
+          assert.ifError(permissions.error);
+          //assert.equal(models.length, 4);
+
+          done(err || permissions.error);
+        });
+      });
+    });
+    describe('@public', function () {
+      it('should be NOT ALLOWED to #read Model', function (done) {
+        var options = {
+          url: url + '/model',
+          json: true
+        };
+        request(options, function (err, res, body) {
+          assert(_.isString(body.error));
+          done(err);
+        });
+      });
+    });
   });
-
 });

@@ -1,32 +1,116 @@
-var actionMethodMap = {
-  find: 'read',
-  findOne: 'read',
-  create: 'create',
-  update: 'update',
-  delete: 'delete'
+var methodMap = {
+  POST: 'create',
+  GET: 'read',
+  PUT: 'update',
+  DELETE: 'delete'
 };
+
+var findRecords = require('sails/lib/hooks/blueprints/actions/find');
 
 module.exports = {
 
   /**
-   * Query the ownership relationship between a user and an object.
-   *
-   * @returns {Integer}
-   *  0   user is the the owner of the object, e.g. user = object.owner;
-   *  1   user can reach the owner of the object via one Role
-   *  -1 there is no Role subgraph that connects the user to object.owner
+   * Given an object, or a list of objects, return true if the list contains
+   * objects not owned by the specified user.
    */
-  getOwnership: function (user, object) {
-    return user.getOwnershipRelation(object);
+  hasForeignObjects: function (objects, user) {
+    if (!_.isArray(objects)) {
+      return PermissionService.isForeignObject(user.id)(objects);
+    }
+    return _.any(objects, PermissionService.isForeignObject(user.id));
+  },
+
+  /**
+   * Return whether the specified object is NOT owned by the specified user.
+   */
+  isForeignObject: function (owner) {
+    return function (object) {
+      //sails.log('object', object);
+      //sails.log('object.owner: ', object.owner, ', owner:', owner);
+      return object.owner !== owner;
+    };
+  },
+
+  /**
+   * Find objects that some arbitrary action would be performed on, given the
+   * same request.
+   *
+   * @param options.model
+   * @param options.query
+   *
+   * TODO this will be less expensive when waterline supports a caching layer
+   */
+  findTargetObjects: function (req) {
+    return new Promise(function (resolve, reject) {
+      findRecords(req, {
+        ok: resolve,
+        serverError: reject
+      });
+    });
+  },
+
+  /**
+   * Query Permissions that grant privileges to a role/user on an action for a
+   * model.
+   *
+   * @param options.method
+   * @param options.model
+   * @param options.user
+   */
+  findModelPermissions: function (options) {
+    var action = PermissionService.getMethod(options.method);
+    var permissionCriteria = {
+      model: options.model.id,
+      action: action
+    };
+
+    //sails.log('req.user', options.user);
+
+    return User.findOne(options.user.id)
+      .populate('roles')
+      .then(function (user) {
+        return Permission.find({
+          model: options.model.id,
+          action: action,
+          role: _.pluck(user.roles, 'id')
+        });
+      });
+
+    /*
+    return Role
+      .find({ active: true })
+      .populate('permissions', { where: permissionCriteria })
+      .populate('users', { where: { id: options.user.id } })
+      .then(function (roles) {
+        sails.log('matching roles', roles);
+        return _.flatten(_.pluck(roles, 'permissions'));
+      });
+    */
+  },
+
+  /**
+   * Return true if the specified model supports the ownership policy; false
+   * otherwise.
+   */
+  hasOwnershipPolicy: function (model) {
+    //var ignoreModel = _.contains(sails.config.permissions.ignore, model.globalId);
+    return model.autoCreatedBy;
+  },
+
+  /**
+   * Build an error message
+   */
+  getErrorMessage: function (options) {
+    return [
+      'User', options.user.email, 'is not permitted to', options.method, options.model.globalId
+    ].join(' ');
   },
 
   /**
    * Given an action, return the CRUD method it maps to.
    */
-  getMethod: function (req) {
-    return actionMethodMap[req.options.action];
-  },
-
-  checkPermissions: function (user, model, method) {
+  getMethod: function (method) {
+    return methodMap[method];
   }
+
 };
