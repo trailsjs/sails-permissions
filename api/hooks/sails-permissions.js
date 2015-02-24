@@ -1,3 +1,11 @@
+var permissionPolicies = [
+  'passport',
+  'sessionAuth',
+  'ModelPolicy',
+  'OwnerPolicy',
+  'PermissionPolicy',
+  'RolePolicy'
+];
 module.exports = function (sails) {
   return {
     configure: function () {
@@ -10,10 +18,15 @@ module.exports = function (sails) {
       global._ = require('lodash');
       _.mixin(require('congruence'));
 
-
       sails.config.blueprints.populate = false;
     },
     initialize: function (next) {
+      if (!validatePolicyConfig(sails)) {
+        sails.log.error('One or more required policies are missing.');
+        sails.log.error('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions');
+        return next(new Error('sails-permissions policies not correctly installed in sails.config.policies.'));
+      }
+
       installModelOwnership(sails.models);
 
       sails.after('hook:orm:loaded', function () {
@@ -40,16 +53,16 @@ module.exports = function (sails) {
  */
 function initializeFixtures () {
   //sails.log('Initializing sails-permissions fixtures');
-  return require('../../../config/fixtures/model').createModels()
+  return require('../../config/fixtures/model').createModels()
     .bind({ })
     .then(function (models) {
       this.models = models;
-      return require('../../../config/fixtures/role').create();
+      return require('../../config/fixtures/role').create();
     })
     .then(function (roles) {
       this.roles = roles;
       var userModel = _.find(this.models, { name: 'User' });
-      return require('../../../config/fixtures/user').create(this.roles, userModel);
+      return require('../../config/fixtures/user').create(this.roles, userModel);
     })
     .then(function (user) {
       sails.log.silly('admin user created. setting owner...');
@@ -58,7 +71,7 @@ function initializeFixtures () {
       return user.save();
     })
     .then(function (admin) {
-      return require('../../../config/fixtures/permission').create(this.roles, this.models, admin);
+      return require('../../config/fixtures/permission').create(this.roles, this.models, admin);
     })
     .then(function (permissions) {
       return null;
@@ -85,4 +98,13 @@ function installModelOwnership (models) {
       }
     });
   });
+}
+
+function validatePolicyConfig (sails) {
+  var policies = sails.config.policies;
+  return _.all([
+    _.isArray(policies['*']),
+    _.intersection(permissionPolicies, policies['*']).length === permissionPolicies.length,
+    policies.AuthController['*'] = true
+  ]);
 }
