@@ -11,17 +11,40 @@ module.exports = require('sails-generate-entities')({
     'api/controllers/PermissionController.js',
     'api/controllers/RoleController.js',
                                             
-    'config/permissions.js'
+    'config/permissions.js',
+
+    // sails-auth
+    'config/routes/sails-auth.js',
+    'config/passport.js',
+
+    'api/controllers/AuthController.js',
+    'api/controllers/UserController.js',
+    'api/models/Passport.js'
   ],
   classes: [
     'api/services/ModelService.js',
-    'api/services/PermissionService.js'
+    'api/services/PermissionService.js',
+    
+    // sails-auth
+    'api/services/passport.js',
+    'api/services/protocols/local.js',
+    'api/services/protocols/oauth.js',
+    'api/services/protocols/oauth2.js',
+    'api/services/protocols/openid.js'
   ],
   functions: [
-    'api/hooks/permissions-api/index.js',
     'api/policies/ModelPolicy.js',
     'api/policies/OwnerPolicy.js',
     'api/policies/PermissionPolicy.js',
-    'api/policies/RolePolicy.js'
+    'api/policies/RolePolicy.js',
+
+    'api/hooks/permissions-api/index.js',
+
+    // sails-auth hook
+    'api/hooks/sails-auth.js',
+
+    // sails-auth policies
+    'api/policies/basicAuth.js',
+    'api/policies/passport.js'
   ]
 });
