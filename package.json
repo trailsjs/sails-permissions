@@ -43,9 +43,11 @@
     "bluebird": "^2.3.6",
     "congruence": "^1.6.4",
     "fnv-plus": "^1.2.9",
-    "lodash": "^3.2",
     "pluralize": "^1.0.1",
-    "sails-auth": "latest",
     "sails-generate-entities": "latest"
+  },
+  "peerDependencies": {
+    "sails-auth": "latest",
+    "lodash": ">=2.4"
   }
 }
