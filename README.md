@@ -8,7 +8,7 @@ Comprehensive sails.js user permissions and entitlements system. Supports user a
 
 ## Install
 ```sh
-$ npm install lodash sails-auth sails-permissions --save
+$ npm install sails-permissions --save
 ```
 
 ## Usage
@@ -19,8 +19,7 @@ $ npm install lodash sails-auth sails-permissions --save
 {
   "generators": {
     "modules": {
-      "permissions-api": "sails-permissions",
-      "auth-api": "sails-auth"
+      "permissions-api": "sails-permissions"
     }
   }
 }

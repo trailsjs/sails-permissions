@@ -1,7 +1,7 @@
 {
   "name": "sails-permissions",
-  "version": "1.0.0-rc2",
-  "description": "Comprehensive sails.js user permission/privilege framework that allows granting and restricting access to models and attributes based on object ownership and relationships with other users and roles",
+  "version": "1.0.0-rc7",
+  "description": "Comprehensive user permissions and entitlements system for sails.js and Waterline. Supports user authentication with passport.js, role-based permissioning, object ownership, and row-level security.",
   "main": "index.js",
   "scripts": {
     "test": "rm -rf .tmp && mocha --reporter spec"
@@ -11,7 +11,6 @@
     "url": "https://github.com/tjwebb/sails-permissions.git"
   },
   "keywords": [
-    "balderdash",
     "sails",
     "sails.js",
     "permissions",
@@ -22,7 +21,8 @@
     "passport",
     "grant",
     "roles",
-    "security"
+    "security",
+    "enterprise"
   ],
   "author": "Travis Webb <me@traviswebb.com>",
   "license": "MIT",
@@ -31,21 +31,25 @@
   },
   "homepage": "https://github.com/tjwebb/sails-permissions",
   "devDependencies": {
-    "hashware-api": "*",
     "mocha": "^1.21.4",
     "request": "^2.53.0",
-    "sails": "^0.11.0",
     "sails-disk": "^0.10.7",
     "sails-docgen": "^0.10.4"
   },
   "dependencies": {
     "a.b": "^1.0.1",
     "bluebird": "^2.3.6",
-    "congruence": "^1.6.4",
-    "fnv-plus": "^1.2.9",
-    "lodash": "^3.2",
+    "congruence": "^1.6.9",
     "pluralize": "^1.0.1",
-    "sails-auth": "latest",
     "sails-generate-entities": "latest"
+  },
+  "peerDependencies": {
+    "sails-auth": "*",
+    "lodash": ">2.4.0",
+    "sails": ">0.10.0"
+  },
+  "engines": {
+    "node": ">= 0.10",
+    "npm": ">= 2.3"
   }
 }
