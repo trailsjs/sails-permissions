@@ -52,7 +52,6 @@ module.exports = function (sails) {
  * Permissions, and creates an admin user.
  */
 function initializeFixtures () {
-  //sails.log('Initializing sails-permissions fixtures');
   return require('../../config/fixtures/model').createModels()
     .bind({ })
     .then(function (models) {
@@ -65,6 +64,7 @@ function initializeFixtures () {
       return require('../../config/fixtures/user').create(this.roles, userModel);
     })
     .then(function (user) {
+      console.log('user', user);
       sails.log.silly('admin user created. setting owner...');
       user.createdBy = user.id;
       user.owner = user.id;
