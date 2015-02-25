@@ -64,8 +64,6 @@ module.exports = {
       action: action
     };
 
-    //sails.log('req.user', options.user);
-
     return User.findOne(options.user.id)
       .populate('roles')
       .then(function (user) {
@@ -75,17 +73,6 @@ module.exports = {
           role: _.pluck(user.roles, 'id')
         });
       });
-
-    /*
-    return Role
-      .find({ active: true })
-      .populate('permissions', { where: permissionCriteria })
-      .populate('users', { where: { id: options.user.id } })
-      .then(function (roles) {
-        sails.log('matching roles', roles);
-        return _.flatten(_.pluck(roles, 'permissions'));
-      });
-    */
   },
 
   /**
@@ -93,7 +80,6 @@ module.exports = {
    * otherwise.
    */
   hasOwnershipPolicy: function (model) {
-    //var ignoreModel = _.contains(sails.config.permissions.ignore, model.globalId);
     return model.autoCreatedBy;
   },
 
@@ -112,5 +98,4 @@ module.exports = {
   getMethod: function (method) {
     return methodMap[method];
   }
-
 };
