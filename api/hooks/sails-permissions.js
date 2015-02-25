@@ -64,7 +64,6 @@ function initializeFixtures () {
       return require('../../config/fixtures/user').create(this.roles, userModel);
     })
     .then(function (user) {
-      console.log('user', user);
       sails.log.silly('admin user created. setting owner...');
       user.createdBy = user.id;
       user.owner = user.id;
