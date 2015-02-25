@@ -11,7 +11,9 @@ Comprehensive sails.js user permissions and entitlements system. Supports user a
 $ npm install sails-permissions --save
 ```
 
-## Usage
+## Quickstart
+
+**Note:** Complete documentation available in the sails-permissions wiki: https://github.com/tjwebb/sails-permissions/wiki
 
 ### 1. configure sailsrc
 
