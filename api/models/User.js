@@ -21,7 +21,7 @@ _.merge(exports, {
         .then(function (user) {
           next();
         })
-        .catch(next)
+        .catch(next);
     },
     function attachDefaultRole (user, next) {
       Promise.bind({ }, User.findOne(user.id)
