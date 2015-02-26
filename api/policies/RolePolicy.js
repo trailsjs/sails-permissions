@@ -27,7 +27,7 @@ module.exports = function (req, res, next) {
   PermissionService.findTargetObjects(req)
     .then(function (objects) {
       if (PermissionService.hasForeignObjects(objects, req.user)) {
-        res.badRequest({ error: 'Cannot perform action on foreign object' });
+        res.badRequest({ error: 'Cannot perform action ['+ action +'] on foreign object' });
       }
       else {
         next();

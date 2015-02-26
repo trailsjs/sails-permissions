@@ -19,14 +19,6 @@
  * @param {Function} next
  */
 module.exports = function (req, res, next) {
-  /*
-  if (!req.isAuthenticated()) {
-    return next(new Error('Request not authenticated; bailing out of PermissionsPolicy'));
-  }
-  */
-
-  //sails.log('PermissionPolicy req.model', req.model);
-
   var options = {
     model: req.model,
     method: req.method,
