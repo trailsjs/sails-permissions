@@ -18,24 +18,18 @@ module.exports = {
     ipAddress: {
       type: 'string'
     },
+    method: {
+      type: 'string'
+    },
     url: {
       type: 'string',
       url: true
     },
-    user: {
-      model: 'User'
-    },
-    method: {
-      type: 'string'
-    },
-    params: {
-      type: 'json'
-    },
-    query: {
-      type: 'json'
-    },
     body: {
       type: 'json'
+    },
+    user: {
+      model: 'User'
     },
     model: {
       type: 'string'
