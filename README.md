@@ -50,6 +50,7 @@ $ sails generate permissions-api
     'passport',
     'sessionAuth',
     'ModelPolicy',
+    'AuditPolicy',
     'OwnerPolicy',
     'PermissionPolicy',
     'RolePolicy'
