@@ -48,22 +48,16 @@ module.exports = {
       type: 'string',
       index: true,
       notNull: true,
+      /**
+       * TODO remove enum and support permissions based on all controller
+       * actions, including custom ones
+       */
       enum: [
         'create',
         'read',
         'update',
         'delete'
       ]
-    },
-
-    /**
-     * controller service that this permission governs.
-     *
-     * TODO dormant. enable in future release
-     */
-    service: {
-      type: 'string',
-      defaultsTo: null
     },
 
     relation: {
