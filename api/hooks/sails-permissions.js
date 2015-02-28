@@ -9,7 +9,6 @@ var permissionPolicies = [
 module.exports = function (sails) {
   return {
     configure: function () {
-      sails.log.info('configuring sails-permissions...');
       if (!_.isObject(sails.config.permissions)) sails.config.permissions = { };
 
       // setup some necessary globals
@@ -30,8 +29,6 @@ module.exports = function (sails) {
       installModelOwnership(sails.models);
 
       sails.after('hook:orm:loaded', function () {
-        sails.log.info('initializing sails-permissions...');
-
         Model.count()
           .then(function (count) {
             if (count == sails.models.length) return next();
@@ -64,7 +61,7 @@ function initializeFixtures () {
       return require('../../config/fixtures/user').create(this.roles, userModel);
     })
     .then(function (user) {
-      sails.log.silly('admin user created. setting owner...');
+      //sails.log('admin user created. setting owner...');
       user.createdBy = user.id;
       user.owner = user.id;
       return user.save();
