@@ -4,7 +4,6 @@ var _ = require('lodash');
 module.exports = function (req, res, next) {
   var ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   req.requestId = fnv.hash(new Date().valueOf() + ipAddress, 128).str();
-  sails.log('req.requestId', req.requestId);
 
   sails.models.requestlog.create({
     id: req.requestId,
@@ -21,5 +20,4 @@ module.exports = function (req, res, next) {
 
   // persist RequestLog entry in the background; continue immediately
   next();
-
 };
