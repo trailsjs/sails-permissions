@@ -57,7 +57,7 @@ $ sails generate permissions-api
   ],
 
   AuthController: {
-    '*': true
+    '*': [ 'passport' ]
   }
 ```
 
