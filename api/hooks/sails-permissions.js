@@ -60,8 +60,12 @@ function initializeFixtures () {
       var userModel = _.find(this.models, { name: 'User' });
       return require('../../config/fixtures/user').create(this.roles, userModel);
     })
+    .then(function () {
+      return User.findOne({ email: sails.config.permissions.adminEmail });
+    })
     .then(function (user) {
       //sails.log('admin user created. setting owner...');
+      sails.log('sails-permissions: created admin user:', user);
       user.createdBy = user.id;
       user.owner = user.id;
       return user.save();
@@ -89,8 +93,7 @@ function installModelOwnership (models) {
       },
       owner: {
         model: 'User',
-        index: true,
-        notNull: true
+        index: true
       }
     });
   });

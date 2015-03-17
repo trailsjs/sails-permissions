@@ -16,6 +16,7 @@ _.merge(exports, {
    */
   afterCreate: [
     function setOwner (user, next) {
+      sails.log('User.afterCreate.setOwner', user);
       User
         .update({ id: user.id }, { owner: user.id })
         .then(function (user) {
