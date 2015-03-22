@@ -6,6 +6,8 @@ module.exports = require('sails-generate-entities')({
     'api/models/Permission.js',
     'api/models/Role.js',
     'api/models/User.js',
+    'api/models/RequestLog.js',
+    'api/models/SecurityLog.js',
                                             
     'api/controllers/ModelController.js',
     'api/controllers/PermissionController.js',
