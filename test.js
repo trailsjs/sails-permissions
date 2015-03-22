@@ -162,7 +162,6 @@ describe('sails-permissions', function () {
         };
         request(options, function (err, res, permissions) {
           assert.ifError(permissions.error);
-          //assert.equal(models.length, 4);
 
           done(err || permissions.error);
         });

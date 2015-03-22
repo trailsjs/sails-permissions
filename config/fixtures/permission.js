@@ -51,15 +51,14 @@ function grantAdminPermissions (roles, models, admin) {
   var permissions = _.flatten(_.map(models, function (modelEntity) {
     var model = sails.models[modelEntity.identity];
 
-    return _.map(grants['admin'], function (permission) {
-      //sails.log.silly('creating permission for role:', role.name, '; model:', model.globalId, '; action:', permission.action);
-
-      return Permission.create({
+    return _.map(grants.admin, function (permission) {
+      var newPermission = {
         model: modelEntity.id,
         action: permission.action,
         role: adminRole.id,
         createdBy: admin.id
-      });
+      };
+      return Permission.findOrCreate(newPermission, newPermission);
     });
   }));
 

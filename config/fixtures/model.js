@@ -4,7 +4,7 @@
  * @public
  */
 exports.createModels = function () {
-  sails.log('Installing Models');
+  sails.log('sails-permissions: syncing waterline models');
 
   var models = _.compact(_.map(sails.controllers, function (controller, name) {
     var model = sails.models[name];
@@ -16,7 +16,6 @@ exports.createModels = function () {
   }));
 
   return Promise.map(models, function (model) {
-      sails.log('creating', model.name);
-      return Model.create(model);
-    });
+    return Model.findOrCreate({ name: model.name }, model);
+  });
 };
