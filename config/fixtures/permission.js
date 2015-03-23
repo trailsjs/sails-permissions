@@ -68,27 +68,30 @@ function grantAdminPermissions (roles, models, admin) {
 function grantRegisteredPermissions (roles, models, admin) {
   var registeredRole = _.find(roles, { name: 'registered' });
   var permissions = [
-    Permission.create({
+    {
       model: _.find(models, { name: 'Permission' }).id,
       action: 'read',
       role: registeredRole.id,
       createdBy: admin.id
-    }),
-    Permission.create({
+    },
+    {
       model: _.find(models, { name: 'Model' }).id,
       action: 'read',
       role: registeredRole.id,
       createdBy: admin.id
-    }),
-    Permission.create({
+    },
+    {
       model: _.find(models, { name: 'User' }).id,
       action: 'update',
       role: registeredRole.id,
       createdBy: admin.id,
       relation: 'owner'
-    }),
-
+    }
   ];
 
-  return Promise.all(permissions);
+  return Promise.all(
+    _.map(permissions, function (permission) {
+      return Permission.findOrCreate(permission, permission);
+    })
+  );
 }
