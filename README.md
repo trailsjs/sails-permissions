@@ -1,7 +1,6 @@
 # <img src="http://cdn.tjw.io/images/sails-logo.png" height='43px' />-permissions
 
-[![Join the chat at https://gitter.im/tjwebb/sails-permissions](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tjwebb/sails-permissions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
+[![Gitter][gitter-image]][gitter-url]
 [![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
@@ -74,3 +73,5 @@ MIT
 [travis-url]: https://travis-ci.org/tjwebb/sails-permissions
 [daviddm-image]: http://img.shields.io/david/tjwebb/sails-permissions.svg?style=flat-square
 [daviddm-url]: https://david-dm.org/tjwebb/sails-permissions
+[gitter-image]: http://img.shields.io/badge/+%20GITTER-JOIN%20CHAT%20%E2%86%92-1DCE73.svg?style=flat-square
+[gitter-url]: https://gitter.im/tjwebb/sails-permissions
