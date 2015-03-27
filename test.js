@@ -137,6 +137,19 @@ describe('sails-permissions', function () {
           done(err);
         });
       });
+      it('should be ALLOWED to #read self', function (done) {
+        var options = {
+          method: 'GET',
+          url: url + '/user/' + newUserId,
+          json: true,
+          headers: registeredAuth
+        };
+        request(options, function (err, res, user) {
+          assert.ifError(err);
+          assert.equal(user.id, newUserId);
+          done(err);
+        });
+      });
       it('should be ALLOWED to #update User (relation=owner)', function (done) {
         var options = {
           method: 'PUT',
@@ -180,4 +193,5 @@ describe('sails-permissions', function () {
       });
     });
   });
+
 });

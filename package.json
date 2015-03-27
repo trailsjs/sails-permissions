@@ -37,7 +37,10 @@
     "mocha": "^1.21.4",
     "request": "^2.53.0",
     "sails-disk": "^0.10.7",
-    "sails-docgen": "^0.10.4"
+    "sails-docgen": "^0.10.4",
+    "sails-auth": "*",
+    "lodash": ">2.4.0",
+    "sails": ">0.10.0"
   },
   "dependencies": {
     "a.b": "^1.0.1",
