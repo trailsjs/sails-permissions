@@ -7,7 +7,9 @@ exports.createModels = function () {
   sails.log('sails-permissions: syncing waterline models');
 
   var models = _.compact(_.map(sails.controllers, function (controller, name) {
-    var model = sails.models[name];
+    var modelName = controller._config ? controller._config.model : name
+      , model = sails.models[modelName]
+    ;
     return model && model.globalId && model.identity && {
       name: model.globalId,
       identity: model.identity,
