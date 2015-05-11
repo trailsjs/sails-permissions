@@ -3,7 +3,7 @@ var _ = require('lodash');
 var url = require('url');
 
 module.exports = function (req, res, next) {
-  var ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  var ipAddress = req.isSocket ? req.socket.handshake.address.address + ":" + req.socket.handshake.address.port : req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   req.requestId = fnv.hash(new Date().valueOf() + ipAddress, 128).str();
 
   sails.models.requestlog.create({
@@ -23,7 +23,7 @@ module.exports = function (req, res, next) {
 function sanitizeRequestUrl (req) {
   var requestUrl = url.format({
     protocol: req.protocol,
-    host: req.get('host'),
+    host: sails.getHost(),
     pathname: req.originalUrl,
     query: req.query
   });
