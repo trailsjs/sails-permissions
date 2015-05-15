@@ -23,10 +23,10 @@ module.exports = function (req, res, next) {
 function sanitizeRequestUrl (req) {
   var requestUrl = url.format({
     protocol: req.protocol,
-    host: req.get('host'),
-    pathname: req.originalUrl,
+    host: sails.getHost(),
+    pathname: req.originalUrl || req.url,
     query: req.query
   });
 
-  return requestUrl.replace(/password=\w+&/i, 'password=<hidden>');
+  return requestUrl.replace(/(password=).*?(&|$)/ig, '$1<hidden>$2');
 }
