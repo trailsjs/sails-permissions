@@ -104,6 +104,6 @@ function validatePolicyConfig (sails) {
   return _.all([
     _.isArray(policies['*']),
     _.intersection(permissionPolicies, policies['*']).length === permissionPolicies.length,
-    policies.AuthController['*'] = true
+    policies.AuthController['*']
   ]);
 }
