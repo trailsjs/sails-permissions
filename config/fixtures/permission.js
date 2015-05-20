@@ -86,6 +86,13 @@ function grantRegisteredPermissions (roles, models, admin) {
       role: registeredRole.id,
       createdBy: admin.id,
       relation: 'owner'
+    },
+    {
+      model: _.find(models, { name: 'User' }).id,
+      action: 'read',
+      role: registeredRole.id,
+      createdBy: admin.id,
+      relation: 'owner'
     }
   ];
 
