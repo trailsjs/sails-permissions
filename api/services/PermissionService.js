@@ -114,7 +114,7 @@ module.exports = {
     if (!_.isArray(objects)) {
       return PermissionService.isAllowedToPerformSingle(user.id, action, model)(objects);
     }
-    return new Promise.map([objects], PermissionService.isAllowedToPerformSingle(user.id, action, model));
+    return new Promise.map(objects, PermissionService.isAllowedToPerformSingle(user.id, action, model));
   },
 
   /**
