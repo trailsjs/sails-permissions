@@ -66,7 +66,8 @@ module.exports = {
       type: 'string',
       enum: [
         'role',
-        'owner'
+        'owner',
+        'user'
       ],
       defaultsTo: 'role',
       index: true
@@ -78,7 +79,17 @@ module.exports = {
      */
     role: {
       model: 'Role',
-      required: true
+      // Validate manually
+      //required: true
+    },
+
+    /**
+     * The User to which this Permission grants create, read, update, and/or
+     * delete privileges.
+     */
+    user: {
+      model: 'User'
+      // Validate manually
     }
   },
 
@@ -87,6 +98,15 @@ module.exports = {
       if (permission.relation == 'owner' && permission.action == 'create') {
         next(new Error('Creating a Permission with relation=owner and action=create is tautological'));
       }
+
+      if (permission.relation == 'user' && permission.user == "") {
+        next(new Error('A Permission with relation user MUST have the user attribute set'));
+      }
+
+      if (permission.relation == 'role' && permission.role == "") {
+        next(new Error('A Permission with relation role MUST have the role attribute set'));
+      }
+
       next();
     }
   ]

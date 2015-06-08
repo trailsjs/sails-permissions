@@ -70,7 +70,10 @@ module.exports = {
         return Permission.find({
           model: options.model.id,
           action: action,
-          role: _.pluck(user.roles, 'id')
+          or: [
+            {user: user.id},
+            {role: _.pluck(user.roles, 'id')}
+          ]
         });
       });
   },
