@@ -100,5 +100,51 @@ module.exports = {
    */
   getMethod: function (method) {
     return methodMap[method];
+  },
+
+  /**
+   * Check if the user (out of role) is granted to perform action on given objects
+   * @param objects
+   * @param user
+   * @param action
+   * @param model
+   * @returns {*}
+   */
+  isAllowedToPerformAction: function (objects, user, action, model) {
+    if (!_.isArray(objects)) {
+      return PermissionService.isAllowedToPerformSingle(user.id, action, model)(objects);
+    }
+    return new Promise.map([objects], PermissionService.isAllowedToPerformSingle(user.id, action, model));
+  },
+
+  /**
+   * Resolve if the user have the permission to perform this action
+   * @param user
+   * @param action
+   * @param model
+   * @returns {Function}
+   */
+  isAllowedToPerformSingle: function (user, action, model) {
+    return function (obj) {
+      return new Promise(function (resolve, reject) {
+        Model.findOne({
+          identity: model
+        }).then(function (model) {
+          return Permission.find({
+            model: model.id,
+            object: obj.id,
+            action: action,
+            relation: 'user',
+            user: user
+          });
+        }).then(function (permission) {
+          if (permission.length > 0) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }).catch(reject);
+      });
+    }
   }
 };

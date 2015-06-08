@@ -26,7 +26,11 @@ module.exports = function (req, res, next) {
 
   PermissionService.findTargetObjects(req)
     .then(function (objects) {
-      if (PermissionService.hasForeignObjects(objects, req.user)) {
+      this.objects = objects;
+      return PermissionService.isAllowedToPerformAction(this.objects, req.user, action, ModelService.getTargetModelName(req));
+    })
+    .then(function (canPerform) {
+      if (PermissionService.hasForeignObjects(this.objects, req.user) && !canPerform) {
         res.badRequest({ error: 'Cannot perform action ['+ action +'] on foreign object' });
       }
       else {
