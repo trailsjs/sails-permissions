@@ -79,6 +79,13 @@ module.exports = {
     role: {
       model: 'Role',
       required: true
+    },
+
+    /**
+     * Additional criteria that are required for transitive permissions
+     */
+    where: {
+      type: 'json'
     }
   },
 

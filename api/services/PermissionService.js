@@ -76,6 +76,46 @@ module.exports = {
   },
 
   /**
+   * given a list of objects, determine if any of them fail the given where clause
+   */
+  checkWhereClause: function (objects, criteria) {
+    // return success if there is no criteria
+    if (_.isEmpty(criteria)) return false;
+
+    // criteria can be something like {stream: [1,2], active: true}
+    // objects = [{stream: 1, active: false}]
+    var criteriaKeys = Object.keys(criteria);
+
+    function checkCriteriaKeys (object) {
+        var objectFails = false;
+        criteriaKeys.some(function (criteriaKey) {
+            var whereCriteria = criteria[criteriaKey];
+            var objectValue = object[criteriaKey];
+
+            if (_.isArray(whereCriteria)) {
+                // what about more complex queries, i.e. when the objectValue is an array or an object
+                if (!_.includes(whereCriteria, objectValue)) {
+                   objectFails = true; 
+                   return true;
+                }
+            } else if (whereCriteria !== objectValue) {
+                objectFails = true;
+                return true;
+            }
+        });
+        return objectFails;
+    }
+
+    if (!_.isArray(objects)) {
+        return checkCriteriaKeys(objects, criteria); 
+    }
+
+    return _.any(objects, checkCriteriaKeys);
+  },
+
+
+
+  /**
    * Return true if the specified model supports the ownership policy; false
    * otherwise.
    */

@@ -109,6 +109,36 @@ describe('Permission Service', function () {
 
   });
 
+  describe('#checkWhereClause()', function () {
+
+      it ('should return an array of items that don\'t match the given criteria', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var criteria = {x:2};
+          assert(sails.services.permissionservice.checkWhereClause(objects, criteria));
+          done();
+      });
+
+      it ('should return an array of items that don\'t match the given criteria, if the criteria has many values for the same key', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var criteria = {x:[2,3]};
+          assert(sails.services.permissionservice.checkWhereClause(objects, criteria));
+          done();
+      });
+
+      it ('should return an array of items that don\'t match the given criteria, if the criteria has many values for the same key', function (done) {
+          var objects = {x:2}; 
+          var criteria = {x:[2,3]};
+          assert.equal(sails.services.permissionservice.checkWhereClause(objects, criteria), false);
+          done();
+      });
+
+      it ('should return an empty array if there is no criteria', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          assert.equal(sails.services.permissionservice.checkWhereClause(objects), false);
+          done();
+      })
+  });
+
   //TODO: add unit tests for #findTargetObjects()
 
   //TODO: add unit tests for #findModelPermissions()
