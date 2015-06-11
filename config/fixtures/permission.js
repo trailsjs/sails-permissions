@@ -56,7 +56,6 @@ function grantAdminPermissions (roles, models, admin) {
         model: modelEntity.id,
         action: permission.action,
         role: adminRole.id,
-        createdBy: admin.id
       };
       return Permission.findOrCreate(newPermission, newPermission);
     });
@@ -71,27 +70,23 @@ function grantRegisteredPermissions (roles, models, admin) {
     {
       model: _.find(models, { name: 'Permission' }).id,
       action: 'read',
-      role: registeredRole.id,
-      createdBy: admin.id
+      role: registeredRole.id
     },
     {
       model: _.find(models, { name: 'Model' }).id,
       action: 'read',
-      role: registeredRole.id,
-      createdBy: admin.id
+      role: registeredRole.id
     },
     {
       model: _.find(models, { name: 'User' }).id,
       action: 'update',
       role: registeredRole.id,
-      createdBy: admin.id,
       relation: 'owner'
     },
     {
       model: _.find(models, { name: 'User' }).id,
       action: 'read',
       role: registeredRole.id,
-      createdBy: admin.id,
       relation: 'owner'
     }
   ];
