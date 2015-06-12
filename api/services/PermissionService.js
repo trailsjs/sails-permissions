@@ -80,11 +80,7 @@ module.exports = {
    * given a list of objects, determine if they all satisfy at least on permission where clause
    */
   checkWhereClause: function (objects, permissions, attributes) {
-                        /*
-    var criteria = _.compact(req.permissions.map(function(permission) {
-      return permission.where;
-    }));
-    */
+    //console.log('objects, permissions, attributes', objects, permissions, attributes);
 
     // return success if there are no permissions or objects
     if (_.isEmpty(permissions) || _.isEmpty(objects)) return true;
@@ -97,13 +93,11 @@ module.exports = {
         permission = [permissions];
     }
 
-    // every object must have at least one permission that has a passing criteria
+    // every object must have at least one permission that has a passing criteria and a passing attribute check
     return objects.every(function (obj) {
         return permissions.some(function (permission) {
-            var criteria = permission.where;
-            var whitelist = permission.attributes;
-            var match = wlFilter([obj], { where: criteria }).results;
-            var hasUnpermittedAttributes = PermissionService.hasUnpermittedAttributes(attributes, whitelist);
+            var match = wlFilter([obj], { where: permission.where }).results;
+            var hasUnpermittedAttributes = PermissionService.hasUnpermittedAttributes(attributes, permission.attributes);
             return match.length === 1 && !hasUnpermittedAttributes;
         });
     });

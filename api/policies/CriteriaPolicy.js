@@ -6,12 +6,10 @@
  */
 module.exports = function(req, res, next) {
   var permissions = req.permissions;
-  
 
   if (_.isEmpty(permissions)) {
     return next();
   }
-  
 
   var action = PermissionService.getMethod(req.method);
 
@@ -19,8 +17,8 @@ module.exports = function(req, res, next) {
 
   // if we are creating, we don't need to query the db, just check the where clause vs the passed in data
   if (action === 'create') {
-    if (!PermissionService.checkWhereClause(body, permissions, body)) {
-        return res.badRequest({ error: 'Can\'t create this object, because of failing where clause or attribute permissions'});
+    if (!PermissionService.checkWhereClause(body, permissions)) {
+        return res.badRequest({ error: 'Can\'t create this object, because of failing where clause'});
     }
     return next();
   }
