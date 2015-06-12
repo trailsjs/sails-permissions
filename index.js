@@ -40,6 +40,8 @@ module.exports = require('sails-generate-entities')({
     'api/policies/PermissionPolicy.js',
     'api/policies/RolePolicy.js',
     'api/policies/AuditPolicy.js',
+    'api/policies/CriteriaPolicy.js',
+
 
     'api/hooks/sails-permissions.js',
 

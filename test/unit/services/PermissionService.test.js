@@ -113,30 +113,97 @@ describe('Permission Service', function () {
 
       it ('should return an array of items that don\'t match the given criteria', function (done) {
           var objects = [{x:1}, {x:2}, {x:3}]; 
-          var criteria = {x:2};
-          assert(sails.services.permissionservice.checkWhereClause(objects, criteria));
+          var permissions = [{ where: {x:2}}];
+          assert.equal(sails.services.permissionservice.checkWhereClause(objects, permissions), false);
           done();
       });
 
       it ('should return an array of items that don\'t match the given criteria, if the criteria has many values for the same key', function (done) {
           var objects = [{x:1}, {x:2}, {x:3}]; 
-          var criteria = {x:[2,3]};
-          assert(sails.services.permissionservice.checkWhereClause(objects, criteria));
+          var permissions = [{where: {x:2}}, {where: {x:3}}];
+          assert.equal(sails.services.permissionservice.checkWhereClause(objects, permissions), false);
           done();
       });
 
       it ('should return an array of items that don\'t match the given criteria, if the criteria has many values for the same key', function (done) {
           var objects = {x:2}; 
-          var criteria = {x:[2,3]};
-          assert.equal(sails.services.permissionservice.checkWhereClause(objects, criteria), false);
+          var permissions = [{where: {x:2}}, {where: {x:3}}];
+          assert(sails.services.permissionservice.checkWhereClause(objects, permissions));
           done();
       });
 
       it ('should return an empty array if there is no criteria', function (done) {
           var objects = [{x:1}, {x:2}, {x:3}]; 
-          assert.equal(sails.services.permissionservice.checkWhereClause(objects), false);
+          assert(sails.services.permissionservice.checkWhereClause(objects));
           done();
-      })
+      });
+
+      it ('should match without where clause and attributes', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{ attributes: ['x']}];
+          assert(sails.services.permissionservice.checkWhereClause(objects, permissions));
+          done();
+      });
+
+      it ('should match with where clause and attributes', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{ where: { x: { '>': 0} }, attributes: ['x']}];
+          assert(sails.services.permissionservice.checkWhereClause(objects, permissions, {x: 5}));
+          done();
+      });
+
+      it ('should fail with bad where clause and good attributes', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{ where: { x: { '<': 0} }, attributes: ['x']}];
+          assert.equal(sails.services.permissionservice.checkWhereClause(objects, permissions, {x: 5}), false);
+          done();
+      });
+
+      it ('should fail with good where clause and bad attributes', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{ where: { x: { '>': 0} }, attributes: ['y']}];
+          assert.equal(sails.services.permissionservice.checkWhereClause(objects, permissions, {x: 5}), false);
+          done();
+      });
+
+  });
+
+  describe('#hasUnpermittedAttributes', function () {
+    it ('should return false if all attributes are permitted', function (done) {
+        attributes = { ok: 1, fine: 2 };
+        whitelist = ["ok", "alright", "fine"]
+        assert.equal(sails.services.permissionservice.hasUnpermittedAttributes(attributes, whitelist), false);
+        done();
+    });
+
+    it ('should return true if any attributes are not permitted', function (done) {
+        attributes = { ok: 1, fine: 2, whatever: 3 };
+        whitelist = ["ok", "alright", "fine"]
+        assert(sails.services.permissionservice.hasUnpermittedAttributes(attributes, whitelist));
+        done();
+    }); 
+
+    it ('should return true if any attributes are not permitted', function (done) {
+        attributes = { ok: 1, fine: 2, whatever: 3 };
+        whitelist = ["ok", "alright", "fine"]
+        assert(sails.services.permissionservice.hasUnpermittedAttributes(attributes, whitelist));
+        done();
+    }); 
+
+    it ('should return false if attributes is empty', function (done) {
+        attributes = {};
+        whitelist = ["ok", "alright", "fine"]
+        assert.equal(sails.services.permissionservice.hasUnpermittedAttributes(attributes, whitelist), false);
+        done();
+    }); 
+
+    it ('should return true if whitelist is empty', function (done) {
+        attributes = { ok: 1, fine: 2, whatever: 3 };
+        whitelist = []
+        assert.equal(sails.services.permissionservice.hasUnpermittedAttributes(attributes, whitelist), false);
+        done();
+    }); 
+
   });
 
   //TODO: add unit tests for #findTargetObjects()

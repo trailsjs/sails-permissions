@@ -6,6 +6,7 @@ var methodMap = {
 };
 
 var findRecords = require('sails/lib/hooks/blueprints/actions/find');
+var wlFilter = require('waterline-criteria');
 
 module.exports = {
 
@@ -76,44 +77,45 @@ module.exports = {
   },
 
   /**
-   * given a list of objects, determine if any of them fail the given where clause
+   * given a list of objects, determine if they all satisfy at least on permission where clause
    */
-  checkWhereClause: function (objects, criteria) {
-    // return success if there is no criteria
-    if (_.isEmpty(criteria)) return false;
+  checkWhereClause: function (objects, permissions, attributes) {
+                        /*
+    var criteria = _.compact(req.permissions.map(function(permission) {
+      return permission.where;
+    }));
+    */
 
-    // criteria can be something like {stream: [1,2], active: true}
-    // objects = [{stream: 1, active: false}]
-    var criteriaKeys = Object.keys(criteria);
-
-    function checkCriteriaKeys (object) {
-        var objectFails = false;
-        criteriaKeys.some(function (criteriaKey) {
-            var whereCriteria = criteria[criteriaKey];
-            var objectValue = object[criteriaKey];
-
-            if (_.isArray(whereCriteria)) {
-                // what about more complex queries, i.e. when the objectValue is an array or an object
-                if (!_.includes(whereCriteria, objectValue)) {
-                   objectFails = true; 
-                   return true;
-                }
-            } else if (whereCriteria !== objectValue) {
-                objectFails = true;
-                return true;
-            }
-        });
-        return objectFails;
-    }
+    // return success if there are no permissions or objects
+    if (_.isEmpty(permissions) || _.isEmpty(objects)) return true;
 
     if (!_.isArray(objects)) {
-        return checkCriteriaKeys(objects, criteria); 
+        objects = [objects];
     }
 
-    return _.any(objects, checkCriteriaKeys);
+    if (!_.isArray(permissions)) {
+        permission = [permissions];
+    }
+
+    // every object must have at least one permission that has a passing criteria
+    return objects.every(function (obj) {
+        return permissions.some(function (permission) {
+            var criteria = permission.where;
+            var whitelist = permission.attributes;
+            var match = wlFilter([obj], { where: criteria }).results;
+            var hasUnpermittedAttributes = PermissionService.hasUnpermittedAttributes(attributes, whitelist);
+            return match.length === 1 && !hasUnpermittedAttributes;
+        });
+    });
+
   },
 
-
+  hasUnpermittedAttributes: function (attributes, whitelist) {
+    if (_.isEmpty(attributes) || _.isEmpty(whitelist)) {
+        return false;
+    }
+    return _.difference(Object.keys(attributes), whitelist).length ? true : false;
+  },
 
   /**
    * Return true if the specified model supports the ownership policy; false
