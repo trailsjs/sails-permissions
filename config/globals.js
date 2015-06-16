@@ -18,4 +18,3 @@ module.exports.globals = {
 
 global.Promise = require('bluebird');
 global._ = require('lodash');
-_.mixin(require('congruence'));

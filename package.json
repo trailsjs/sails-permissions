@@ -44,9 +44,7 @@
     "supertest": "^0.15.0"
   },
   "dependencies": {
-    "a.b": "^1.0.1",
     "bluebird": "^2.3.6",
-    "congruence": "^1.6.9",
     "fnv-plus": "^1.2.10",
     "pluralize": "^1.0.1",
     "sails-generate-entities": "latest"

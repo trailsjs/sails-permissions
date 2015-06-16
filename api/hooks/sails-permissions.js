@@ -11,12 +11,6 @@ module.exports = function (sails) {
     configure: function () {
       if (!_.isObject(sails.config.permissions)) sails.config.permissions = { };
 
-      // setup some necessary globals
-      // XXX is this really necessary here?
-      global.Promise = require('bluebird');
-      global._ = require('lodash');
-      _.mixin(require('congruence'));
-
       sails.config.blueprints.populate = false;
     },
     initialize: function (next) {
@@ -26,7 +20,7 @@ module.exports = function (sails) {
         return next(new Error('sails-permissions policies not correctly installed in sails.config.policies.'));
       }
 
-      installModelOwnership(sails.models);
+      installModelOwnership(sails);
 
       sails.once(sails.config.permissions.afterEvent, function () {
         Model.count()
@@ -64,7 +58,6 @@ function initializeFixtures () {
       return User.findOne({ email: sails.config.permissions.adminEmail });
     })
     .then(function (user) {
-      //sails.log('admin user created. setting owner...');
       sails.log('sails-permissions: created admin user:', user);
       user.createdBy = user.id;
       user.owner = user.id;
@@ -81,7 +74,10 @@ function initializeFixtures () {
     });
 }
 
-function installModelOwnership (models) {
+function installModelOwnership (sails) {
+  var models = sails.models;
+  if (sails.config.models.autoCreatedBy === false) return;
+
   _.each(models, function (model) {
     if (model.autoCreatedBy === false) return;
 
