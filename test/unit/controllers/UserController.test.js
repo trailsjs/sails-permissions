@@ -123,9 +123,11 @@ describe('User Controller', function() {
                 action: 'update',
                 role: roleId,
                 createdBy: adminUserId,
-                attributes: ['name'], // this permission is only for changing the name attribute
-                where: {
-                  active: true
+                criteria: {
+                    blacklist: ['id', 'stream'], // blacklist
+                    where: {
+                      active: true
+                    }
                 }
               })
               .expect(201)
