@@ -103,10 +103,6 @@ function installModelOwnership (sails) {
   });
 }
 
-function cacheModelIds (models, sails) {
-
-}
-
 function validatePolicyConfig (sails) {
   var policies = sails.config.policies;
   return _.all([
