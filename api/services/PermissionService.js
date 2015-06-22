@@ -78,9 +78,13 @@ module.exports = {
   },
 
   /**
-   * given a list of objects, determine if they all satisfy at least on permission where clause
+   * Given a list of objects, determine if they all satisfy at least one permission's where clause/attribute blacklist combination
+   * @param {Array of objects} objects - The result of the query, or if the action is create, the body of the object to be created
+   * @param {Array of Permission objects} permissions - An array of permission objects that are relevant to this particular user query
+   * @param {Object} attributes - The body of the request, in an update or create request.  The keys of this object are checked against the permissions blacklist
+   * @returns boolean - True if there is at least one granted permission that allows the requested action, otherwise false
    */
-  checkWhereClause: function (objects, permissions, attributes) {
+  hasPassingCriteria: function (objects, permissions, attributes) {
     // return success if there are no permissions or objects
     if (_.isEmpty(permissions) || _.isEmpty(objects)) return true;
 

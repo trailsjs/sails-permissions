@@ -2,7 +2,7 @@
  * CriteriaPolicy
  * @depends PermissionPolicy
  *
- * Verify that the User fulfills permission 'where' conditions and attribute access restrictions
+ * Verify that the User fulfills permission 'where' conditions and attribute blacklist restrictions
  */
 module.exports = function(req, res, next) {
   var permissions = req.permissions;
@@ -17,7 +17,7 @@ module.exports = function(req, res, next) {
 
   // if we are creating, we don't need to query the db, just check the where clause vs the passed in data
   if (action === 'create') {
-    if (!PermissionService.checkWhereClause(body, permissions, body)) {
+    if (!PermissionService.hasPassingCriteria(body, permissions, body)) {
         return res.badRequest({ error: 'Can\'t create this object, because of failing where clause'});
     }
     return next();
@@ -32,7 +32,7 @@ module.exports = function(req, res, next) {
         body = undefined;
       }
     
-      if (!PermissionService.checkWhereClause(objects, permissions, body)) {
+      if (!PermissionService.hasPassingCriteria(objects, permissions, body)) {
         return res.badRequest({ error: 'Can\'t ' + action + ', because of failing where clause or attribute permissions'});
       }
 
