@@ -124,10 +124,10 @@ describe('User Controller', function() {
                 role: roleId,
                 createdBy: adminUserId,
                 criteria: {
-                    blacklist: ['id', 'stream'], // blacklist
-                    where: {
-                      active: true
-                    }
+                  blacklist: ['id', 'stream'],
+                  where: {
+                    active: true
+                  }
                 }
               })
               .expect(201)
@@ -153,7 +153,75 @@ describe('User Controller', function() {
             done(err);
           });
       });
+
+      it('should be able to create a read permission with a where clause for roles and a blacklist', function(done) {
+
+        request(sails.hooks.http.app)
+          .get('/model?name=role')
+          .set('Authorization', adminAuth.Authorization)
+          .expect(200)
+          .end(function(err, res) {
+
+            // haha roleModel
+            var roleModel = res.body[0];
+
+            request(sails.hooks.http.app)
+              .post('/permission')
+              .set('Authorization', adminAuth.Authorization)
+              .send({
+                model: roleModel.id,
+                action: 'read',
+                role: roleId,
+                createdBy: adminUserId,
+                criteria: {
+                  where: {
+                    active: true
+                  },
+                  blacklist: [ 'name', 'createdAt' ]
+                }
+              })
+              .expect(201)
+              .end(function(err, res) {
+                done(err);
+              });
+          });
+      });
+
+      it('should be able to create a read permission with a where clause for a role that should filter out all results', function(done) {
+
+        request(sails.hooks.http.app)
+          .get('/model?name=permission')
+          .set('Authorization', adminAuth.Authorization)
+          .expect(200)
+          .end(function(err, res) {
+
+            var permissionModel = res.body[0];
+
+            request(sails.hooks.http.app)
+              .post('/permission')
+              .set('Authorization', adminAuth.Authorization)
+              .send({
+                model: permissionModel.id,
+                action: 'read',
+                role: roleId,
+                createdBy: adminUserId,
+                criteria: {
+                  where: {
+                    id: {
+                      '>': 99999
+                    }
+                  }
+                }
+              })
+              .expect(201)
+              .end(function(err, res) {
+                done(err);
+              });
+          });
+      });
+
     });
+
 
   });
 
@@ -248,7 +316,7 @@ describe('User Controller', function() {
       });
 
       it('should not be able to update role name when role is inactive', function(done) {
-          // attribute is ok but where clause fails
+        // attribute is ok but where clause fails
         request(sails.hooks.http.app)
           .put('/role/' + inactiveRoleId)
           .set('Authorization', newUserAuth.Authorization)
@@ -261,6 +329,42 @@ describe('User Controller', function() {
             assert.ifError(err);
             done(err);
 
+          });
+      });
+
+
+      // this test depends on a previous test that set a permission with a particular where clause/blacklist
+      it('should read only active roles, and should not have blacklisted attributes', function(done) {
+
+        request(sails.hooks.http.app)
+          .get('/role')
+          .set('Authorization', newUserAuth.Authorization)
+          .send({
+            name: 'updatedInactiveName'
+          })
+          .expect(200)
+          .end(function(err, res) {
+            res.body.forEach(function(role) {
+              assert(!role.hasOwnProperty('name'));
+              assert(!role.hasOwnProperty('createdAt'));
+              assert(role.active);
+            });
+            done(err);
+
+          });
+      });
+
+      it('should have filtered out all of the permissions results', function(done) {
+
+        request(sails.hooks.http.app)
+          .get('/permission')
+          .set('Authorization', newUserAuth.Authorization)
+          .send({
+            name: 'updatedInactiveName'
+          })
+          .expect(404)
+          .end(function(err, res) {
+            done(err);
           });
       });
 
