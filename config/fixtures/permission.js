@@ -1,3 +1,5 @@
+var Promise = require('bluebird');
+
 var grants = {
   admin: [
     { action: 'create' },
