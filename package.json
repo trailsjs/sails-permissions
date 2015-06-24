@@ -34,12 +34,13 @@
   },
   "homepage": "https://github.com/tjwebb/sails-permissions",
   "devDependencies": {
+    "jshint": "^2.8.0",
+    "lodash": ">2.4.0",
     "mocha": "^1.21.4",
     "request": "^2.53.0",
     "sails": ">0.10.0",
-    "sails-disk": "^0.10.7",
     "sails-auth": "*",
-    "lodash": ">2.4.0",
+    "sails-disk": "^0.10.7",
     "sails-docgen": "^0.10.4",
     "supertest": "^0.15.0"
   },

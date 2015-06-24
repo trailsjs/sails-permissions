@@ -93,7 +93,7 @@ function responsePolicy(criteria, _data, options) {
       if (filtered.length) {
 
         if (crit.blacklist && crit.blacklist.length) {
-          item = _.omit(item, crit.blacklist)
+          item = _.omit(item, crit.blacklist);
         }
         memo.push(item);
         return true;

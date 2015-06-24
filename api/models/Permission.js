@@ -75,7 +75,8 @@ module.exports = {
         next(new Error('Creating a Permission with relation=owner and action=create is tautological'));
       }
 
-      if (permission.action === 'delete' && _.filter(permission.criteria, function (criteria) { return !_.isEmpty(criteria.blacklist); }).length) {
+      if (permission.action === 'delete' &&
+              _.filter(permission.criteria, function (criteria) { return !_.isEmpty(criteria.blacklist); }).length) {
         next(new Error('Creating a Permission with an attribute blacklist is not allowed when action=delete'));
       }
       next();
