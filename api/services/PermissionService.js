@@ -1,3 +1,4 @@
+var Promise = require('bluebird');
 var methodMap = {
   POST: 'create',
   GET: 'read',
