@@ -1,3 +1,4 @@
+var Promise = require('bluebird');
 /**
  * Creates database representations of the Model types.
  *

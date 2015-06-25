@@ -1,3 +1,4 @@
+var Promise = require('bluebird');
 /**
  * PermissionPolicy
  * @depends OwnerPolicy

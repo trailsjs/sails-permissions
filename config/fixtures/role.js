@@ -1,3 +1,4 @@
+var Promise = require('bluebird');
 /**
  * Creates default Roles
  *
