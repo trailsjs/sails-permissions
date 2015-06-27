@@ -8,6 +8,8 @@ var permissionPolicies = [
 ];
 module.exports = function (sails) {
   return {
+    identity: 'permissions',
+
     /**
      * Local cache of Model name -> id mappings to avoid excessive database lookups.
      */
@@ -19,6 +21,8 @@ module.exports = function (sails) {
       sails.config.blueprints.populate = false;
     },
     initialize: function (next) {
+      sails.log.info('permissions: initializing sails-permissions hook');
+
       if (!validatePolicyConfig(sails)) {
         sails.log.error('One or more required policies are missing.');
         sails.log.error('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions');
@@ -27,12 +31,16 @@ module.exports = function (sails) {
 
       installModelOwnership(sails);
 
-      sails.once(sails.config.permissions.afterEvent, function () {
+      sails.after(sails.config.permissions.afterEvent, function () {
         Model.count()
           .then(function (count) {
             if (count == sails.models.length) return next();
 
-            initializeFixtures(sails).then(next);
+            return initializeFixtures(sails)
+              .then(function () {
+                sails.emit('hook:permissions:loaded');
+                next();
+              });
           })
           .catch(function (error) {
             sails.log.error(error);
