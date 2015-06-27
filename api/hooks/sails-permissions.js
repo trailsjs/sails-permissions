@@ -8,6 +8,11 @@ var permissionPolicies = [
 ];
 module.exports = function (sails) {
   return {
+    /**
+     * Local cache of Model name -> id mappings to avoid excessive database lookups.
+     */
+    _modelCache: { },
+
     configure: function () {
       if (!_.isObject(sails.config.permissions)) sails.config.permissions = { };
 
@@ -27,7 +32,7 @@ module.exports = function (sails) {
           .then(function (count) {
             if (count == sails.models.length) return next();
 
-            initializeFixtures().then(next);
+            initializeFixtures(sails).then(next);
           })
           .catch(function (error) {
             sails.log.error(error);
@@ -42,11 +47,14 @@ module.exports = function (sails) {
  * Install the application. Sets up default Roles, Users, Models, and
  * Permissions, and creates an admin user.
  */
-function initializeFixtures () {
+function initializeFixtures (sails) {
   return require('../../config/fixtures/model').createModels()
     .bind({ })
     .then(function (models) {
       this.models = models;
+
+      sails.hooks['sails-permissions']._modelCache = _.indexBy(models, 'identity');
+
       return require('../../config/fixtures/role').create();
     })
     .then(function (roles) {
