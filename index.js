@@ -4,6 +4,7 @@ module.exports = require('sails-generate-entities')({
   statics: [
     'api/models/Model.js',
     'api/models/Permission.js',
+    'api/models/Criteria.js',
     'api/models/Role.js',
     'api/models/User.js',
     'api/models/RequestLog.js',
@@ -40,6 +41,8 @@ module.exports = require('sails-generate-entities')({
     'api/policies/PermissionPolicy.js',
     'api/policies/RolePolicy.js',
     'api/policies/AuditPolicy.js',
+    'api/policies/CriteriaPolicy.js',
+
 
     'api/hooks/sails-permissions.js',
 
