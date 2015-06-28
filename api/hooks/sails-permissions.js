@@ -100,8 +100,7 @@ function installModelOwnership (sails) {
     _.defaults(model.attributes, {
       createdBy: {
         model: 'User',
-        index: true,
-        notNull: true
+        index: true
       },
       owner: {
         model: 'User',

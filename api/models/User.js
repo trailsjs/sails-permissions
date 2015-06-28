@@ -23,7 +23,10 @@ _.merge(exports, {
         .then(function (user) {
           next();
         })
-        .catch(next);
+        .catch(function (e) {
+          sails.log.error(e);
+          next(e);
+        });
     },
     function attachDefaultRole (user, next) {
       Promise.bind({ }, User.findOne(user.id)
@@ -40,7 +43,10 @@ _.merge(exports, {
           sails.log.silly('role "registered" attached to user', this.user.username);
           next();
         })
-        .catch(next)
+        .catch(function (e) {
+          sails.log.error(e);
+          next(e);
+        })
       );
     }
   ]
