@@ -26,7 +26,8 @@ module.exports.policies = {
     'AuditPolicy',
     'OwnerPolicy',
     'PermissionPolicy',
-    'RolePolicy'
+    'RolePolicy',
+    'CriteriaPolicy'
   ],
 
   AuthController: {

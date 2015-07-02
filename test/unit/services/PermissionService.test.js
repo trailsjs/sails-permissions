@@ -109,6 +109,172 @@ describe('Permission Service', function () {
 
   });
 
+  describe('#hasPassingCriteria()', function () {
+
+      it ('should return an array of items that don\'t match the given criteria', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{ criteria: { where: {x:2}}}];
+          assert.equal(sails.services.permissionservice.hasPassingCriteria(objects, permissions), false);
+          done();
+      });
+
+      it ('should return an array of items that don\'t match the given criteria, if the criteria has many values for the same key', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{ criteria: {where: {x:2}}}, {criteria: {where: {x:3}}}];
+          assert.equal(sails.services.permissionservice.hasPassingCriteria(objects, permissions), false);
+          done();
+      });
+
+      it ('should return an array of items that don\'t match the given criteria, if the criteria has many values for the same key', function (done) {
+          var objects = {x:2}; 
+          var permissions = [{criteria: {where: {x:2}}}, {criteria: {where: {x:3}}}];
+          assert(sails.services.permissionservice.hasPassingCriteria(objects, permissions));
+          done();
+      });
+
+      it ('should return an empty array if there is no criteria', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          assert(sails.services.permissionservice.hasPassingCriteria(objects));
+          done();
+      });
+
+      it ('should match without where clause and blacklist', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{ criteria: { blacklist: ['x']}}];
+          assert(sails.services.permissionservice.hasPassingCriteria(objects, permissions));
+          done();
+      });
+
+      it ('should match with where clause and attributes', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{ criteria: { where: { x: { '>': 0} }, blacklist: ['y']}}];
+          assert(sails.services.permissionservice.hasPassingCriteria(objects, permissions, {x: 5}));
+          done();
+      });
+
+      it ('should fail with bad where clause and good blacklist', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{criteria: { where: { x: { '<': 0} }, blacklist: ['y']}}];
+          assert.equal(sails.services.permissionservice.hasPassingCriteria(objects, permissions, {x: 5}), false);
+          done();
+      });
+
+      it ('should fail with good where clause and bad blacklist', function (done) {
+          var objects = [{x:1}, {x:2}, {x:3}]; 
+          var permissions = [{ criteria: { where: { x: { '>': 0} }, blacklist: ['x']}}];
+          assert.equal(sails.services.permissionservice.hasPassingCriteria(objects, permissions, {x: 5}), false);
+          done();
+      });
+
+  });
+
+  describe('#hasUnpermittedAttributes', function () {
+    it ('should return true if any of the attributes are in the blacklist', function (done) {
+        var attributes = { ok: 1, fine: 2 };
+        var blacklist = ["ok", "alright", "fine"]
+        assert(sails.services.permissionservice.hasUnpermittedAttributes(attributes, blacklist));
+        done();
+    });
+
+    it ('should return true if any attributes are not permitted', function (done) {
+        var attributes = { ok: 1, fine: 2, whatever: 3 };
+        var blacklist = ["ok", "alright", "fine"]
+        assert(sails.services.permissionservice.hasUnpermittedAttributes(attributes, blacklist));
+        done();
+    }); 
+
+    it ('should return false if none of the keys are in the blacklist', function (done) {
+        var attributes = { ok: 1, fine: 2, whatever: 3 };
+        var blacklist = ["notallowed"]
+        assert.equal(sails.services.permissionservice.hasUnpermittedAttributes(attributes, blacklist), false);
+        done();
+    }); 
+
+    it ('should return false if there are no attributes', function (done) {
+        var attributes = {};
+        var blacklist = ["ok", "alright", "fine"]
+        assert.equal(sails.services.permissionservice.hasUnpermittedAttributes(attributes, blacklist), false);
+        done();
+    }); 
+
+    it ('should return false if blacklist is empty', function (done) {
+        var attributes = { ok: 1, fine: 2, whatever: 3 };
+        var blacklist = []
+        assert.equal(sails.services.permissionservice.hasUnpermittedAttributes(attributes, blacklist), false);
+        done();
+    }); 
+
+  });
+
+  describe ('role and permission helpers', function () {
+    it ('should create a role', function (done) {
+        // make sure there is no existing role with this name
+        Role.find({name: 'fakeRole'})
+        .then(function (role) {
+            assert.equal(role.length, 0);
+            // use the helper to create a new role
+            var newRole = { name: 'fakeRole', permissions: [{model: 'Permission', action: 'delete', relation: 'role', }], users: ['newuser'] };
+            return sails.services.permissionservice.createRole(newRole);
+        })
+        .then(function (result) {
+            // make sure the role exists now that we have created it
+            return Role.findOne({name: 'fakeRole'});
+        })
+        .then(function (role) {
+            assert(role && role.id);
+            done();
+        });
+    });
+
+    it ('should create a permission', function (done) {
+        var permissionModelId;
+        // find any existing permission for this action, and delete it
+        Model.findOne({name: 'Permission'}).then(function (permissionModel) {
+            permissionModelId = permissionModel.id;
+            return Permission.destroy({action: 'create', model: permissionModelId, relation: 'role'});
+        })
+        .then(function (destroyed) {
+            // make sure we actually destroyed it
+            return Permission.find({action: 'create', relation: 'role', model: permissionModelId });
+        })
+        .then(function (permission) {
+            assert.equal(permission.length, 0);
+            // create a new permission
+            var newPermissions = [{role: 'fakeRole', model: 'Permission', action: 'create', relation: 'role', criteria: { where: { x: 1}, blacklist: ['y'] }},
+                {role: 'fakeRole', model: 'Role', action: 'update', relation: 'role', criteria: { where: { x: 1}, blacklist: ['y'] }}];
+            return sails.services.permissionservice.grant(newPermissions);
+        })
+        .then(function (perm) {
+          // verify that it was created
+          return Permission.findOne({action: 'create', relation: 'role', model: permissionModelId})
+        })
+        .then(function (permission) {
+          assert(permission && permission.id);
+          done();
+        });
+    });
+
+    it ('should revoke a permission', function (done) {
+
+        // make sure there is already an existing permission for this case
+        Model.findOne({name: 'Permission'}).then(function (permissionModel) {
+            permissionModelId = permissionModel.id;
+            return Permission.find({action: 'create', relation: 'role', model: permissionModelId });
+        })
+        .then(function (permission) {
+            assert.equal(permission.length, 1);
+            return sails.services.permissionservice.revoke({role: 'fakeRole', model: 'Permission', relation: 'role', action: 'create'});
+        })
+        .then(function () {
+            return Permission.find({action: 'create', relation: 'role', model: permissionModelId });
+        })
+        .then(function (permission) {
+            assert.equal(permission.length, 0);
+            done();
+        });
+    });
+
+  });
   //TODO: add unit tests for #findTargetObjects()
 
   //TODO: add unit tests for #findModelPermissions()

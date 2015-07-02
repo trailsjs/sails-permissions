@@ -23,29 +23,6 @@ module.exports = {
       required: true
     },
 
-    /**
-     * id of particular object/record (of type 'model') that this Permission
-     * applies to.
-     *
-     * TODO dormant. enable in future release
-     */
-    object: {
-      type: 'integer',
-      defaultsTo: -1,
-      index: true
-    },
-
-    /**
-     * attribute of model that this Permission governs.
-     *
-     * TODO dormant. enable in future release
-     */
-    attribute: {
-      type: 'string',
-      defaultsTo: null,
-      index: true
-    },
-
     action: {
       type: 'string',
       index: true,
@@ -90,6 +67,15 @@ module.exports = {
     user: {
       model: 'User'
       // Validate manually
+    },
+
+    /**
+     * A list of criteria.  If any of the criteria match the request, the action is allowed.
+     * If no criteria are specified, it is ignored altogether.
+     */
+    criteria: {
+      collection: 'Criteria',
+      via: 'permission'
     }
   },
 
@@ -97,6 +83,11 @@ module.exports = {
     function validateOwnerCreateTautology (permission, next) {
       if (permission.relation == 'owner' && permission.action == 'create') {
         next(new Error('Creating a Permission with relation=owner and action=create is tautological'));
+      }
+
+      if (permission.action === 'delete' &&
+              _.filter(permission.criteria, function (criteria) { return !_.isEmpty(criteria.blacklist); }).length) {
+        next(new Error('Creating a Permission with an attribute blacklist is not allowed when action=delete'));
       }
 
       if (permission.relation == 'user' && permission.user == "") {

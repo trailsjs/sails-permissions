@@ -4,17 +4,23 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
  * Query the Model that is being acted upon, and set it on the req object.
  */
 module.exports = function ModelPolicy (req, res, next) {
-  //sails.log('ModelPolicy()');
+  var modelCache = sails.hooks['sails-permissions']._modelCache;
   req.options.modelIdentity = actionUtil.parseModel(req).identity;
-  req.options.modelDefinition = sails.models[req.options.modelIdentity];
 
   if (_.isEmpty(req.options.modelIdentity)) {
-    //sails.log('no model identity');
     return next();
   }
 
-  // get the Model from the database which will allow us to relate to Roles
-  // and Permissions
+  req.options.modelDefinition = sails.models[req.options.modelIdentity];
+  req.model = modelCache[req.options.modelIdentity];
+
+  if (_.isObject(req.model) && !_.isEmpty(req.model.id)) {
+    return next();
+  }
+
+  sails.log.warn('Model [', req.options.modelIdentity, '] not found in model cache');
+
+  // if the model is not found in the cache for some reason, get it from the database
   Model.findOne({ identity: req.options.modelIdentity })
     .then(function (model) {
       if (!_.isObject(model)) {
@@ -22,14 +28,6 @@ module.exports = function ModelPolicy (req, res, next) {
       }
 
       req.model = model;
-      if (req.options.modelDefinition.autoCreatedBy) {
-        //req.query.model = model.id;
-        _.isObject(req.body) && (req.body.model = model.id);
-        //sails.log(
-        //'OwnerPolicy hasOwnershipPolicy: false');
-      }
-
-      //sails.log('ModelPolicy req.model', req.model);
       next();
     })
     .catch(next);

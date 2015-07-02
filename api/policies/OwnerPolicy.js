@@ -1,4 +1,6 @@
 /**
+ * TODO - this is setting createdBy, not owner.
+ * The comment below, and the name of this file/function is confusing to me
  * Ensure that the 'owner' property of an Object is set upon creation.
  */
 module.exports = function OwnerPolicy (req, res, next) {
@@ -15,7 +17,7 @@ module.exports = function OwnerPolicy (req, res, next) {
   */
 
   if (req.options.modelDefinition.autoCreatedBy === false) {
-    //sails.log('OwnerPolicy hasOwnershipPolicy: false');
+    // sails.log('OwnerPolicy hasOwnershipPolicy: false');
     return next();
   }
 
