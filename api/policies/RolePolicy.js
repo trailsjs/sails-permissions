@@ -28,7 +28,7 @@ module.exports = function(req, res, next) {
   PermissionService.findTargetObjects(req)
     .then(function (objects) {
       this.objects = objects;
-      return PermissionService.isAllowedToPerformAction(this.objects, req.user, action, ModelService.getTargetModelName(req));
+      return PermissionService.isAllowedToPerformAction(this.objects, req.user, action, ModelService.getTargetModelName(req), req.body);
     })
     .then(function(canPerform) {
       if (PermissionService.hasForeignObjects(objects, req.user) && !canPerform) {

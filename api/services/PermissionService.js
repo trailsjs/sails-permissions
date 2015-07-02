@@ -312,29 +312,31 @@ module.exports = {
     return ok;
   },
 
-  /**
-   * Check if the user (out of role) is granted to perform action on given objects
-   * @param objects
-   * @param user
-   * @param action
-   * @param model
-   * @returns {*}
-   */
-  isAllowedToPerformAction: function (objects, user, action, model) {
+    /**
+     * Check if the user (out of role) is granted to perform action on given objects
+     * @param objects
+     * @param user
+     * @param action
+     * @param model
+     * @param body
+     * @returns {*}
+     */
+  isAllowedToPerformAction: function (objects, user, action, model, body) {
     if (!_.isArray(objects)) {
-      return PermissionService.isAllowedToPerformSingle(user.id, action, model)(objects);
+      return PermissionService.isAllowedToPerformSingle(user.id, action, model, body)(objects);
     }
-    return new Promise.map(objects, PermissionService.isAllowedToPerformSingle(user.id, action, model));
+    return new Promise.map(objects, PermissionService.isAllowedToPerformSingle(user.id, action, model, body));
   },
 
-  /**
-   * Resolve if the user have the permission to perform this action
-   * @param user
-   * @param action
-   * @param model
-   * @returns {Function}
-   */
-  isAllowedToPerformSingle: function (user, action, model) {
+    /**
+     * Resolve if the user have the permission to perform this action
+     * @param user
+     * @param action
+     * @param model
+     * @param body
+     * @returns {Function}
+     */
+  isAllowedToPerformSingle: function (user, action, model, body) {
     return function (obj) {
       return new Promise(function (resolve, reject) {
         Model.findOne({
@@ -342,13 +344,12 @@ module.exports = {
         }).then(function (model) {
           return Permission.find({
             model: model.id,
-            object: obj.id,
             action: action,
             relation: 'user',
             user: user
-          });
+          }).populate('criteria');
         }).then(function (permission) {
-          if (permission.length > 0) {
+          if (permission.length > 0 && PermissionService.hasPassingCriteria(obj, permission, body)) {
             resolve(true);
           } else {
             resolve(false);

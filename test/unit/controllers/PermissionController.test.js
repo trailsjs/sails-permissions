@@ -30,7 +30,11 @@ describe('PermissionController', function () {
           .set('Authorization', adminAuth.Authorization)
           .send({
             model: 2,
-            object: 1,
+            criteria: {
+              where: {
+                id: 1
+              }
+            },
             action: "delete",
             relation: "user",
             user: 2
