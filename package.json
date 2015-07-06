@@ -39,7 +39,6 @@
     "mocha": "^1.21.4",
     "request": "^2.53.0",
     "sails": ">0.10.0",
-    "sails-auth": "*",
     "sails-disk": "^0.10.7",
     "sails-docgen": "^0.10.4",
     "supertest": "^0.15.0"
@@ -49,7 +48,8 @@
     "fnv-plus": "^1.2.10",
     "pluralize": "^1.0.1",
     "sails-generate-entities": "latest",
-    "waterline-criteria": "^0.11.1"
+    "waterline-criteria": "^0.11.1",
+    "sails-auth": "^1.2.6"
   },
   "peerDependencies": {
     "lodash": ">2.4.0"
