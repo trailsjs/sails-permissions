@@ -9,6 +9,10 @@ _.merge(exports, {
       collection: 'Role',
       via: 'users',
       dominant: true
+    },
+    permissions: {
+      collection: "Permission",
+      via: "user"
     }
   },
 
