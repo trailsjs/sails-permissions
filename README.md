@@ -66,6 +66,11 @@ $ sails generate permissions-api
 ## License
 MIT
 
+## Maintained By
+[<img src='http://i.imgur.com/zM0ynQk.jpg' height='36px'>](http://balderdash.co)
+
+<img src='http://i.imgur.com/NsAdNdJ.png'>
+
 [sails-logo]: http://cdn.tjw.io/images/sails-logo.png
 [sails-url]: https://sailsjs.org
 [npm-image]: https://img.shields.io/npm/v/sails-permissions.svg?style=flat-square
