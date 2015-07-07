@@ -48,6 +48,7 @@
     "fnv-plus": "^1.2.10",
     "lodash": "^3.10.0",
     "pluralize": "^1.0.1",
+    "sails-auth": "^1.2.6",
     "sails-generate-entities": "latest",
     "waterline-criteria": "^0.11.1",
     "sails-auth": "^1.2.6"
