@@ -82,7 +82,7 @@ describe('User Controller', function() {
             email: 'newuser@example.com',
             password: 'user1234'
           })
-          .expect(500)
+          .expect(400)
           .end(function(err) {
             done(err);
           });

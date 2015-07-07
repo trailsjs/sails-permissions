@@ -82,9 +82,6 @@ function initializeFixtures (sails) {
     .then(function (admin) {
       return require('../../config/fixtures/permission').create(this.roles, this.models, admin);
     })
-    .then(function (permissions) {
-      return null;
-    })
     .catch(function (error) {
       sails.log.error(error);
     });
