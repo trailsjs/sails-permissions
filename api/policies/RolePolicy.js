@@ -26,8 +26,12 @@ module.exports = function(req, res, next) {
 
   // Make sure you have owner permissions for all models if you are mutating an existing object
   PermissionService.findTargetObjects(req)
-    .then(function(objects) {
-      if (PermissionService.hasForeignObjects(objects, req.user)) {
+    .then(function (objects) {
+      this.objects = objects;
+      return PermissionService.isAllowedToPerformAction(this.objects, req.user, action, ModelService.getTargetModelName(req), req.body);
+    })
+    .then(function(canPerform) {
+      if (PermissionService.hasForeignObjects(objects, req.user) && !canPerform) {
         return res.badRequest({
           error: 'Cannot perform action [' + action + '] on foreign object'
         });

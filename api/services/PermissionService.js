@@ -72,7 +72,10 @@ module.exports = {
         return Permission.find({
           model: options.model.id,
           action: action,
-          role: _.pluck(user.roles, 'id')
+          or: [
+            {user: user.id},
+            {role: _.pluck(user.roles, 'id')}
+          ]
         }).populate('criteria');
       });
   },
@@ -241,12 +244,12 @@ module.exports = {
   /**
    * add one or more users to a particular role
    * TODO should this work with multiple roles?
-   * @param usernames {string or string array} - list of names of users 
+   * @param usernames {string or string array} - list of names of users
    * @param rolename {string} - the name of the role that the users should be added to
    */
   addUsersToRole: function (usernames, rolename) {
     if (_.isEmpty(usernames)) {
-       return Promise.reject(new Error('One or more usernames must be provided')); 
+       return Promise.reject(new Error('One or more usernames must be provided'));
     }
 
     if (!_.isArray(usernames)) {
@@ -269,7 +272,7 @@ module.exports = {
    */
   removeUsersFromRole: function (usernames, rolename) {
     if (_.isEmpty(usernames)) {
-       return Promise.reject(new Error('One or more usernames must be provided')); 
+       return Promise.reject(new Error('One or more usernames must be provided'));
     }
 
     if (!_.isArray(usernames)) {
@@ -307,5 +310,52 @@ module.exports = {
     });
 
     return ok;
+  },
+
+    /**
+     * Check if the user (out of role) is granted to perform action on given objects
+     * @param objects
+     * @param user
+     * @param action
+     * @param model
+     * @param body
+     * @returns {*}
+     */
+  isAllowedToPerformAction: function (objects, user, action, model, body) {
+    if (!_.isArray(objects)) {
+      return PermissionService.isAllowedToPerformSingle(user.id, action, model, body)(objects);
+    }
+    return new Promise.map(objects, PermissionService.isAllowedToPerformSingle(user.id, action, model, body));
+  },
+
+    /**
+     * Resolve if the user have the permission to perform this action
+     * @param user
+     * @param action
+     * @param model
+     * @param body
+     * @returns {Function}
+     */
+  isAllowedToPerformSingle: function (user, action, model, body) {
+    return function (obj) {
+      return new Promise(function (resolve, reject) {
+        Model.findOne({
+          identity: model
+        }).then(function (model) {
+          return Permission.find({
+            model: model.id,
+            action: action,
+            relation: 'user',
+            user: user
+          }).populate('criteria');
+        }).then(function (permission) {
+          if (permission.length > 0 && PermissionService.hasPassingCriteria(obj, permission, body)) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }).catch(reject);
+      });
+    }
   }
 };
