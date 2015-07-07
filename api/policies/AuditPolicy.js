@@ -13,7 +13,7 @@ module.exports = function (req, res, next) {
     method: req.method,
     body: _.omit(req.body, 'password'),
     model: req.options.modelIdentity,
-    user: req.user.id
+    user: (req.user || {}).id
   }).exec(_.identity);
 
   // persist RequestLog entry in the background; continue immediately
