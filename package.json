@@ -47,12 +47,10 @@
   "dependencies": {
     "bluebird": "^2.3.6",
     "fnv-plus": "^1.2.10",
+    "lodash": "^3.10.0",
     "pluralize": "^1.0.1",
     "sails-generate-entities": "latest",
     "waterline-criteria": "^0.11.1"
-  },
-  "peerDependencies": {
-    "lodash": ">2.4.0"
   },
   "engines": {
     "node": ">= 0.10",
