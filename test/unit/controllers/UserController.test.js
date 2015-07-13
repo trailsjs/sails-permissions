@@ -105,7 +105,7 @@ describe('User Controller', function() {
           });
       });
 
-      it('should be able to create a new permission', function(done) {
+      it('should be able to create a new permission for updating active roles', function(done) {
         request(sails.hooks.http.app)
           .get('/model?name=role')
           .set('Authorization', adminAuth.Authorization)
@@ -129,6 +129,37 @@ describe('User Controller', function() {
                     active: true
                   }
                 }
+              })
+              .expect(201)
+              .end(function(err, res) {
+                done(err);
+              });
+
+          });
+      });
+
+      it('should be able to create a new permission for updating owned roles', function(done) {
+        request(sails.hooks.http.app)
+          .get('/model?name=role')
+          .set('Authorization', adminAuth.Authorization)
+          .expect(200)
+          .end(function(err, res) {
+
+            // haha roleModel
+            var roleModel = res.body[0];
+
+            request(sails.hooks.http.app)
+              .post('/permission')
+              .set('Authorization', adminAuth.Authorization)
+              .send({
+                model: roleModel.id,
+                action: 'update',
+                role: roleId,
+                createdBy: adminUserId,
+                criteria: {
+                    blacklist: ['id']
+                },
+                relation: 'owner'
               })
               .expect(201)
               .end(function(err, res) {

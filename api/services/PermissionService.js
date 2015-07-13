@@ -93,7 +93,7 @@ module.exports = {
    * @returns boolean - True if there is at least one granted permission that allows the requested action,
    * otherwise false
    */
-  hasPassingCriteria: function (objects, permissions, attributes) {
+  hasPassingCriteria: function (objects, permissions, attributes, user) {
     // return success if there are no permissions or objects
     if (_.isEmpty(permissions) || _.isEmpty(objects)) return true;
 
@@ -104,6 +104,11 @@ module.exports = {
     var criteria = permissions.reduce(function (memo, perm) {
         if (perm && perm.criteria) {
             memo = memo.concat(perm.criteria);
+        }
+        if (perm.relation === 'owner') {
+            perm.criteria.forEach(function (criteria) {
+                criteria.owner = true;
+            });
         }
         return memo;
     }, []);
@@ -121,7 +126,11 @@ module.exports = {
         return criteria.some(function (criteria) {
             var match = wlFilter([obj], { where: criteria.where }).results;
             var hasUnpermittedAttributes = PermissionService.hasUnpermittedAttributes(attributes, criteria.blacklist);
-            return match.length === 1 && !hasUnpermittedAttributes;
+            var hasOwnership = true; // edge case for scenario where a user has some permissions that are owner based and some that are role based
+            if (criteria.owner) {
+              hasOwnership = !PermissionService.isForeignObject(user)(obj);
+            }
+            return match.length === 1 && !hasUnpermittedAttributes && hasOwnership;
         });
     });
 

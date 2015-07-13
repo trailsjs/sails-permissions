@@ -35,9 +35,8 @@
   "homepage": "https://github.com/tjwebb/sails-permissions",
   "devDependencies": {
     "jshint": "^2.8.0",
-    "lodash": ">2.4.0",
-    "mocha": "^1.21.4",
-    "request": "^2.53.0",
+    "mocha": "^2.x.x",
+    "request": "^2.58.0",
     "sails": ">0.10.0",
     "sails-disk": "^0.10.7",
     "supertest": "^0.15.0"
