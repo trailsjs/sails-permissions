@@ -15,10 +15,13 @@ module.exports = function(req, res, next) {
   if (!_.isEmpty(relations.role)) {
     return next();
   }
+  if (req.options.unknownModel) {
+    return next();
+  }
 
   // inject 'owner' as a query criterion and continue if we are not mutating
   // an existing object
-  if (!_.contains(['update', 'delete'], action)) {
+  if (!_.contains(['update', 'delete'], action) && req.options.modelDefinition.attributes.owner) {
     req.query.owner = req.user.id;
     _.isObject(req.body) && (req.body.owner = req.user.id);
     return next();

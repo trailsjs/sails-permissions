@@ -5,5 +5,7 @@ module.exports.permissions = {
   adminUsername: process.env.ADMIN_USERNAME || 'admin',
   adminPassword: process.env.ADMIN_PASSWORD || 'admin1234',
 
-  afterEvent: 'hook:orm:loaded'
+  afterEvent: 'hook:orm:loaded',
+
+  allowUnknownModelDefinitions: false
 };

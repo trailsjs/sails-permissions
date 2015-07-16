@@ -26,6 +26,10 @@ module.exports = function (req, res, next) {
     user: req.user
   };
 
+  if (req.options.unknownModel) {
+    return next();
+  }
+
   PermissionService
     .findModelPermissions(options)
     .then(function (permissions) {
