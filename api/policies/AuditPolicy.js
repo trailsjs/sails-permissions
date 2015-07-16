@@ -23,7 +23,7 @@ module.exports = function (req, res, next) {
 function sanitizeRequestUrl (req) {
   var requestUrl = url.format({
     protocol: req.protocol,
-    host: sails.getHost(),
+    host: req.host || sails.getHost(),
     pathname: req.originalUrl || req.url,
     query: req.query
   });
