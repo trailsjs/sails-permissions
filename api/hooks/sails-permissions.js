@@ -29,9 +29,13 @@ module.exports = function (sails) {
         return next(new Error('sails-permissions policies not correctly installed in sails.config.policies.'));
       }
 
-      installModelOwnership(sails);
 
       sails.after(sails.config.permissions.afterEvent, function () {
+          installModelOwnership(sails);
+      });
+
+      sails.after('hook:orm:loaded', function () {
+        installModelOwnership(sails);
         Model.count()
           .then(function (count) {
             if (count == sails.models.length) return next();
