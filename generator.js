@@ -43,12 +43,6 @@ module.exports = require('sails-generate-entities')({
     'api/policies/AuditPolicy.js',
     'api/policies/CriteriaPolicy.js',
 
-
-    'api/hooks/sails-permissions.js',
-
-    // sails-auth hook
-    'api/hooks/sails-auth.js',
-
     // sails-auth policies
     'api/policies/basicAuth.js',
     'api/policies/passport.js'

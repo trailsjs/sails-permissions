@@ -24,7 +24,14 @@ module.exports = function ModelPolicy (req, res, next) {
   Model.findOne({ identity: req.options.modelIdentity })
     .then(function (model) {
       if (!_.isObject(model)) {
-        return next(new Error('Model definition not found: '+ req.options.modelIdentity));
+        req.options.unknownModel = true;
+
+        if (!sails.config.permissions.allowUnknownModelDefinition) {
+          return next(new Error('Model definition not found: '+ req.options.modelIdentity));
+        }
+        else {
+          model = sails.models[req.options.modelIdentity];
+        }
       }
 
       req.model = model;
