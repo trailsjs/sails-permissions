@@ -48,7 +48,7 @@ module.exports = function(req, res, next) {
         body = undefined;
       }
 
-      if (!PermissionService.hasPassingCriteria(objects, permissions, body)) {
+      if (!PermissionService.hasPassingCriteria(objects, permissions, body, req.user.id)) {
         return res.badRequest({
           error: 'Can\'t ' + action + ', because of failing where clause or attribute permissions'
         });
@@ -93,7 +93,9 @@ function responsePolicy(criteria, _data, options) {
       if (filtered.length) {
 
         if (crit.blacklist && crit.blacklist.length) {
-          item = _.omit(item, crit.blacklist);
+          crit.blacklist.forEach(function (term) {
+            delete item[term];
+          });
         }
         memo.push(item);
         return true;
