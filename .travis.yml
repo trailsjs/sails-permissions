@@ -1,25 +1,20 @@
 language: node_js
 node_js:
-  - '0.12'
-
+- '0.12'
 sudo: false
-
 env:
   global:
-    - REDIS_URL=redis://:@localhost:6379
-
+  - REDIS_URL=redis://:@localhost:6379
 services:
-  - redis-server
-
+- redis-server
 notifications:
   email: false
-
 deploy:
   provider: npm
   email: me@traviswebb.com
   api_key:
-    secure: XkUxb/VgRRKBhbu/gl1piyKPK0O4v1f8+dN173FzWmP9zTmtWYywsJDmoFSuUOjZURsmuwNrDWLVR7SKRa/q5VfBZ0pO2roasgMqlufMaKqMESxTy8BaVE71UlUNhmuCUNIqBKP5yqVmOVb1QdhKLY478FK7OlUepEIhmDm9uXg=
+    secure: AitUbALDH1eqxEuTIUMynFcaumHP2jFVZyCqUOqVmoNmHo6T5l+S6fwE1AlnPaeEic8q0gosDnMYG6W3GhQuXd0UkfAB7Gz72SHfNvNe29/svNN5exP7c/PWZZSqBxarnYM6NU7rkqdP11sF+UO6oqzd0QguT7VJPylg5EXg5I8=
   on:
     tags: true
-    repo: tjwebb/sails-permissions
     all_branches: true
+    repo: tjwebb/sails-permissions
