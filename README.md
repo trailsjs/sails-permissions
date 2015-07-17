@@ -44,7 +44,7 @@ $ sails generate permissions-api
 
 #### 4. update configs
 
-#### config/policies.js
+#### `config/policies.js`
 ```js
   '*': [
     'basicAuth',
@@ -62,6 +62,40 @@ $ sails generate permissions-api
     '*': [ 'passport' ]
   }
 ```
+
+#### `config/permissions.js`
+```js
+module.exports.permissions = {
+  /**
+   * If you'd like to wait for any additional hooks to load before intializing
+   * the permissions hook, add the events to wait for in this list.
+   */
+  afterEvent: [ 'hook:orm:loaded' ],
+
+  /**
+   * Any Controllers that are not eponymous of the Models they operate on can
+   * be mapped here.
+   */ 
+  controllerMapping: {
+
+   /**
+    * e.g. if you want your FileController to operate under the
+    * jurisdiction of the FileDescriptor model rather than the File model
+    */
+    FileController: 'FileDescriptor'
+  },
+
+  /**
+   * Set to true to ignore unknown models, that is, custom controllers that do
+   * not map to any known model, or via controllerMapping. This is not
+   * recommended because it creates a security hole if these additional
+   * endpoints are not secured manually by policies.
+   */
+  allowUnknownModelDefinitions: false
+};
+```
+
+## [Complete Documentation](https://github.com/tjwebb/sails-permissions/wiki)
 
 ## License
 MIT

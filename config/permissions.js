@@ -5,7 +5,12 @@ module.exports.permissions = {
   adminUsername: process.env.ADMIN_USERNAME || 'admin',
   adminPassword: process.env.ADMIN_PASSWORD || 'admin1234',
 
-  afterEvent: 'hook:orm:loaded',
+  // TODO rename to afterEvents in 2.0
+  afterEvent: [ 'hook:orm:loaded' ],
 
-  allowUnknownModelDefinitions: false
+  allowUnknownModelDefinitions: false,
+
+  controllerMapping: {
+    FileController: 'FileDescriptor'
+  }
 };
