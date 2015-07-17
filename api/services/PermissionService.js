@@ -5,6 +5,16 @@ var methodMap = {
   PUT: 'update',
   DELETE: 'delete'
 };
+var actionMap = {
+  create: 'create',
+  find: 'read',
+  findone: 'read',
+  update: 'update',
+  destroy: 'delete',
+  populate: 'read',
+  add: 'update',
+  remove: 'update'
+};
 
 var findRecords = require('sails/lib/hooks/blueprints/actions/find');
 var wlFilter = require('waterline-criteria');
@@ -27,8 +37,6 @@ module.exports = {
    */
   isForeignObject: function (owner) {
     return function (object) {
-      //sails.log('object', object);
-      //sails.log('object.owner: ', object.owner, ', owner:', owner);
       return object.owner !== owner;
     };
   },
@@ -55,12 +63,12 @@ module.exports = {
    * Query Permissions that grant privileges to a role/user on an action for a
    * model.
    *
-   * @param options.method
+   * @param options.action
    * @param options.model
    * @param options.user
    */
   findModelPermissions: function (options) {
-    var action = PermissionService.getMethod(options.method);
+    var action = PermissionService.getAction(options);
     var permissionCriteria = {
       model: options.model.id,
       action: action
@@ -156,15 +164,23 @@ module.exports = {
    */
   getErrorMessage: function (options) {
     return [
-      'User', options.user.email, 'is not permitted to', options.method, options.model.globalId
+      'User', options.user.email, 'is not permitted to', options.action, options.model.identity
     ].join(' ');
   },
 
   /**
-   * Given an action, return the CRUD method it maps to.
+   * Given a request, return the CRUD action or controller action it maps
+   * to.
+   *
+   * @param req.options
+   *
+   * If a standard blueprint action, then translate that blueprint action into a
+   * CRUD action. If a custom controller action, then return the name of that action as-is.
    */
-  getMethod: function (method) {
-    return methodMap[method];
+  getAction: function (options) {
+    var action = actionMap[options.action] || options.action;
+
+    return action;
   },
 
   /**

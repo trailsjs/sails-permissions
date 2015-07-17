@@ -77,38 +77,6 @@ describe('Permission Service', function () {
 
   });
 
-  describe('#getMethod()', function () {
-
-    it ('should return \'create\' if POST request', function(done) {
-
-      assert.equal(sails.services.permissionservice.getMethod('POST'), 'create');
-      done();
-
-    });
-
-    it ('should return \'update\' if PUT request', function(done) {
-
-      assert.equal(sails.services.permissionservice.getMethod('PUT'), 'update');
-      done();
-
-    });
-
-    it ('should return \'read\' if GET request', function(done) {
-
-      assert.equal(sails.services.permissionservice.getMethod('GET'), 'read');
-      done();
-
-    });
-
-    it ('should return \'delete\' if DELETE request', function(done) {
-
-      assert.equal(sails.services.permissionservice.getMethod('DELETE'), 'delete');
-      done();
-
-    });
-
-  });
-
   describe('#hasPassingCriteria()', function () {
 
       it ('should return an array of items that don\'t match the given criteria', function (done) {
