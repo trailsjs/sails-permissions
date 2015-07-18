@@ -4,8 +4,12 @@
 module.exports = function ModelPolicy (req, res, next) {
   var modelCache = sails.hooks['sails-permissions']._modelCache;
 
-
   req.options.modelDefinition = sails.models[req.options.model];
+
+  if (_.isUndefined(req.options.model)) {
+    req.options.model = sails.config.permissions.controllerMapping[req.options.controller];
+  }
+
   req.model = modelCache[req.options.model];
 
   if (_.isObject(req.model) && !_.isUndefined(req.model.id)) {
@@ -21,7 +25,7 @@ module.exports = function ModelPolicy (req, res, next) {
         req.options.unknownModel = true;
 
         if (!sails.config.permissions.allowUnknownModelDefinition) {
-          return next(new Error('Model definition not found: '+ req.options.model));
+          return res.negotiate({ error: 'Model definition not found: '+ req.options.model });
         }
         else {
           model = sails.models[req.options.model];

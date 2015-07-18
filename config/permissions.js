@@ -11,6 +11,5 @@ module.exports.permissions = {
   allowUnknownModelDefinitions: false,
 
   controllerMapping: {
-    FileController: 'FileDescriptor'
   }
 };
