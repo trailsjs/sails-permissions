@@ -4,8 +4,6 @@
 module.exports = function ModelPolicy (req, res, next) {
   var modelCache = sails.hooks['sails-permissions']._modelCache;
 
-  req.options.modelDefinition = sails.models[req.options.model];
-
   if (_.isUndefined(req.options.model)) {
     req.options.model = sails.config.permissions.controllerMapping[req.options.controller];
   }
