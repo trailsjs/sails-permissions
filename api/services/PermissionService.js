@@ -8,7 +8,7 @@ var methodMap = {
 var actionMap = {
   create: 'create',
   find: 'read',
-  findone: 'read',
+  findOne: 'read',
   update: 'update',
   destroy: 'delete',
   populate: 'read',

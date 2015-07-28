@@ -247,7 +247,7 @@ describe('Permission Service', function () {
   describe('#getAction', function () {
     describe('CRUD actions', function () {
       it('@findone: should return the "read" action', function () {
-        assert.equal(PermissionService.getAction({ action: 'findone' }), 'read');
+        assert.equal(PermissionService.getAction({ action: 'findOne' }), 'read');
       });
       it('@find: should return the "read" action', function () {
         assert.equal(PermissionService.getAction({ action: 'find' }), 'read');
