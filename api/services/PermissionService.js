@@ -17,6 +17,7 @@ var actionMap = {
 };
 
 var findRecords = require('sails/lib/hooks/blueprints/actions/find');
+var populateRecords = require('sails/lib/hooks/blueprints/actions/populate');
 var wlFilter = require('waterline-criteria');
 
 module.exports = {
@@ -51,12 +52,22 @@ module.exports = {
    * TODO this will be less expensive when waterline supports a caching layer
    */
   findTargetObjects: function (req) {
-    return new Promise(function (resolve, reject) {
-      findRecords(req, {
-        ok: resolve,
-        serverError: reject
+    if (req.options.action === 'add' || req.options.action === 'remove') {
+      return new Promise(function (resolve, reject) {
+        populateRecords(req, {
+          ok: resolve,
+          serverError: reject
+        });
       });
-    });
+    }
+    else {
+      return new Promise(function (resolve, reject) {
+        findRecords(req, {
+          ok: resolve,
+          serverError: reject
+        });
+      });
+    }
   },
 
   /**
