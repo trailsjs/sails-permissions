@@ -7,7 +7,9 @@ module.exports = {
   getTargetModelName: function (req) {
     // TODO there has to be a more sails-y way to do this without including
     // external modules
-    if (_.isString(req.options.alias)) {
+    //
+    // TODO if action is 'add' or 'remove' check to see if the user has read access on the relation
+    if (_.isString(req.options.alias) && !_.contains(['add','remove'],req.options.action) ) {
       sails.log.silly('singularizing', req.options.alias, 'to use as target model');
       return pluralize.singular(req.options.alias);
     }

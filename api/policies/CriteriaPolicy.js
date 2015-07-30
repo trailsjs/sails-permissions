@@ -34,7 +34,8 @@ module.exports = function(req, res, next) {
     // get all of the where clauses and blacklists into one flat array
     var criteria = _.compact(_.flatten(_.pluck(permissions, 'criteria')));
 
-    if (criteria.length) {
+    // TODO if populate, make sure permissions are run on the result set
+    if (criteria.length && req.options.action != 'populate')) {
       bindResponsePolicy(req, res, criteria);
     }
     return next();
