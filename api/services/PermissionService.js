@@ -52,7 +52,7 @@ module.exports = {
    * TODO this will be less expensive when waterline supports a caching layer
    */
   findTargetObjects: function (req) {
-    if (req.options.action === 'add' || req.options.action === 'remove') {
+    if (_.contains(['add','remove','populate'],req.options.action)) {
       return new Promise(function (resolve, reject) {
         populateRecords(req, {
           ok: resolve,
