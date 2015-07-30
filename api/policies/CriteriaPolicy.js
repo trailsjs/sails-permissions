@@ -45,7 +45,8 @@ module.exports = function(req, res, next) {
       )
     ));
 
-    if (criteria.length) {
+    // TODO if populate, make sure permissions are run on the result set
+    if (criteria.length && req.options.action != 'populate') {
       bindResponsePolicy(req, res, criteria);
     }
     return next();
