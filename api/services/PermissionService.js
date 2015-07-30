@@ -9,6 +9,7 @@ var actionMap = {
   create: 'create',
   find: 'read',
   findone: 'read',
+  findOne: 'read',
   update: 'update',
   destroy: 'delete',
   populate: 'read',
@@ -55,7 +56,9 @@ module.exports = {
     if (_.contains(['add','remove','populate'],req.options.action)) {
       return new Promise(function (resolve, reject) {
         populateRecords(req, {
-          ok: resolve,
+          ok: function() {
+            return sails.models[req.model.identity].findOne(req.params.parentid).then(resolve);
+          },
           serverError: reject
         });
       });
