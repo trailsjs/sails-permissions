@@ -81,6 +81,10 @@ function responsePolicy(criteria, _data, options) {
   sails.log.silly('options', options);
   sails.log.silly('criteria!', criteria);
 
+  if (data.length === 0) {
+    return res._ok([], options);
+  }
+
   var permitted = data.reduce(function(memo, item) {
     criteria.some(function(crit) {
       var filtered = wlFilter([item], {
