@@ -9,7 +9,7 @@ module.exports = {
     // external modules
     //
     // TODO if action is 'add' or 'remove' check to see if the user has read access on the relation
-    if (_.isString(req.options.alias) && !_.contains(['add','remove'],req.options.action) ) {
+    if (_.isString(req.options.alias) && !_.contains(['add','remove','populate'],req.options.action) ) {
       sails.log.silly('singularizing', req.options.alias, 'to use as target model');
       return pluralize.singular(req.options.alias);
     }
