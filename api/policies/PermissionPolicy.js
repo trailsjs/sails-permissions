@@ -76,6 +76,6 @@ module.exports = function (req, res, next) {
     next();
   })
   .catch(function(e) {
-    return res.badRequest({ error: e});
+    return res.badRequest({error: e.message});
   });
 };
