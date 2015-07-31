@@ -111,13 +111,13 @@ module.exports = {
 
     var criteria = permissions.reduce(function (memo, perm) {
       if (perm) {
-        if (perm.criteria && perm.criteria.where) {
-            memo = memo.concat(perm.criteria);
-        }
-        else {
+        if (!perm.criteria) {
           // If a permission has no criteria then it passes for all cases
           // (like the admin role)
           memo.concat([{where:{}}]);
+        }
+        else {
+            memo = memo.concat(perm.criteria);
         }
         if (perm.relation === 'owner') {
             perm.criteria.forEach(function (criteria) {
