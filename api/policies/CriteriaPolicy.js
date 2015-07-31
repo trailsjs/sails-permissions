@@ -31,11 +31,12 @@ module.exports = function(req, res, next) {
   // set up response filters if we are not mutating an existing object
   if (!_.contains(['update', 'delete'], action)) {
 
-    // get all of the where clauses and blacklists into one flat array
-    var criteria = _.compact(_.flatten(_.pluck(permissions, 'criteria')));
+    var checkPermissions = req.options.action === 'populate' ? req.populatePermissions : req.permissions;
 
-    // TODO if populate, make sure permissions are run on the result set
-    if (criteria.length && req.options.action != 'populate') {
+    // get all of the where clauses and blacklists into one flat array
+    var criteria = _.compact(_.flatten(_.pluck(checkPermissions, 'criteria')));
+
+    if (criteria.length) {
       bindResponsePolicy(req, res, criteria);
     }
     return next();
