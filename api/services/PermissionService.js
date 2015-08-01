@@ -111,7 +111,7 @@ module.exports = {
 
     var criteria = permissions.reduce(function (memo, perm) {
       if (perm) {
-        if (!perm.criteria) {
+        if (!perm.criteria || perm.criteria.length==0) {
           // If a permission has no criteria then it passes for all cases
           // (like the admin role)
           memo = memo.concat([{where:{}}]);
