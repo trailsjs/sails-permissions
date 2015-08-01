@@ -114,7 +114,7 @@ module.exports = {
         if (!perm.criteria) {
           // If a permission has no criteria then it passes for all cases
           // (like the admin role)
-          memo.concat([{where:{}}]);
+          memo = memo.concat([{where:{}}]);
         }
         else {
             memo = memo.concat(perm.criteria);
