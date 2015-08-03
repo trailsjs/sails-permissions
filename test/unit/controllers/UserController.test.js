@@ -385,7 +385,7 @@ describe('User Controller', function() {
           });
       });
 
-      it('should have filtered out all of the permissions results', function(done) {
+      it.skip('should have filtered out all of the permissions results', function(done) {
 
         request(sails.hooks.http.app)
           .get('/permission')
