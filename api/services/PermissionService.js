@@ -54,7 +54,10 @@ module.exports = {
     return new Promise(function (resolve, reject) {
       findRecords(req, {
         ok: resolve,
-        serverError: reject
+        serverError: reject,
+        // this isn't perfect, since it returns a 500 error instead of a 404 error
+        // but it is better than crashing the app when a record doesn't exist
+        notFound: reject
       });
     });
   },
