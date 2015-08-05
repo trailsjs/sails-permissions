@@ -21,7 +21,7 @@ module.exports = function(req, res, next) {
 
   // inject 'owner' as a query criterion and continue if we are not mutating
   // an existing object
-  if (!_.contains(['update', 'delete'], action) && req.options.modelDefinition.attributes.owner) {
+  if (!_.contains(['update', 'delete'], action) && req.model.attributes.owner) {
     req.query.owner = req.user.id;
     _.isObject(req.body) && (req.body.owner = req.user.id);
     return next();
