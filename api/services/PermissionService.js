@@ -8,7 +8,6 @@ var methodMap = {
 var actionMap = {
   create: 'create',
   find: 'read',
-  findone: 'read',
   findOne: 'read',
   update: 'update',
   destroy: 'delete',
@@ -53,6 +52,7 @@ module.exports = {
    * TODO this will be less expensive when waterline supports a caching layer
    */
   findTargetObjects: function (req) {
+<<<<<<< HEAD
     if (_.contains(['add','remove','populate'],req.options.action)) {
       return new Promise(function (resolve, reject) {
         populateRecords(req, {
@@ -61,6 +61,15 @@ module.exports = {
           },
           serverError: reject
         });
+=======
+    return new Promise(function (resolve, reject) {
+      findRecords(req, {
+        ok: resolve,
+        serverError: reject,
+        // this isn't perfect, since it returns a 500 error instead of a 404 error
+        // but it is better than crashing the app when a record doesn't exist
+        notFound: reject
+>>>>>>> 8bf47918481af7b4f86303291f212c652d2a522c
       });
     }
     else {
@@ -249,7 +258,10 @@ module.exports = {
   /**
    *
    * @param options {permission object, or array of permissions objects}
-   * @param options.role {string} - the role name that the permission is associated with
+   * @param options.role {string} - the role name that the permission is associated with,
+   *                                either this or user should be supplied, but not both
+   * @param options.user {string} - the user than that the permission is associated with,
+   *                                either this or role should be supplied, but not both
    * @param options.model {string} - the model name that the permission is associated with
    * @param options.action {string} - the http action that the permission allows
    * @param options.criteria - optional criteria object
@@ -263,13 +275,18 @@ module.exports = {
 
      // look up the models based on name, and replace them with ids
      var ok = Promise.map(permissions, function (permission) {
-         return Model.findOne({name: permission.model})
-             .then(function (model) {
+        var findRole = permission.role ? Role.findOne({name: permission.role}) : null;
+        var findUser = permission.user ? User.findOne({username: permission.user}) : null;
+        return Promise.all([findRole, findUser, Model.findOne({name: permission.model})])
+             .spread(function (role, user, model) {
                   permission.model = model.id;
-                  return Role.findOne({name: permission.role})
-                    .then(function (role) {
+                  if (role && role.id) {
                         permission.role = role.id;
-                    });
+                  } else if (user && user.id) {
+                        permission.user = user.id;
+                  } else {
+                    return Promise.reject(new Error('no role or user specified'));
+                  }
               });
      });
 
@@ -331,21 +348,34 @@ module.exports = {
   /**
    * revoke permission from role
    * @param options
-   * @param options.role {string} - the name of the role related to the permission
+   * @param options.role {string} - the name of the role related to the permission.  This, or options.user should be set, but not both.
+   * @param options.user {string} - the name of the user related to the permission.  This, or options.role should be set, but not both.
    * @param options.model {string} - the name of the model for the permission
    * @param options.action {string} - the name of the action for the permission
    * @param options.relation {string} - the type of the relation (owner or role)
    */
   revoke: function (options) {
-    var ok = Promise.all([Role.findOne({name: options.role}), Model.findOne({name: options.model})]);
-    ok = ok.then(function (result) {
-        var role = result[0];
-        var model = result[1];
-        return Permission.destroy({role: role.id,
+    var findRole = options.role ? Role.findOne({name: options.role}) : null;
+    var findUser = options.user ? User.findOne({username: options.user}) : null;
+    var ok = Promise.all([findRole, findUser, Model.findOne({name: options.model})]);
+
+    ok = ok.spread(function (role, user, model) {
+
+        var query = {
             model: model.id,
             action: options.action,
             relation: options.relation
-        });
+        };
+
+        if (role && role.id) {
+            query.role = role.id;
+        } else if (user && user.id) {
+            query.user = user.id;
+        } else {
+            return Promise.reject(new Error('You must provide either a user or role to revoke the permission from'));
+        }
+
+        return Permission.destroy(query);
     });
 
     return ok;
