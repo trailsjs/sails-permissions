@@ -52,24 +52,17 @@ module.exports = {
    * TODO this will be less expensive when waterline supports a caching layer
    */
   findTargetObjects: function (req) {
-<<<<<<< HEAD
     if (_.contains(['add','remove','populate'],req.options.action)) {
       return new Promise(function (resolve, reject) {
         populateRecords(req, {
           ok: function() {
             return sails.models[req.model.identity].findOne(req.params.parentid).then(resolve);
           },
-          serverError: reject
+          serverError: reject,
+          // this isn't perfect, since it returns a 500 error instead of a 404 error
+          // but it is better than crashing the app when a record doesn't exist
+          notFound: reject
         });
-=======
-    return new Promise(function (resolve, reject) {
-      findRecords(req, {
-        ok: resolve,
-        serverError: reject,
-        // this isn't perfect, since it returns a 500 error instead of a 404 error
-        // but it is better than crashing the app when a record doesn't exist
-        notFound: reject
->>>>>>> 8bf47918481af7b4f86303291f212c652d2a522c
       });
     }
     else {
