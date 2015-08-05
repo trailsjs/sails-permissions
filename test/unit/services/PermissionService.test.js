@@ -190,8 +190,8 @@ describe('Permission Service', function () {
         })
         .then(function (role) {
             assert(role && role.id);
-            done();
-        });
+        })
+        .done(done, done);
     });
 
     it ('should create a permission', function (done) {
@@ -218,8 +218,37 @@ describe('Permission Service', function () {
         })
         .then(function (permission) {
           assert(permission && permission.id);
-          done();
-        });
+        })
+        .done(done, done);
+    });
+
+
+    it ('should grant a permission directly to a user', function (done) {
+        var permissionModelId;
+        // find any existing permission for this action, and delete it
+        Model.findOne({name: 'Permission'}).then(function (permissionModel) {
+            permissionModelId = permissionModel.id;
+            return Permission.destroy({action: 'create', model: permissionModelId, relation: 'role'});
+        })
+        .then(function (destroyed) {
+            // make sure we actually destroyed it
+            return Permission.find({action: 'create', relation: 'role', model: permissionModelId });
+        })
+        .then(function (permission) {
+            assert.equal(permission.length, 0);
+            // create a new permission
+            var newPermissions = [{user: 'admin', model: 'Permission', action: 'create', relation: 'role', criteria: { where: { x: 1}, blacklist: ['y'] }},
+                {user: 'admin', model: 'Role', action: 'update', relation: 'role', criteria: { where: { x: 1}, blacklist: ['y'] }}];
+            return sails.services.permissionservice.grant(newPermissions);
+        })
+        .then(function (perm) {
+          // verify that it was created
+          return Permission.findOne({action: 'create', relation: 'role', model: permissionModelId})
+        })
+        .then(function (permission) {
+          assert(permission && permission.id);
+        })
+        .done(done, done);
     });
 
     it ('should revoke a permission', function (done) {
@@ -227,18 +256,48 @@ describe('Permission Service', function () {
         // make sure there is already an existing permission for this case
         Model.findOne({name: 'Permission'}).then(function (permissionModel) {
             permissionModelId = permissionModel.id;
-            return Permission.find({action: 'create', relation: 'role', model: permissionModelId });
+            return Permission.find({action: 'create', relation: 'role', model: permissionModelId});
         })
         .then(function (permission) {
             assert.equal(permission.length, 1);
-            return sails.services.permissionservice.revoke({role: 'fakeRole', model: 'Permission', relation: 'role', action: 'create'});
+            return sails.services.permissionservice.revoke({user: 'admin', model: 'Permission', relation: 'role', action: 'create'});
         })
         .then(function () {
             return Permission.find({action: 'create', relation: 'role', model: permissionModelId });
         })
         .then(function (permission) {
             assert.equal(permission.length, 0);
-            done();
+        })
+        .done(done, done);
+    });
+
+    it ('should not revoke a permission if no user or role is supplied', function (done) {
+
+
+        var newPermissions = [{user: 'admin', model: 'Permission', action: 'create', relation: 'role', criteria: { where: { x: 1}, blacklist: ['y'] }},
+            {user: 'admin', model: 'Role', action: 'update', relation: 'role', criteria: { where: { x: 1}, blacklist: ['y'] }}];
+
+        return sails.services.permissionservice.grant(newPermissions)
+        .then(function() {
+            // make sure there is already an existing permission for this case
+            Model.findOne({name: 'Permission'}).then(function (permissionModel) {
+                permissionModelId = permissionModel.id;
+                return Permission.find({action: 'create', relation: 'role', model: permissionModelId});
+            })
+            .then(function (permission) {
+                assert.equal(permission.length, 1);
+                return sails.services.permissionservice.revoke({model: 'Permission', relation: 'role', action: 'create'});
+            })
+            .catch(function (err) {
+                assert.equal(err.message, 'You must provide either a user or role to revoke the permission from');
+            })
+            .then(function () {
+                return Permission.find({action: 'create', relation: 'role', model: permissionModelId });
+            })
+            .then(function (permission) {
+                assert.equal(permission.length, 1);
+            })
+            .done(done, done);
         });
     });
 
@@ -247,7 +306,7 @@ describe('Permission Service', function () {
   describe('#getAction', function () {
     describe('CRUD actions', function () {
       it('@findone: should return the "read" action', function () {
-        assert.equal(PermissionService.getAction({ action: 'findone' }), 'read');
+        assert.equal(PermissionService.getAction({ action: 'findOne' }), 'read');
       });
       it('@find: should return the "read" action', function () {
         assert.equal(PermissionService.getAction({ action: 'find' }), 'read');
