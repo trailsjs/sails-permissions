@@ -294,7 +294,7 @@ module.exports = {
 
     return Role.findOne({name: rolename}).populate('users').then(function (role) {
         User.find({username: usernames}).then(function (users) {
-            role.users.add(users);
+            role.users.add(_.pluck(users, 'id'));
             return role.save();
         });
     });
