@@ -33,18 +33,19 @@ _.merge(exports, {
         });
     },
     function attachDefaultRole (user, next) {
+      var thisUser;
       Promise.bind({ }, User.findOne(user.id)
         .populate('roles')
         .then(function (user) {
-          this.user = user;
+          thisUser = user;
           return Role.findOne({ name: 'registered' });
         })
         .then(function (role) {
-          this.user.roles.add(role.id);
-          return this.user.save();
+          thisUser.roles.add(role.id);
+          return thisUser.save();
         })
         .then(function (updatedUser) {
-          sails.log.silly('role "registered" attached to user', this.user.username);
+          sails.log.silly('role "registered" attached to user', thisUser.username);
           next();
         })
         .catch(function (e) {
