@@ -69,6 +69,15 @@ sails.config.permissions.adminPassword = 'admin1234'
   }
 ```
 
+#### 5. Login
+You can now login using the aforementioned default login data or the admin settings you specified using the `/auth/local` endpoint.
+```json
+{
+    "identifier": "admin@example.com",
+    "password": "admin1234"
+}
+```
+
 ## License
 MIT
 
