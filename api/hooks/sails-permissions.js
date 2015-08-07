@@ -103,6 +103,7 @@ function installModelOwnership (sails) {
 
   _.each(models, function (model) {
     if (model.autoCreatedBy === false) return;
+    if (model.meta.junctionTable) return;
 
     _.defaults(model.attributes, {
       createdBy: {
