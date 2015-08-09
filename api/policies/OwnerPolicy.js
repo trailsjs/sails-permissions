@@ -24,6 +24,7 @@ module.exports = function OwnerPolicy (req, res, next) {
   if ('POST' == req.method) {
     //req.body || (req.body = { });
     req.body.createdBy = req.user.id;
+    req.body.owner = req.user.id;
   }
 
   //sails.log('OwnerPolicy req.model', req.model);
