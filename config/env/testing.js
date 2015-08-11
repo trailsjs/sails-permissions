@@ -14,6 +14,7 @@ module.exports = {
 
   log: { level: 'silent' },
   models: { migrate: 'drop' },
-  hooks: { grunt: false }
+  hooks: { grunt: false },
+  port: 1336
 
 };

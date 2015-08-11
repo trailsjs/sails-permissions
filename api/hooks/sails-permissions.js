@@ -41,7 +41,6 @@ module.exports = function (sails) {
       });
 
       sails.after('hook:orm:loaded', function () {
-        installModelOwnership(sails);
         Model.count()
           .then(function (count) {
             if (count == sails.models.length) return next();
@@ -103,7 +102,6 @@ function installModelOwnership (sails) {
 
   _.each(models, function (model) {
     if (model.autoCreatedBy === false) return;
-    if (model.meta.junctionTable) return;
 
     _.defaults(model.attributes, {
       createdBy: {

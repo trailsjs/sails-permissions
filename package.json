@@ -1,6 +1,6 @@
 {
   "name": "sails-permissions",
-  "version": "1.3.6",
+  "version": "1.3.12",
   "description": "Comprehensive user permissions and entitlements system for sails.js and Waterline. Supports user authentication with passport.js, role-based permissioning, object ownership, and row-level security.",
   "main": "api/hooks/sails-permissions.js",
   "scripts": {
@@ -39,7 +39,7 @@
     "jshint": "^2.8.0",
     "mocha": "^2.x.x",
     "request": "^2.58.0",
-    "sails": "balderdashy/sails",
+    "sails": ">0.10.0",
     "sails-disk": "^0.10.7",
     "supertest": "^0.15.0"
   },

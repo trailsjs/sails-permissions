@@ -9,7 +9,7 @@
 module.exports = function(req, res, next) {
   var permissions = req.permissions;
   var relations = _.groupBy(permissions, 'relation');
-  var action = PermissionService.getAction(req.options);
+  var action = PermissionService.getMethod(req.method);
 
   // continue if there exist role Permissions which grant the asserted privilege
   if (!_.isEmpty(relations.role)) {
