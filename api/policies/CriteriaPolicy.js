@@ -13,7 +13,7 @@ module.exports = function(req, res, next) {
     return next();
   }
 
-  var action = PermissionService.getAction(req.options);
+  var action = PermissionService.getMethod(req.method);
 
   var body = req.body || req.query;
 
@@ -73,6 +73,7 @@ function responsePolicy(criteria, _data, options) {
   var req = this.req;
   var res = this.res;
   var user = req.owner;
+  var method = PermissionService.getMethod(req);
   var isResponseArray = _.isArray(_data);
 
   var data = isResponseArray ? _data : [_data];
