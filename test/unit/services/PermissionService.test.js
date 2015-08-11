@@ -334,29 +334,6 @@ describe('Permission Service', function () {
     });
 
   });
-
-  describe('#getAction', function () {
-    describe('CRUD actions', function () {
-      it('@findone: should return the "read" action', function () {
-        assert.equal(PermissionService.getAction({ action: 'findOne' }), 'read');
-      });
-      it('@find: should return the "read" action', function () {
-        assert.equal(PermissionService.getAction({ action: 'find' }), 'read');
-      });
-      it('@create: should return the "create" action', function () {
-        assert.equal(PermissionService.getAction({ action: 'create' }), 'create');
-      });
-    });
-    describe('custom actions', function () {
-      it('@upload: should return the "upload" action', function () {
-        assert.equal(PermissionService.getAction({ action: 'upload' }), 'upload');
-      });
-      it('@download: should return the "download" action', function () {
-        assert.equal(PermissionService.getAction({ action: 'upload' }), 'upload');
-      });
-    });
-  })
-
   //TODO: add unit tests for #findTargetObjects()
 
   //TODO: add unit tests for #findModelPermissions()
