@@ -81,10 +81,6 @@ function responsePolicy(criteria, _data, options) {
   sails.log.silly('options', options);
   sails.log.silly('criteria!', criteria);
 
-  if (data.length === 0) {
-    return res._ok([], options);
-  }
-
   var permitted = data.reduce(function(memo, item) {
     criteria.some(function(crit) {
       var filtered = wlFilter([item], {
@@ -107,11 +103,11 @@ function responsePolicy(criteria, _data, options) {
     return memo;
   }, []);
 
-  if (permitted.length === 0) {
+  if (isResponseArray) {
+    return res._ok(permitted, options);
+  } else if (permitted.length === 0) {
     sails.log.silly('permitted.length === 0');
     return res.send(404);
-  } else if (isResponseArray) {
-    return res._ok(permitted, options);
   } else {
     res._ok(permitted[0], options);
   }
