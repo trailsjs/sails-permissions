@@ -28,10 +28,11 @@ module.exports = function(req, res, next) {
   }
 
   // Make sure you have owner permissions for all models if you are mutating an existing object
+  var objects;
   PermissionService.findTargetObjects(req)
-    .then(function (objects) {
-      this.objects = objects;
-      return PermissionService.isAllowedToPerformAction(this.objects, req.user, action, ModelService.getTargetModelName(req), req.body);
+    .then(function (_objects) {
+      objects = _objects;
+      return PermissionService.isAllowedToPerformAction(objects, req.user, action, ModelService.getTargetModelName(req), req.body);
     })
     .then(function(canPerform) {
       if (PermissionService.hasForeignObjects(objects, req.user) && !canPerform) {

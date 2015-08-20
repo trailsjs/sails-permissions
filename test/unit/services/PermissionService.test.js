@@ -284,6 +284,7 @@ describe('Permission Service', function () {
     });
 
     it ('should revoke a permission', function (done) {
+        var permissionModelId;
 
         // make sure there is already an existing permission for this case
         Model.findOne({name: 'Permission'}).then(function (permissionModel) {
@@ -304,8 +305,7 @@ describe('Permission Service', function () {
     });
 
     it ('should not revoke a permission if no user or role is supplied', function (done) {
-
-
+        var permissionModelId;
         var newPermissions = [{user: 'admin', model: 'Permission', action: 'create', relation: 'role', criteria: { where: { x: 1}, blacklist: ['y'] }},
             {user: 'admin', model: 'Role', action: 'update', relation: 'role', criteria: { where: { x: 1}, blacklist: ['y'] }}];
 
