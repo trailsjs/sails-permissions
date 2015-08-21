@@ -1,3 +1,4 @@
+var _ = require('lodash');
 /**
  * Testing environment settings
  *
@@ -15,6 +16,13 @@ module.exports = {
   log: { level: 'silent' },
   models: { migrate: 'drop' },
   hooks: { grunt: false },
-  port: 1336
+  port: 1336,
+  routes: _.extend(require('../routes/sails-auth.js'), {
+    "DELETE /role/:parentid/users/:id": {
+        controller: 'RoleController',
+        action: 'remove',
+        alias: 'users'
+    }
+  })
 
 };
