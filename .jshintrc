@@ -1,12 +1,12 @@
 {
   "indent": 2,
   "maxdepth": 6,
-  "maxlen": 120,
+  "maxlen": 200,
   "esnext": true,
   "expr": true,
   "trailing": true,
   "node": true,
-  "esnext": true,
+  "esnext": false,
   "globals": {
     "_": true,
     "sails": true,
