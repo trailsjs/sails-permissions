@@ -512,6 +512,7 @@ describe('Permission Service', function() {
     });
 
     it('should revoke a permission', function(done) {
+      var permissionModelId;
 
       // make sure there is already an existing permission for this case
       Model.findOne({
@@ -547,8 +548,7 @@ describe('Permission Service', function() {
     });
 
     it('should not revoke a permission if no user or role is supplied', function(done) {
-
-
+      var permissionModelId;
       var newPermissions = [{
         user: 'admin',
         model: 'Permission',

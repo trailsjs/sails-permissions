@@ -341,7 +341,7 @@ module.exports = {
         }, {
           select: ['id']
         }).then(function(users) {
-          users.map(function(users) {
+          users.map(function(user) {
             role.users.remove(user.id);
           });
           return role.save();
