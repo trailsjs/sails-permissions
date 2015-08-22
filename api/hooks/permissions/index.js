@@ -22,7 +22,6 @@ class Permissions extends Marlinspike {
      * Local cache of Model name -> id mappings to avoid excessive database lookups.
      */
     //this._modelCache = { }
-
     this.sails.config.blueprints.populate = false
   }
 
@@ -31,7 +30,6 @@ class Permissions extends Marlinspike {
 
     this.sails.log.info('permissions: initializing sails-permissions hook')
 
-    /*
     if (!this.validateDependencies()) {
       this.sails.log.error('Cannot find sails-auth hook. Did you "npm install sails-auth --save"?')
       this.sails.log.error('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions')
@@ -39,11 +37,9 @@ class Permissions extends Marlinspike {
     }
 
     if (!this.validatePolicyConfig()) {
-      this.sails.log.error('One or more required policies are missing.')
-      this.sails.log.error('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions')
-      return this.sails.lower()
+      this.sails.log.warn('One or more required policies are missing.')
+      this.sails.log.warn('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions')
     }
-    */
 
     this.sails.after(config.afterEvent, () => {
       this.installModelOwnership()
@@ -56,7 +52,6 @@ class Permissions extends Marlinspike {
 
           return this.initializeFixtures()
             .then(() => {
-              //this.sails.emit('hook:permissions:loaded')
               next()
             })
         })
@@ -105,8 +100,6 @@ class Permissions extends Marlinspike {
     return require(path.resolve(fixturesPath, 'model')).createModels()
       .then(models => {
         this.models = models
-        console.log('models', models)
-
         this.sails.hooks.permissions._modelCache = _.indexBy(models, 'identity')
 
         return require(path.resolve(fixturesPath, 'role')).create()
@@ -134,7 +127,7 @@ class Permissions extends Marlinspike {
   }
 
   validateDependencies () {
-    return !!this.sails.hooks['sails-auth']
+    return !!this.sails.hooks.auth;
   }
 }
 

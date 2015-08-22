@@ -14,7 +14,7 @@ exports.createModels = function () {
     };
   }));
 
-  return Promise.all(models, function (model) {
+  return Promise.all(_.map(models, function (model) {
     return sails.models.model.findOrCreate({ name: model.name }, model);
-  });
+  }));
 };
