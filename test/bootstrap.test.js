@@ -12,22 +12,17 @@ before(function(done) {
   this.timeout(30000);
 
   Sails.lift(ConfigOverrides, function(err, server) {
-
-    sails = server;
+    global.sails = server;
 
     if (err) {
       return done(err);
     }
     // here you can load fixtures, etc.
     done(err, sails);
-
   });
 
 });
 
 after(function(done) {
-
-  // here you can clear fixtures, etc.
-  sails.lower(done);
-
+  global.sails.lower(done);
 });

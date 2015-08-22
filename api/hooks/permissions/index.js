@@ -28,20 +28,18 @@ class Permissions extends Marlinspike {
   initialize (next) {
     let config = this.sails.config.permissions
 
-    this.sails.log.info('permissions: initializing sails-permissions hook')
-
-    if (!this.validateDependencies()) {
-      this.sails.log.error('Cannot find sails-auth hook. Did you "npm install sails-auth --save"?')
-      this.sails.log.error('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions')
-      return this.sails.lower()
-    }
-
-    if (!this.validatePolicyConfig()) {
-      this.sails.log.warn('One or more required policies are missing.')
-      this.sails.log.warn('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions')
-    }
-
     this.sails.after(config.afterEvent, () => {
+      if (!this.validateDependencies()) {
+        this.sails.log.error('Cannot find sails-auth hook. Did you "npm install sails-auth --save"?')
+        this.sails.log.error('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions')
+        return this.sails.lower()
+      }
+
+      if (!this.validatePolicyConfig()) {
+        this.sails.log.warn('One or more required policies are missing.')
+        this.sails.log.warn('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions')
+      }
+
       this.installModelOwnership()
     })
 
