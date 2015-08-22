@@ -48,8 +48,6 @@
     "supertest": "^0.15.0"
   },
   "dependencies": {
-    "babel": "^5.8.21",
-    "bluebird": "^2.3.6",
     "fnv-plus": "^1.2.10",
     "lodash": "^3.10.0",
     "marlinspike": "^0.12",
@@ -59,8 +57,8 @@
     "waterline-criteria": "^0.11.1"
   },
   "bundledDependencies": [
-    "babel",
-    "bluebird",
+    "fnv-plus",
+    "lodash",
     "pluralize"
   ],
   "engines": {

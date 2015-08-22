@@ -1,14 +1,19 @@
 language: node_js
 node_js:
 - '0.12'
+
 sudo: false
+
 env:
   global:
   - REDIS_URL=redis://:@localhost:6379
+
 services:
 - redis-server
+
 notifications:
   email: false
+
 deploy:
   provider: npm
   email: me@traviswebb.com
