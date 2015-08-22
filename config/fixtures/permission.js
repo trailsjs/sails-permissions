@@ -59,7 +59,7 @@ function grantAdminPermissions (roles, models, admin) {
         action: permission.action,
         role: adminRole.id,
       };
-      return Permission.findOrCreate(newPermission, newPermission);
+      return sails.models.permission.findOrCreate(newPermission, newPermission);
     });
   }));
 
@@ -95,7 +95,7 @@ function grantRegisteredPermissions (roles, models, admin) {
 
   return Promise.all(
     _.map(permissions, function (permission) {
-      return Permission.findOrCreate(permission, permission);
+      return sails.models.permission.findOrCreate(permission, permission);
     })
   );
 }

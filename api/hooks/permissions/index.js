@@ -50,7 +50,7 @@ class Permissions extends Marlinspike {
     })
 
     this.sails.after('hook:orm:loaded', () => {
-      Model.count()
+      sails.models.model.count()
         .then(count => {
           if (count == this.sails.models.length) return next()
 
@@ -105,6 +105,7 @@ class Permissions extends Marlinspike {
     return require(path.resolve(fixturesPath, 'model')).createModels()
       .then(models => {
         this.models = models
+        console.log('models', models)
 
         this.sails.hooks.permissions._modelCache = _.indexBy(models, 'identity')
 
@@ -116,7 +117,7 @@ class Permissions extends Marlinspike {
         return require(path.resolve(fixturesPath, 'user')).create(this.roles, userModel)
       })
       .then(() => {
-        return User.findOne({ email: this.sails.config.permissions.adminEmail })
+        return sails.models.user.findOne({ email: this.sails.config.permissions.adminEmail })
       })
       .then(user => {
         this.sails.log('sails-permissions: created admin user:', user)
