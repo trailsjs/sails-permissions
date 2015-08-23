@@ -29,7 +29,7 @@ describe('PermissionController', function () {
           .post("/permission")
           .set('Authorization', adminAuth.Authorization)
           .send({
-            model: 2,
+            model: 4,
             criteria: {
               where: {
                 id: 1

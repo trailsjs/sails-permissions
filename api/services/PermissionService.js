@@ -79,23 +79,23 @@ module.exports = {
    */
   findModelPermissions: function(options) {
     var action = PermissionService.getMethod(options.method);
-    var permissionCriteria = {
-      model: options.model.id,
-      action: action
-    };
+
+    //console.log('findModelPermissions options', options)
+    //console.log('findModelPermissions action', action)
 
     return User.findOne(options.user.id)
       .populate('roles')
       .then(function(user) {
-        return Permission.find({
+        var permissionCriteria = {
           model: options.model.id,
           action: action,
-          or: [{
-            user: user.id
-          }, {
-            role: _.pluck(user.roles, 'id')
-          }]
-        }).populate('criteria');
+          or: [
+            { role: _.pluck(user.roles, 'id') },
+            { user: user.id }
+          ]
+        };
+        
+        return Permission.find(permissionCriteria).populate('criteria')
       });
   },
 

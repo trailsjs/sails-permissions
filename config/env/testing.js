@@ -1,4 +1,5 @@
 var _ = require('lodash');
+
 /**
  * Testing environment settings
  *
@@ -10,11 +11,18 @@ var _ = require('lodash');
  * any private information to this file!
  *
  */
-
 module.exports = {
 
   log: { level: 'debug' },
-  models: { migrate: 'drop' },
+  models: {
+    migrate: 'drop',
+    connection: 'testing'
+  },
+  connections: {
+    testing: {
+      adapter: 'sails-memory'
+    }
+  },
   hooks: { grunt: false },
   port: 1336,
   routes: _.extend(require('sails-auth/config/routes'), {
@@ -24,5 +32,4 @@ module.exports = {
         alias: 'users'
     }
   })
-
 };
