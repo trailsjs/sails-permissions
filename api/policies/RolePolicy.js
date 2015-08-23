@@ -35,7 +35,7 @@ module.exports = function(req, res, next) {
     })
     .then(function(canPerform) {
       if (PermissionService.hasForeignObjects(objects, req.user) && !canPerform) {
-        return res.badRequest({
+        return res.forbidden({
           error: 'Cannot perform action [' + action + '] on foreign object'
         });
       }
