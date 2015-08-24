@@ -1,4 +1,3 @@
-var Promise = require('bluebird');
 var methodMap = {
   POST: 'create',
   GET: 'read',
@@ -211,7 +210,7 @@ module.exports = {
 
     // look up the model id based on the model name for each permission, and change it to an id
     ok = ok.then(function() {
-      return Promise.map(permissions, function(permission) {
+      return Promise.all(permissions.map(function(permission) {
         return Model.findOne({
             name: permission.model
           })
@@ -219,7 +218,7 @@ module.exports = {
             permission.model = model.id;
             return permission;
           });
-      });
+      }));
     });
 
     // look up user ids based on usernames, and replace the names with ids
@@ -260,7 +259,7 @@ module.exports = {
     }
 
     // look up the models based on name, and replace them with ids
-    var ok = Promise.map(permissions, function(permission) {
+    var ok = Promise.all(permissions.map(function(permission) {
       var findRole = permission.role ? Role.findOne({
         name: permission.role
       }) : null;
@@ -270,7 +269,7 @@ module.exports = {
       return Promise.all([findRole, findUser, Model.findOne({
           name: permission.model
         })])
-        .spread(function(role, user, model) {
+        .then(([ role, user, model]) => {
           permission.model = model.id;
           if (role && role.id) {
             permission.role = role.id;
@@ -280,7 +279,7 @@ module.exports = {
             return Promise.reject(new Error('no role or user specified'));
           }
         });
-    });
+    }));
 
     ok = ok.then(function() {
       return Permission.create(permissions);
@@ -369,7 +368,7 @@ module.exports = {
       name: options.model
     })]);
 
-    ok = ok.spread(function(role, user, model) {
+    ok = ok.then(([ role, user, model ]) => {
 
       var query = {
         model: model.id,
@@ -404,7 +403,7 @@ module.exports = {
     if (!_.isArray(objects)) {
       return PermissionService.isAllowedToPerformSingle(user.id, action, model, body)(objects);
     }
-    return new Promise.map(objects, PermissionService.isAllowedToPerformSingle(user.id, action, model, body));
+    return new Promise.all(objects.map(PermissionService.isAllowedToPerformSingle(user.id, action, model, body)));
   },
 
   /**

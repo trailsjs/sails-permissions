@@ -25,11 +25,11 @@ module.exports = {
   },
   hooks: { grunt: false },
   port: 1336,
-  routes: _.extend(require('sails-auth/config/routes'), {
+  routes: {
     "DELETE /role/:parentid/users/:id": {
         controller: 'RoleController',
         action: 'remove',
         alias: 'users'
     }
-  })
+  }
 };
