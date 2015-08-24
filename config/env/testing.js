@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var path = require('path');
 
 /**
  * Testing environment settings
@@ -12,7 +13,6 @@ var _ = require('lodash');
  *
  */
 module.exports = {
-
   log: { level: 'debug' },
   models: {
     migrate: 'drop',

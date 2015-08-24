@@ -51,9 +51,7 @@ describe('PermissionController', function () {
               })
               .expect(200)
               .end(function (err, res) {
-
                 agent.saveCookies(res);
-
                 return done(err);
               });
           });
