@@ -316,7 +316,7 @@ describe('User Controller', function() {
             email: 'newuser1@example.com',
             password: 'lalalal1234'
           })
-          .expect(400)
+          .expect(403)
           .end(function(err, res) {
 
             var user = res.body;
@@ -382,7 +382,7 @@ describe('User Controller', function() {
           .send({
             id: 99
           })
-          .expect(400)
+          .expect(403)
           .end(function(err, res) {
             assert(res.body.hasOwnProperty('error'));
             assert.ifError(err);
@@ -400,7 +400,7 @@ describe('User Controller', function() {
           .send({
             name: 'updatedInactiveName'
           })
-          .expect(400)
+          .expect(403)
           .end(function(err, res) {
             assert(res.body.hasOwnProperty('error'));
             assert.ifError(err);
@@ -453,7 +453,7 @@ describe('User Controller', function() {
           .send({
             email: 'crapadminemail@example.com'
           })
-          .expect(400)
+          .expect(403)
           .end(function(err, res) {
 
             var user = res.body;
