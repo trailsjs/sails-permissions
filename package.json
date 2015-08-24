@@ -49,7 +49,6 @@
     "supertest": "^0.15.0"
   },
   "dependencies": {
-    "bluebird": "^2.9.34",
     "fnv-plus": "^1.2.10",
     "lodash": "^3.10.0",
     "marlinspike": "^0.12",
