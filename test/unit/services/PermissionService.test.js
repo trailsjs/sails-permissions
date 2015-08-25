@@ -614,7 +614,8 @@ describe('Permission Service', function() {
     it('should remove users from a role', function(done) {
       var user;
       var ok = User.create({
-        username: 'test'
+        username: 'test',
+        email: 'testemail@test.test'
       });
 
       ok = ok.then(function(usr) {
