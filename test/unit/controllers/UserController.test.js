@@ -344,14 +344,12 @@ describe('User Controller', function() {
           })
           .expect(200)
           .end(function(err, res) {
-
             var user = res.body;
 
             assert.ifError(err);
             assert.equal(user.email, 'newuserupdated@example.com');
 
             done(err);
-
           });
 
       });

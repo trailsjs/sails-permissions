@@ -21,8 +21,8 @@ class Permissions extends Marlinspike {
     /**
      * Local cache of Model name -> id mappings to avoid excessive database lookups.
      */
-    //this._modelCache = { }
     this.sails.config.blueprints.populate = false
+    this.installModelOwnership()
   }
 
   initialize (next) {
@@ -40,7 +40,6 @@ class Permissions extends Marlinspike {
         this.sails.log.warn('Please see README for installation instructions: https://github.com/tjwebb/sails-permissions')
       }
 
-      this.installModelOwnership()
     })
 
     this.sails.after('hook:orm:loaded', () => {
