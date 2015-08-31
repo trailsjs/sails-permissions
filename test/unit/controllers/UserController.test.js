@@ -1,5 +1,6 @@
 var assert = require('assert');
 var request = require('supertest');
+var _ = require('lodash');
 
 var adminAuth = {
   Authorization: 'Basic YWRtaW5AZXhhbXBsZS5jb206YWRtaW4xMjM0'
@@ -40,6 +41,51 @@ describe('User Controller', function() {
             done(err);
 
           });
+      });
+
+      it('should be able to remove a user from a role', function(done) {
+        var ok = Role.find({
+          name: 'registered'
+        });
+
+        ok.then(function(role) {
+            request(sails.hooks.http.app)
+              .post('/user')
+              .set('Authorization', adminAuth.Authorization)
+              .send({
+                username: 'abouttoberemoveduser',
+                email: 'abouttoberemoveduser@example.com',
+                password: 'user1234'
+              })
+              .expect(200)
+              .end(function(err, res) {
+
+                assert.ifError(err);
+                var user = res.body;
+                Role.findOne({
+                    name: 'registered'
+                  }).populate('users', {
+                    id: user.id
+                  })
+                  .then(function(role) {
+                    assert.equal(user.username, 'abouttoberemoveduser');
+                    assert(_.contains(_.pluck(role.users, 'id'), user.id));
+
+                    request(sails.hooks.http.app)
+                      .delete('/role/' + role.id + '/users/' + user.id)
+                      .set('Authorization', adminAuth.Authorization)
+                      .expect(200)
+                      .end(function(err, res) {
+                        // the user id should not be in the list anymore
+                        assert(!_.includes(_.pluck(res.users, 'id'), user.id));
+                        done();
+                      });
+                  });
+
+              });
+          })
+          .catch(done);
+
       });
 
     });
@@ -157,7 +203,7 @@ describe('User Controller', function() {
                 role: roleId,
                 createdBy: adminUserId,
                 criteria: {
-                    blacklist: ['id']
+                  blacklist: ['id']
                 },
                 relation: 'owner'
               })
@@ -208,7 +254,7 @@ describe('User Controller', function() {
                   where: {
                     active: true
                   },
-                  blacklist: [ 'name', 'createdAt' ]
+                  blacklist: ['name', 'createdAt']
                 }
               })
               .expect(201)
@@ -338,7 +384,7 @@ describe('User Controller', function() {
           })
           .expect(400)
           .end(function(err, res) {
-            assert(res.body.hasOwnProperty('error'))
+            assert(res.body.hasOwnProperty('error'));
             assert.ifError(err);
             done(err);
 
@@ -356,7 +402,7 @@ describe('User Controller', function() {
           })
           .expect(400)
           .end(function(err, res) {
-            assert(res.body.hasOwnProperty('error'))
+            assert(res.body.hasOwnProperty('error'));
             assert.ifError(err);
             done(err);
 
@@ -414,6 +460,43 @@ describe('User Controller', function() {
 
             assert.ifError(err);
             assert(_.isString(user.error), JSON.stringify(user));
+
+            done(err);
+
+          });
+
+      });
+
+
+      it('should not be able to read another user', function(done) {
+
+        request(sails.hooks.http.app)
+          .get('/user/' + adminUserId)
+          .set('Authorization', registeredAuth.Authorization)
+          .expect(400)
+          .end(function(err, res) {
+            var user = res.body;
+
+            assert.ifError(err);
+            assert(_.isString(user.error), JSON.stringify(user));
+
+            done(err);
+
+          });
+
+      });
+
+      it('should not be able to read all users', function(done) {
+
+        request(sails.hooks.http.app)
+          .get('/user/')
+          .set('Authorization', registeredAuth.Authorization)
+          .expect(200)
+          .end(function(err, res) {
+            var users = res.body;
+
+            assert.ifError(err);
+            assert(users.length == 1);
 
             done(err);
 

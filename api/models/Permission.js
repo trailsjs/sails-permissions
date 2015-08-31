@@ -26,7 +26,17 @@ module.exports = {
     action: {
       type: 'string',
       index: true,
-      notNull: true
+      notNull: true,
+      /**
+       * TODO remove enum and support permissions based on all controller
+       * actions, including custom ones
+       */
+      enum: [
+        'create',
+        'read',
+        'update',
+        'delete'
+      ]
     },
 
     relation: {
@@ -80,11 +90,11 @@ module.exports = {
         next(new Error('Creating a Permission with an attribute blacklist is not allowed when action=delete'));
       }
 
-      if (permission.relation == 'user' && permission.user == "") {
+      if (permission.relation == 'user' && permission.user === "") {
         next(new Error('A Permission with relation user MUST have the user attribute set'));
       }
 
-      if (permission.relation == 'role' && permission.role == "") {
+      if (permission.relation == 'role' && permission.role === "") {
         next(new Error('A Permission with relation role MUST have the role attribute set'));
       }
 
