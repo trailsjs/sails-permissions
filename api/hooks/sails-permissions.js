@@ -41,7 +41,6 @@ module.exports = function (sails) {
       });
 
       sails.after('hook:orm:loaded', function () {
-        installModelOwnership(sails);
         Model.count()
           .then(function (count) {
             if (count == sails.models.length) return next();

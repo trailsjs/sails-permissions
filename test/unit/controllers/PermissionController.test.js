@@ -7,7 +7,7 @@ var adminAuth = {
 
 describe('PermissionController', function () {
 
-  var agent
+  var agent;
   before(function(done) {
 
     agent = request.agent(sails.hooks.http.app);
