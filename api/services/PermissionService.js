@@ -403,7 +403,12 @@ module.exports = {
     if (!_.isArray(objects)) {
       return PermissionService.isAllowedToPerformSingle(user.id, action, model, body)(objects);
     }
-    return new Promise.all(objects.map(PermissionService.isAllowedToPerformSingle(user.id, action, model, body)));
+    return Promise.all(objects.map(PermissionService.isAllowedToPerformSingle(user.id, action, model, body)))
+      .then(function (allowedArray) {
+        return allowedArray.every(function (allowed) {
+          return allowed === true;
+        });
+      });
   },
 
   /**
@@ -420,7 +425,7 @@ module.exports = {
         Model.findOne({
           identity: model
         }).then(function(model) {
-          return Permission.find({
+         return Permission.find({
             model: model.id,
             action: action,
             relation: 'user',
