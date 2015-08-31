@@ -5,7 +5,7 @@ var Promise = require('bluebird');
  * @public
  */
 exports.createModels = function () {
-  sails.log('sails-permissions: syncing waterline models');
+  sails.log.verbose('sails-permissions: syncing waterline models');
 
   var models = _.compact(_.map(sails.controllers, function (controller, name) {
     var conf = controller._config

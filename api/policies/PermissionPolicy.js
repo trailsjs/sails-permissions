@@ -63,8 +63,8 @@ function responsePolicy (_data, options) {
 
   var data = _.isArray(_data) ? _data : [_data];
 
-  //sails.log('data', _data);
-  //sails.log('options', options);
+  //sails.log.verbose('data', _data);
+  //sails.log.verbose('options', options);
 
   // TODO search populated associations
   Promise.bind(this)
@@ -72,7 +72,7 @@ function responsePolicy (_data, options) {
       return user.getOwnershipRelation(data);
     })
     .then(function (results) {
-      //sails.log('results', results);
+      //sails.log.verbose('results', results);
       var permitted = _.filter(results, function (result) {
         return _.any(req.permissions, function (permission) {
           return permission.permits(result.relation, method);
@@ -80,7 +80,7 @@ function responsePolicy (_data, options) {
       });
 
       if (permitted.length === 0) {
-        //sails.log('permitted.length === 0');
+        //sails.log.verbose('permitted.length === 0');
         return res.send(404);
       }
       else if (_.isArray(_data)) {
