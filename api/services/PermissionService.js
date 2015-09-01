@@ -43,23 +43,17 @@ module.exports = {
    *
    * TODO this will be less expensive when waterline supports a caching layer
    */
+  findTargetObjects: function(req) {
 
-  findTargetObjects: function (req) {
-    if (_.contains(['add','remove','populate'],req.options.action)) {
-      return new Promise(function (resolve, reject) {
-        populateRecords(req, {
-          ok: function() {
-            return sails.models[req.model.identity].findOne(req.params.parentid).then(resolve);
-          },
-          serverError: reject,
-          // this isn't perfect, since it returns a 500 error instead of a 404 error
-          // but it is better than crashing the app when a record doesn't exist
-          notFound: reject
-        });
-      });
+
+    // handle add/remove routes that have :parentid as the primary key field
+    var originalId;
+    if (req.params.parentid) {
+      originalId = req.params.id;
+      req.params.id = req.params.parentid;
     }
-    else {
-      return new Promise(function (resolve, reject) {
+
+    return new Promise(function(resolve, reject) {
         findRecords(req, {
           ok: resolve,
           serverError: reject,
@@ -67,9 +61,13 @@ module.exports = {
           // but it is better than crashing the app when a record doesn't exist
           notFound: reject
         });
+      })
+      .then(function(result) {
+        if (originalId !== undefined) {
+          req.params.id = originalId;
+        }
+        return result;
       });
-    }
-
   },
 
   /**
