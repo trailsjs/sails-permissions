@@ -43,7 +43,7 @@ exports.create = function (roles, models, admin) {
     grantRegisteredPermissions(roles, models, admin)
   ])
   .then(function (permissions) {
-    //sails.log('created', permissions.length, 'permissions');
+    //sails.log.verbose('created', permissions.length, 'permissions');
     return permissions;
   });
 };

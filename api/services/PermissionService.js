@@ -27,8 +27,8 @@ module.exports = {
    */
   isForeignObject: function(owner) {
     return function(object) {
-      //sails.log('object', object);
-      //sails.log('object.owner: ', object.owner, ', owner:', owner);
+      //sails.log.verbose('object', object);
+      //sails.log.verbose('object.owner: ', object.owner, ', owner:', owner);
       return object.owner !== owner;
     };
   },

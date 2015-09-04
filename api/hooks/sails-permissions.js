@@ -83,7 +83,7 @@ function initializeFixtures (sails) {
       return User.findOne({ email: sails.config.permissions.adminEmail });
     })
     .then(function (user) {
-      sails.log('sails-permissions: created admin user:', user);
+      sails.log.verbose('sails-permissions: created admin user:', user);
       user.createdBy = user.id;
       user.owner = user.id;
       return user.save();
