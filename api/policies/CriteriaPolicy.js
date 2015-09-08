@@ -20,7 +20,7 @@ module.exports = function(req, res, next) {
   // if we are creating, we don't need to query the db, just check the where clause vs the passed in data
   if (action === 'create') {
     if (!PermissionService.hasPassingCriteria(body, permissions, body)) {
-      return res.badRequest({
+      return res.forbidden({
         error: 'Can\'t create this object, because of failing where clause'
       });
     }
@@ -49,7 +49,7 @@ module.exports = function(req, res, next) {
       }
 
       if (!PermissionService.hasPassingCriteria(objects, permissions, body, req.user.id)) {
-        return res.badRequest({
+        return res.forbidden({
           error: 'Can\'t ' + action + ', because of failing where clause or attribute permissions'
         });
       }
