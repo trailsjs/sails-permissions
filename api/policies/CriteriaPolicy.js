@@ -20,7 +20,7 @@ module.exports = function(req, res, next) {
   // if we are creating, we don't need to query the db, just check the where clause vs the passed in data
   if (action === 'create') {
     if (!PermissionService.hasPassingCriteria(body, permissions, body)) {
-      return res.badRequest({
+      return res.forbidden({
         error: 'Can\'t create this object, because of failing where clause'
       });
     }
@@ -34,7 +34,18 @@ module.exports = function(req, res, next) {
     var checkPermissions = req.options.action === 'populate' ? req.populatePermissions : req.permissions;
 
     // get all of the where clauses and blacklists into one flat array
-    var criteria = _.compact(_.flatten(_.pluck(checkPermissions, 'criteria')));
+    // if a permission has no criteria then it is always true
+    var criteria = _.compact(_.flatten(
+      _.map(
+        _.pluck(permissions, 'criteria'),
+        function(c) {
+          if (c.length == 0) {
+            return [{where: {}}];
+          }
+          return c;
+        }
+      )
+    ));
 
     if (criteria.length) {
       bindResponsePolicy(req, res, criteria);
@@ -51,7 +62,7 @@ module.exports = function(req, res, next) {
       }
 
       if (!PermissionService.hasPassingCriteria(objects, permissions, body, req.user.id)) {
-        return res.badRequest({
+        return res.forbidden({
           error: 'Can\'t ' + action + ', because of failing where clause or attribute permissions'
         });
       }

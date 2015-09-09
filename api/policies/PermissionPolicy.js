@@ -39,7 +39,7 @@ module.exports = function (req, res, next) {
           req.method, 'on', req.model.name, 'for', req.user.username);
 
       if (!permissions || permissions.length === 0) {
-        throw new Error(PermissionService.getErrorMessage(options));
+        return res.forbidden({ error: PermissionService.getErrorMessage(options) });
       }
 
       req.permissions = permissions;
@@ -98,8 +98,8 @@ function responsePolicy (_data, options) {
 
   var data = _.isArray(_data) ? _data : [_data];
 
-  //sails.log('data', _data);
-  //sails.log('options', options);
+  //sails.log.verbose('data', _data);
+  //sails.log.verbose('options', options);
 
   // TODO search populated associations
   Promise.bind(this)
@@ -107,7 +107,7 @@ function responsePolicy (_data, options) {
       return user.getOwnershipRelation(data);
     })
     .then(function (results) {
-      //sails.log('results', results);
+      //sails.log.verbose('results', results);
       var permitted = _.filter(results, function (result) {
         return _.any(req.permissions, function (permission) {
           return permission.permits(result.relation, method);
@@ -115,7 +115,7 @@ function responsePolicy (_data, options) {
       });
 
       if (permitted.length === 0) {
-        //sails.log('permitted.length === 0');
+        //sails.log.verbose('permitted.length === 0');
         return res.send(404);
       }
       else if (_.isArray(_data)) {

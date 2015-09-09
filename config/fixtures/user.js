@@ -16,7 +16,7 @@ exports.create = function (roles, userModel) {
     .then(function (user) {
       if (user) return user;
 
-      sails.log('sails-permissions: admin user does not exist; creating...');
+      sails.log.info('sails-permissions: admin user does not exist; creating...');
       return User.register({
         username: sails.config.permissions.adminUsername,
         password: sails.config.permissions.adminPassword,
