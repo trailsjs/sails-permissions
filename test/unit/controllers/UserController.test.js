@@ -439,8 +439,9 @@ describe('User Controller', function() {
           .send({
             name: 'updatedInactiveName'
           })
-          .expect(404)
+          .expect(200)
           .end(function(err, res) {
+            assert.equal(res.body.length, 0);
             done(err);
           });
       });
