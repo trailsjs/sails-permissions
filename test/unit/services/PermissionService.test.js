@@ -634,6 +634,33 @@ describe('Permission Service', function() {
 
     });
 
+    it('should add multiple users to a role', function (done) {
+
+      var users = [];
+      var ok = User.create([{
+        username: 'mtest'
+      }, {
+        username: 'mtest1'
+      }]);
+
+      ok = ok.then(function(usr) {
+        users = users.concat(usr);
+        return PermissionService.addUsersToRole(['mtest', 'mtest1'], 'admin');
+      });
+
+      ok = ok.then(function (role) {
+        assert(_.contains(_.pluck(role.users, 'id'), users[0].id));
+        assert(_.contains(_.pluck(role.users, 'id'), users[1].id));
+        return PermissionService.removeUsersFromRole(['mtest', 'mtest1'], 'admin');
+      });
+
+      ok = ok.then(function (role) {
+        assert(!_.contains(_.pluck(role.users, 'id'), users[0].id));
+        assert(!_.contains(_.pluck(role.users, 'id'), users[1].id));
+      })
+      .done(done, done);
+    });
+
   });
   //TODO: add unit tests for #findTargetObjects()
 
