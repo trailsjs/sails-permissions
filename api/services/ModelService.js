@@ -12,9 +12,10 @@ module.exports = {
     if (_.isString(req.options.alias) && !_.contains(['add','remove','populate'],req.options.action) ) {
       sails.log.silly('singularizing', req.options.alias, 'to use as target model');
       return pluralize.singular(req.options.alias);
-    }
-    else {
+    } else if (_.isString(req.options.model)) {
       return req.options.model;
+    } else {
+        return req.model && req.model.identity;
     }
   }
 };

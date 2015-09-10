@@ -436,11 +436,22 @@ describe('User Controller', function() {
         request(sails.hooks.http.app)
           .get('/permission')
           .set('Authorization', newUserAuth.Authorization)
-          .send({
-            name: 'updatedInactiveName'
-          })
-          .expect(404)
+          .expect(200)
           .end(function(err, res) {
+            assert.equal(res.body.length, 0);
+            done(err);
+          });
+      });
+
+      it('should return data from /user/me', function(done) {
+
+        request(sails.hooks.http.app)
+          .get('/user/me')
+          .set('Authorization', newUserAuth.Authorization)
+          .expect(200)
+          .end(function(err, res) {
+            assert.ifError(err);
+            assert(res.body.username == 'newuser');
             done(err);
           });
       });
