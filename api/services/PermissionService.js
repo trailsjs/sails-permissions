@@ -185,7 +185,7 @@ module.exports = {
    */
   getErrorMessage: function(options) {
     return [
-      'User', options.user.email, 'is not permitted to', options.method, options.model.globalId
+      'User', options.user.email, 'is not permitted to', options.method, options.model.name
     ].join(' ');
   },
 
