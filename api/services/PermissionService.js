@@ -120,20 +120,21 @@ module.exports = {
       objects = [objects];
     }
 
-    var criteria = permissions.reduce(function (memo, perm) {
+    var criteria = permissions.reduce(function(memo, perm) {
       if (perm) {
-        if (!perm.criteria || perm.criteria.length==0) {
+        if (!perm.criteria || perm.criteria.length === 0) {
           // If a permission has no criteria then it passes for all cases
           // (like the admin role)
-          memo = memo.concat([{where:{}}]);
-        }
-        else {
-            memo = memo.concat(perm.criteria);
+          memo = memo.concat([{
+            where: {}
+          }]);
+        } else {
+          memo = memo.concat(perm.criteria);
         }
         if (perm.relation === 'owner') {
-            perm.criteria.forEach(function (criteria) {
-                criteria.owner = true;
-            });
+          perm.criteria.forEach(function(criteria) {
+            criteria.owner = true;
+          });
         }
         return memo;
       }
@@ -317,8 +318,12 @@ module.exports = {
     }).populate('users').then(function(role) {
       return User.find({
         username: usernames
+      }, {
+        select: ['id']
       }).then(function(users) {
-        role.users.add(_.pluck(users, 'id'));
+        users.forEach(function (user) {
+            role.users.add(user.id);
+        });
         return role.save();
       });
     });
@@ -349,8 +354,8 @@ module.exports = {
         }, {
           select: ['id']
         }).then(function(users) {
-          users.map(function(users) {
-            role.users.remove(user.id);
+          users.forEach(function (user) {
+              role.users.remove(user.id);
           });
           return role.save();
         });
@@ -413,11 +418,11 @@ module.exports = {
       return PermissionService.isAllowedToPerformSingle(user.id, action, model, body)(objects);
     }
     return new Promise.map(objects, PermissionService.isAllowedToPerformSingle(user.id, action, model, body))
-        .then(function (allowedArray) {
-            return allowedArray.every(function (allowed) {
-                return allowed === true;
-            });
+      .then(function(allowedArray) {
+        return allowedArray.every(function(allowed) {
+          return allowed === true;
         });
+      });
   },
 
   /**
@@ -434,7 +439,7 @@ module.exports = {
         Model.findOne({
           identity: model
         }).then(function(model) {
-         return Permission.find({
+          return Permission.find({
             model: model.id,
             action: action,
             relation: 'user',
