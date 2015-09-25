@@ -183,8 +183,9 @@ module.exports = {
    * Build an error message
    */
   getErrorMessage: function(options) {
+    var user = options.user.email || options.user.username
     return [
-      'User', options.user.email, 'is not permitted to', options.method, options.model.name
+      'User', user, 'is not permitted to', options.method, options.model.name
     ].join(' ');
   },
 
