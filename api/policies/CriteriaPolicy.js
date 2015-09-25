@@ -5,6 +5,7 @@
  * Verify that the User fulfills permission 'where' conditions and attribute blacklist restrictions
  */
 var wlFilter = require('waterline-criteria');
+import _ from 'lodash'
 
 module.exports = function(req, res, next) {
   var permissions = req.permissions;
