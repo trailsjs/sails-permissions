@@ -20,7 +20,7 @@ var modelRestrictions = {
   registered: [
     'Role',
     'Permission',
-    'User',
+    //'User',
     'Passport'
   ],
   public: [
@@ -38,7 +38,6 @@ var modelRestrictions = {
  * Create default Role permissions
  */
 exports.create = function (roles, models, admin) {
-  console.log('granting permissions on models', _.pluck(models, 'identity'))
   return Promise.all([
     grantAdminPermissions(roles, models, admin),
     grantRegisteredPermissions(roles, models, admin)
@@ -52,7 +51,7 @@ exports.create = function (roles, models, admin) {
 function grantAdminPermissions (roles, models, admin) {
   var adminRole = _.find(roles, { name: 'admin' });
   var permissions = _.flatten(_.map(models, function (modelEntity) {
-    var model = sails.models[modelEntity.identity];
+    //var model = sails.models[modelEntity.identity];
 
     return _.map(grants.admin, function (permission) {
       var newPermission = {
@@ -95,8 +94,10 @@ function grantRegisteredPermissions (roles, models, admin) {
   ];
 
   // XXX copy/paste from above. terrible. improve.
-  var grantPermissions = _.flatten(_.map(models, function (modelEntity) {
-    var model = sails.models[modelEntity.identity];
+  var permittedModels = _.filter(models, function (model) {
+    return !_.contains(modelRestrictions.registered, model.name);
+  });
+  var grantPermissions = _.flatten(_.map(permittedModels, function (modelEntity) {
 
     return _.map(grants.registered, function (permission) {
       return {
