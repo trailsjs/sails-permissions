@@ -4,7 +4,7 @@
   "description": "Comprehensive user permissions and entitlements system for sails.js and Waterline. Supports user authentication with passport.js, role-based permissioning, object ownership, and row-level security.",
   "main": "dist/api/hooks/permissions/index.js",
   "scripts": {
-    "test": "mocha --reporter spec --compilers js:babel/register",
+    "test": "gulp && mocha --reporter spec --compilers js:babel/register",
     "prepublish": "gulp"
   },
   "repository": {
@@ -44,7 +44,7 @@
     "mocha": "^2.x.x",
     "request": "^2.58.0",
     "sails": "balderdashy/sails",
-    "sails-auth": "latest",
+    "sails-auth": "^2.0",
     "sails-memory": "^0.10.5",
     "supertest": "^0.15.0",
     "waterline-postgresql": "^0.12.0"

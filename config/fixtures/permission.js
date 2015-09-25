@@ -20,7 +20,7 @@ var modelRestrictions = {
   registered: [
     'Role',
     'Permission',
-    //'User',
+    'User',
     'Passport'
   ],
   public: [
@@ -76,6 +76,11 @@ function grantRegisteredPermissions (roles, models, admin) {
     },
     {
       model: _.find(models, { name: 'Model' }).id,
+      action: 'read',
+      role: registeredRole.id
+    },
+    {
+      model: _.find(models, { name: 'User' }).id,
       action: 'read',
       role: registeredRole.id
     },
