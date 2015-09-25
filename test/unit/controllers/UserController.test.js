@@ -344,14 +344,12 @@ describe('User Controller', function() {
           })
           .expect(200)
           .end(function(err, res) {
-
             var user = res.body;
 
             assert.ifError(err);
             assert.equal(user.email, 'newuserupdated@example.com');
 
             done(err);
-
           });
 
       });
@@ -479,41 +477,6 @@ describe('User Controller', function() {
       });
 
 
-      it('should not be able to read another user', function(done) {
-
-        request(sails.hooks.http.app)
-          .get('/user/' + adminUserId)
-          .set('Authorization', registeredAuth.Authorization)
-          .expect(403)
-          .end(function(err, res) {
-            var user = res.body;
-
-            assert.ifError(err);
-            assert(_.isString(user.error), JSON.stringify(user));
-
-            done(err);
-
-          });
-
-      });
-
-      it('should not be able to read all users', function(done) {
-
-        request(sails.hooks.http.app)
-          .get('/user/')
-          .set('Authorization', registeredAuth.Authorization)
-          .expect(200)
-          .end(function(err, res) {
-            var users = res.body;
-
-            assert.ifError(err);
-            assert(users.length == 1);
-
-            done(err);
-
-          });
-
-      });
 
     });
 

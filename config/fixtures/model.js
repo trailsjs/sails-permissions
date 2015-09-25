@@ -1,4 +1,3 @@
-var Promise = require('bluebird');
 /**
  * Creates database representations of the Model types.
  *
@@ -7,11 +6,7 @@ var Promise = require('bluebird');
 exports.createModels = function () {
   sails.log.verbose('sails-permissions: syncing waterline models');
 
-  var models = _.compact(_.map(sails.controllers, function (controller, name) {
-    var conf = controller._config
-      , modelName = conf && conf.model && conf.model.name
-      , model = sails.models[modelName || name]
-    ;
+  var models = _.compact(_.map(sails.models, function (model, name) {
     return model && model.globalId && model.identity && {
       name: model.globalId,
       identity: model.identity,
@@ -19,7 +14,7 @@ exports.createModels = function () {
     };
   }));
 
-  return Promise.map(models, function (model) {
-    return Model.findOrCreate({ name: model.name }, model);
-  });
+  return Promise.all(_.map(models, function (model) {
+    return sails.models.model.findOrCreate({ name: model.name }, model);
+  }));
 };

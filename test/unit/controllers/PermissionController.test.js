@@ -29,7 +29,7 @@ describe('PermissionController', function () {
           .post("/permission")
           .set('Authorization', adminAuth.Authorization)
           .send({
-            model: 2,
+            model: 4,
             criteria: {
               where: {
                 id: 1
@@ -51,9 +51,7 @@ describe('PermissionController', function () {
               })
               .expect(200)
               .end(function (err, res) {
-
                 agent.saveCookies(res);
-
                 return done(err);
               });
           });

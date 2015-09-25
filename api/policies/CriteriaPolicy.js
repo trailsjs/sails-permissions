@@ -80,7 +80,6 @@ function bindResponsePolicy(req, res, criteria) {
 }
 
 function responsePolicy(criteria, _data, options) {
-  sails.log.info('responsePolicy');
   var req = this.req;
   var res = this.res;
   var user = req.owner;

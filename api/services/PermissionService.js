@@ -1,4 +1,5 @@
-var Promise = require('bluebird');
+var _ = require('lodash');
+
 var methodMap = {
   POST: 'create',
   GET: 'read',
@@ -79,23 +80,23 @@ module.exports = {
    */
   findModelPermissions: function(options) {
     var action = PermissionService.getMethod(options.method);
-    var permissionCriteria = {
-      model: options.model.id,
-      action: action
-    };
+
+    //console.log('findModelPermissions options', options)
+    //console.log('findModelPermissions action', action)
 
     return User.findOne(options.user.id)
       .populate('roles')
       .then(function(user) {
-        return Permission.find({
+        var permissionCriteria = {
           model: options.model.id,
           action: action,
-          or: [{
-            user: user.id
-          }, {
-            role: _.pluck(user.roles, 'id')
-          }]
-        }).populate('criteria');
+          or: [
+            { role: _.pluck(user.roles, 'id') },
+            { user: user.id }
+          ]
+        };
+        
+        return Permission.find(permissionCriteria).populate('criteria')
       });
   },
 
@@ -184,8 +185,9 @@ module.exports = {
    * Build an error message
    */
   getErrorMessage: function(options) {
+    var user = options.user.email || options.user.username
     return [
-      'User', options.user.email, 'is not permitted to', options.method, options.model.name
+      'User', user, 'is not permitted to', options.method, options.model.name
     ].join(' ');
   },
 
@@ -219,7 +221,7 @@ module.exports = {
 
     // look up the model id based on the model name for each permission, and change it to an id
     ok = ok.then(function() {
-      return Promise.map(permissions, function(permission) {
+      return Promise.all(permissions.map(function(permission) {
         return Model.findOne({
             name: permission.model
           })
@@ -227,7 +229,7 @@ module.exports = {
             permission.model = model.id;
             return permission;
           });
-      });
+      }));
     });
 
     // look up user ids based on usernames, and replace the names with ids
@@ -268,7 +270,7 @@ module.exports = {
     }
 
     // look up the models based on name, and replace them with ids
-    var ok = Promise.map(permissions, function(permission) {
+    var ok = Promise.all(permissions.map(function(permission) {
       var findRole = permission.role ? Role.findOne({
         name: permission.role
       }) : null;
@@ -278,7 +280,7 @@ module.exports = {
       return Promise.all([findRole, findUser, Model.findOne({
           name: permission.model
         })])
-        .spread(function(role, user, model) {
+        .then(([ role, user, model]) => {
           permission.model = model.id;
           if (role && role.id) {
             permission.role = role.id;
@@ -288,7 +290,7 @@ module.exports = {
             return Promise.reject(new Error('no role or user specified'));
           }
         });
-    });
+    }));
 
     ok = ok.then(function() {
       return Permission.create(permissions);
@@ -349,7 +351,7 @@ module.exports = {
         }, {
           select: ['id']
         }).then(function(users) {
-          users.map(function(users) {
+          users.map(function(user) {
             role.users.remove(user.id);
           });
           return role.save();
@@ -377,7 +379,7 @@ module.exports = {
       name: options.model
     })]);
 
-    ok = ok.spread(function(role, user, model) {
+    ok = ok.then(([ role, user, model ]) => {
 
       var query = {
         model: model.id,
@@ -412,12 +414,12 @@ module.exports = {
     if (!_.isArray(objects)) {
       return PermissionService.isAllowedToPerformSingle(user.id, action, model, body)(objects);
     }
-    return new Promise.map(objects, PermissionService.isAllowedToPerformSingle(user.id, action, model, body))
-        .then(function (allowedArray) {
-            return allowedArray.every(function (allowed) {
-                return allowed === true;
-            });
+    return Promise.all(objects.map(PermissionService.isAllowedToPerformSingle(user.id, action, model, body)))
+      .then(function (allowedArray) {
+        return allowedArray.every(function (allowed) {
+          return allowed === true;
         });
+      });
   },
 
   /**

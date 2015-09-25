@@ -25,7 +25,7 @@ describe('Model Controller', function () {
 
             var models = res.body;
 
-            assert.equal(models.length, 4);
+            assert.equal(models.length, 8);
             assert.equal(_.intersection(_.pluck(models, 'name'), [
               'Model',
               'Permission',

@@ -1,10 +1,11 @@
+var _ = require('lodash');
 var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
 /**
  * Query the Model that is being acted upon, and set it on the req object.
  */
 module.exports = function ModelPolicy (req, res, next) {
-  var modelCache = sails.hooks['sails-permissions']._modelCache;
+  var modelCache = sails.hooks.permissions._modelCache;
   req.options.modelIdentity = actionUtil.parseModel(req).identity;
 
   if (_.isEmpty(req.options.modelIdentity)) {
@@ -26,12 +27,7 @@ module.exports = function ModelPolicy (req, res, next) {
       if (!_.isObject(model)) {
         req.options.unknownModel = true;
 
-        if (!sails.config.permissions.allowUnknownModelDefinition) {
-          return next(new Error('Model definition not found: '+ req.options.modelIdentity));
-        }
-        else {
-          model = sails.models[req.options.modelIdentity];
-        }
+        model = sails.models[req.options.modelIdentity];
       }
 
       req.model = model;
