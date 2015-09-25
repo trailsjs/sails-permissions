@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
 /**
