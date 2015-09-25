@@ -4,6 +4,7 @@
  * @description
  *   The actions a Role is granted on a particular Model and its attributes
  */
+import _ from 'lodash'
 module.exports = {
   autoCreatedBy: false,
 

@@ -2,6 +2,7 @@
  * Create admin user.
  * @param adminRole - the admin role which grants all permissions
  */
+import _ from 'lodash'
 exports.create = function (roles, userModel) {
   if (_.isEmpty(sails.config.permissions.adminUsername)) {
     throw new Error('sails.config.permissions.adminUsername is not set');
