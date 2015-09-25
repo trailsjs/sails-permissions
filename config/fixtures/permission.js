@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 var grants = {
   admin: [
     { action: 'create' },
@@ -36,6 +38,7 @@ var modelRestrictions = {
  * Create default Role permissions
  */
 exports.create = function (roles, models, admin) {
+  console.log('granting permissions on models', _.pluck(models, 'identity'))
   return Promise.all([
     grantAdminPermissions(roles, models, admin),
     grantRegisteredPermissions(roles, models, admin)
@@ -66,7 +69,7 @@ function grantAdminPermissions (roles, models, admin) {
 
 function grantRegisteredPermissions (roles, models, admin) {
   var registeredRole = _.find(roles, { name: 'registered' });
-  var permissions = [
+  var basePermissions = [
     {
       model: _.find(models, { name: 'Permission' }).id,
       action: 'read',
@@ -91,8 +94,22 @@ function grantRegisteredPermissions (roles, models, admin) {
     }
   ];
 
+  // XXX copy/paste from above. terrible. improve.
+  var grantPermissions = _.flatten(_.map(models, function (modelEntity) {
+    var model = sails.models[modelEntity.identity];
+
+    return _.map(grants.registered, function (permission) {
+      return {
+        model: modelEntity.id,
+        action: permission.action,
+        role: registeredRole.id,
+      };
+    });
+  }));
+
+
   return Promise.all(
-    _.map(permissions, function (permission) {
+    [ ...basePermissions, ...grantPermissions ].map(permission => {
       return sails.models.permission.findOrCreate(permission, permission);
     })
   );
