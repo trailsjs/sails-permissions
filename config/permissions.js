@@ -9,7 +9,5 @@ module.exports.permissions = {
 
   afterEvents: [
     'hook:auth:initialized'
-  ],
-
-  allowUnknownModelDefinitions: false
+  ]
 };
