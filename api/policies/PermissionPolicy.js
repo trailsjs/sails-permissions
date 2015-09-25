@@ -36,7 +36,7 @@ module.exports = function (req, res, next) {
           req.method, 'on', req.model.name, 'for', req.user.username);
 
       if (!permissions || permissions.length === 0) {
-        return res.badRequest({ error: PermissionService.getErrorMessage(options) });
+        return res.forbidden({ error: PermissionService.getErrorMessage(options) });
       }
 
       req.permissions = permissions;

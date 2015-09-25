@@ -26,8 +26,8 @@ module.exports = {
    */
   isForeignObject: function(owner) {
     return function(object) {
-      //sails.log('object', object);
-      //sails.log('object.owner: ', object.owner, ', owner:', owner);
+      //sails.log.verbose('object', object);
+      //sails.log.verbose('object.owner: ', object.owner, ', owner:', owner);
       return object.owner !== owner;
     };
   },
@@ -119,17 +119,25 @@ module.exports = {
       objects = [objects];
     }
 
-    var criteria = permissions.reduce(function(memo, perm) {
-      if (perm && perm.criteria) {
-        memo = memo.concat(perm.criteria);
+    var criteria = permissions.reduce(function (memo, perm) {
+      if (perm) {
+        if (!perm.criteria || perm.criteria.length==0) {
+          // If a permission has no criteria then it passes for all cases
+          // (like the admin role)
+          memo = memo.concat([{where:{}}]);
+        }
+        else {
+            memo = memo.concat(perm.criteria);
+        }
+        if (perm.relation === 'owner') {
+            perm.criteria.forEach(function (criteria) {
+                criteria.owner = true;
+            });
+        }
+        return memo;
       }
-      if (perm.relation === 'owner') {
-        perm.criteria.forEach(function(criteria) {
-          criteria.owner = true;
-        });
-      }
-      return memo;
     }, []);
+
 
     if (!_.isArray(criteria)) {
       criteria = [criteria];
@@ -176,7 +184,7 @@ module.exports = {
    */
   getErrorMessage: function(options) {
     return [
-      'User', options.user.email, 'is not permitted to', options.method, options.model.globalId
+      'User', options.user.email, 'is not permitted to', options.method, options.model.name
     ].join(' ');
   },
 
