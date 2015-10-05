@@ -107,7 +107,7 @@ class Permissions extends Marlinspike {
         return require(path.resolve(fixturesPath, 'user')).create(this.roles, userModel)
       })
       .then(() => {
-        return sails.models.user.findOne({ email: this.sails.config.permissions.adminEmail })
+        return sails.models.user.findOne({ username: this.sails.config.permissions.adminUsername })
       })
       .then(user => {
         this.sails.log('sails-permissions: created admin user:', user)
