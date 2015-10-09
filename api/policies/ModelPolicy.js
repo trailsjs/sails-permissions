@@ -1,4 +1,5 @@
 var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
+var _ = require('lodash');
 
 /**
  * Query the Model that is being acted upon, and set it on the req object.

@@ -16,7 +16,7 @@ describe('User Controller', function() {
 
   var adminUserId;
   var newUserId;
-  var roleId;
+  var testRoleId;
   var inactiveRoleId;
 
   describe('User with Admin Role', function() {
@@ -146,7 +146,7 @@ describe('User Controller', function() {
           })
           .expect(201)
           .end(function(err, res) {
-            roleId = res.body.id; // 4
+            testRoleId = res.body.id; // 4
             done(err);
           });
       });
@@ -167,7 +167,7 @@ describe('User Controller', function() {
               .send({
                 model: roleModel.id,
                 action: 'update',
-                role: roleId,
+                role: testRoleId,
                 createdBy: adminUserId,
                 criteria: {
                   blacklist: ['id', 'stream'],
@@ -200,7 +200,7 @@ describe('User Controller', function() {
               .send({
                 model: roleModel.id,
                 action: 'update',
-                role: roleId,
+                role: testRoleId,
                 createdBy: adminUserId,
                 criteria: {
                   blacklist: ['id']
@@ -248,7 +248,7 @@ describe('User Controller', function() {
               .send({
                 model: roleModel.id,
                 action: 'read',
-                role: roleId,
+                role: testRoleId,
                 createdBy: adminUserId,
                 criteria: {
                   where: {
@@ -280,7 +280,7 @@ describe('User Controller', function() {
               .send({
                 model: permissionModel.id,
                 action: 'read',
-                role: roleId,
+                role: testRoleId,
                 createdBy: adminUserId,
                 criteria: {
                   where: {
@@ -359,7 +359,7 @@ describe('User Controller', function() {
       it('should be able to update role name', function(done) {
         // it should be able to do this, because an earlier test set up the role and permission for it
         request(sails.hooks.http.app)
-          .put('/role/' + roleId)
+          .put('/role/' + testRoleId)
           .set('Authorization', newUserAuth.Authorization)
           .send({
             name: 'updatedName'
@@ -377,7 +377,7 @@ describe('User Controller', function() {
       it('should not be able to update role id', function(done) {
         // it should be able to do this, because an earlier test set up the role and permission for it
         request(sails.hooks.http.app)
-          .put('/role/' + roleId)
+          .put('/role/' + testRoleId)
           .set('Authorization', newUserAuth.Authorization)
           .send({
             id: 99
@@ -407,6 +407,29 @@ describe('User Controller', function() {
             done(err);
 
           });
+      });
+
+      it('should be able to update role name for an inactive role, if user is the owner of the role', function(done) {
+
+        Role.create({
+            name: 'inactiveOwnedRole',
+            active: false,
+            owner: newUserId
+          })
+          .then(function(role) {
+            request(sails.hooks.http.app)
+              .put('/role/' + role.id)
+              .set('Authorization', newUserAuth.Authorization)
+              .send({
+                name: 'newInactiveOwnedRoleName'
+              })
+              .expect(200)
+              .end(function(err, res) {
+                assert.ifError(err);
+                Role.destroy(role.id, done);
+              });
+          });
+
       });
 
 

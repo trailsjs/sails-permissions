@@ -5,6 +5,7 @@
  * Verify that the User fulfills permission 'where' conditions and attribute blacklist restrictions
  */
 var wlFilter = require('waterline-criteria');
+var _ = require('lodash');
 
 module.exports = function(req, res, next) {
   var permissions = req.permissions;
@@ -27,23 +28,33 @@ module.exports = function(req, res, next) {
     return next();
   }
 
+  // get all of the where clauses and blacklists into one flat array
+  // if a permission has no criteria then it is always true
+  var criteria = _.compact(_.flatten(
+    _.map(permissions, function(permission) {
+      if (_.isEmpty(permission.criteria)) {
+        permission.criteria = [{
+          where: {}
+        }];
+      }
+
+      var criteriaList = permission.criteria;
+      return _.map(criteriaList, function(criteria) {
+        // ensure criteria.where is initialized
+        criteria.where = criteria.where || {};
+
+        if (permission.relation == 'owner') {
+          criteria.where.owner = req.user.id;
+        }
+
+        return criteria;
+      });
+    })
+  ));
+
 
   // set up response filters if we are not mutating an existing object
   if (!_.contains(['update', 'delete'], action)) {
-
-    // get all of the where clauses and blacklists into one flat array
-    // if a permission has no criteria then it is always true
-    var criteria = _.compact(_.flatten(
-      _.map(
-        _.pluck(permissions, 'criteria'),
-        function(c) {
-          if (c.length == 0) {
-            return [{where: {}}];
-          }
-          return c;
-        }
-      )
-    ));
 
     if (criteria.length) {
       bindResponsePolicy(req, res, criteria);
@@ -97,14 +108,14 @@ function responsePolicy(criteria, _data, options) {
     criteria.some(function(crit) {
       var filtered = wlFilter([item], {
         where: {
-          or: [crit.where || {}]
+          or: [crit.where]
         }
       }).results;
 
       if (filtered.length) {
 
         if (crit.blacklist && crit.blacklist.length) {
-          crit.blacklist.forEach(function (term) {
+          crit.blacklist.forEach(function(term) {
             delete item[term];
           });
         }
@@ -119,7 +130,9 @@ function responsePolicy(criteria, _data, options) {
     return res._ok(permitted, options);
   } else if (permitted.length === 0) {
     sails.log.silly('permitted.length === 0');
-    return res.send(404);
+    return res.forbidden({
+        error: 'Cannot perform action [read] on foreign object'
+    });
   } else {
     res._ok(permitted[0], options);
   }
