@@ -7,7 +7,6 @@ var methodMap = {
   DELETE: 'delete'
 };
 
-var findRecords = require('sails/lib/hooks/blueprints/actions/find');
 var wlFilter = require('waterline-criteria');
 
 module.exports = {
@@ -54,7 +53,7 @@ module.exports = {
     }
 
     return new Promise(function(resolve, reject) {
-        findRecords(req, {
+        sails.hooks.blueprints.middleware.find(req, {
           ok: resolve,
           serverError: reject,
           // this isn't perfect, since it returns a 500 error instead of a 404 error
