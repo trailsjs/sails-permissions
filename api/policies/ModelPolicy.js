@@ -1,12 +1,19 @@
 var _ = require('lodash');
-var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
+
+/**
+ * Simplified version of sails/lib/hooks/blueprints/actionUtil
+ * see: https://github.com/balderdashy/sails/blob/b4eed1775d01f436b263362180eb3f8447af1b87/lib/hooks/blueprints/actionUtil.js#L302
+ */
+function parseModel (res) {
+  return req.options.model || req.options.controller
+}
 
 /**
  * Query the Model that is being acted upon, and set it on the req object.
  */
 module.exports = function ModelPolicy (req, res, next) {
   var modelCache = sails.hooks.permissions._modelCache;
-  req.options.modelIdentity = actionUtil.parseModel(req).identity;
+  req.options.modelIdentity = parseModel(req).identity;
 
   if (_.isEmpty(req.options.modelIdentity)) {
     return next();
