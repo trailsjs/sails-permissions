@@ -4,7 +4,7 @@ var _ = require('lodash');
  * Simplified version of sails/lib/hooks/blueprints/actionUtil
  * see: https://github.com/balderdashy/sails/blob/b4eed1775d01f436b263362180eb3f8447af1b87/lib/hooks/blueprints/actionUtil.js#L302
  */
-function parseModel (res) {
+function parseModel (req) {
   return req.options.model || req.options.controller
 }
 
@@ -13,7 +13,7 @@ function parseModel (res) {
  */
 module.exports = function ModelPolicy (req, res, next) {
   var modelCache = sails.hooks.permissions._modelCache;
-  req.options.modelIdentity = parseModel(req).identity;
+  req.options.modelIdentity = parseModel(req);
 
   if (_.isEmpty(req.options.modelIdentity)) {
     return next();
