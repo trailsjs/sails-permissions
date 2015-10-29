@@ -78,6 +78,28 @@ You can now login using the aforementioned default login data or the admin setti
 }
 ```
 
+#### 6. How to Contribute
+`sails-permissions` requires an active postgres server to run unit tests against.
+
+## Example Setup on Mac with Brew
+1. Install `postgres` package.  Follow directions provided by Brew to start
+the server after installation.
+```sh
+$ brew install postgres
+```
+2. Create a user named `postgres`
+```sh
+$ createuser -s -r postgres
+```
+3. Login to `psql` with the user `postgres` to verify user creation
+```sh
+$ psql -U postgres
+```
+4. Exit `psql` and run unit tests like a boss!
+```sh
+$ npm test
+```
+
 ## License
 MIT
 
