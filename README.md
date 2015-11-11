@@ -82,7 +82,7 @@ You can now login using the aforementioned default login data or the admin setti
 MIT
 
 ## Maintained By
-[<img src='http://i.imgur.com/zM0ynQk.jpg' height='36px'>](http://balderdash.co)
+[<img src='http://i.imgur.com/zM0ynQk.jpg' height='36px'>](http://balderdash.io)
 
 <img src='http://i.imgur.com/NsAdNdJ.png'>
 

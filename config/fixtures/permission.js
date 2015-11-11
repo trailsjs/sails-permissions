@@ -1,4 +1,4 @@
-var Promise = require('bluebird');
+var _ = require('lodash');
 
 var grants = {
   admin: [
@@ -51,7 +51,7 @@ exports.create = function (roles, models, admin) {
 function grantAdminPermissions (roles, models, admin) {
   var adminRole = _.find(roles, { name: 'admin' });
   var permissions = _.flatten(_.map(models, function (modelEntity) {
-    var model = sails.models[modelEntity.identity];
+    //var model = sails.models[modelEntity.identity];
 
     return _.map(grants.admin, function (permission) {
       var newPermission = {
@@ -59,7 +59,7 @@ function grantAdminPermissions (roles, models, admin) {
         action: permission.action,
         role: adminRole.id,
       };
-      return Permission.findOrCreate(newPermission, newPermission);
+      return sails.models.permission.findOrCreate(newPermission, newPermission);
     });
   }));
 
@@ -68,7 +68,7 @@ function grantAdminPermissions (roles, models, admin) {
 
 function grantRegisteredPermissions (roles, models, admin) {
   var registeredRole = _.find(roles, { name: 'registered' });
-  var permissions = [
+  var basePermissions = [
     {
       model: _.find(models, { name: 'Permission' }).id,
       action: 'read',
@@ -76,6 +76,11 @@ function grantRegisteredPermissions (roles, models, admin) {
     },
     {
       model: _.find(models, { name: 'Model' }).id,
+      action: 'read',
+      role: registeredRole.id
+    },
+    {
+      model: _.find(models, { name: 'User' }).id,
       action: 'read',
       role: registeredRole.id
     },
@@ -93,9 +98,25 @@ function grantRegisteredPermissions (roles, models, admin) {
     }
   ];
 
+  // XXX copy/paste from above. terrible. improve.
+  var permittedModels = _.filter(models, function (model) {
+    return !_.contains(modelRestrictions.registered, model.name);
+  });
+  var grantPermissions = _.flatten(_.map(permittedModels, function (modelEntity) {
+
+    return _.map(grants.registered, function (permission) {
+      return {
+        model: modelEntity.id,
+        action: permission.action,
+        role: registeredRole.id,
+      };
+    });
+  }));
+
+
   return Promise.all(
-    _.map(permissions, function (permission) {
-      return Permission.findOrCreate(permission, permission);
+    [ ...basePermissions, ...grantPermissions ].map(permission => {
+      return sails.models.permission.findOrCreate(permission, permission);
     })
   );
 }

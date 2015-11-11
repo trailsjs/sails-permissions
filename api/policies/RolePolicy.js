@@ -8,6 +8,8 @@
  * By this point, we know we have some permissions related to the action and object
  * If they are 'owner' permissions, verify that the objects that are being accessed are owned by the current user
  */
+import _ from 'lodash'
+
 module.exports = function(req, res, next) {
   var permissions = req.permissions;
   var relations = _.groupBy(permissions, 'relation');

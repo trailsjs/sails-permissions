@@ -1,3 +1,4 @@
+import _ from 'lodash'
 var pluralize = require('pluralize');
 
 module.exports = {

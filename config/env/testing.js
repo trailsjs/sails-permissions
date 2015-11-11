@@ -1,4 +1,6 @@
 var _ = require('lodash');
+var path = require('path');
+
 /**
  * Testing environment settings
  *
@@ -10,19 +12,24 @@ var _ = require('lodash');
  * any private information to this file!
  *
  */
-
 module.exports = {
-
-  log: { level: 'silent' },
-  models: { migrate: 'drop' },
+  log: { level: 'debug' },
+  models: {
+    migrate: 'drop',
+    connection: 'testing'
+  },
+  connections: {
+    testing: {
+      adapter: 'waterline-postgresql'
+    }
+  },
   hooks: { grunt: false },
   port: 1336,
-  routes: _.extend(require('../routes/sails-auth.js'), {
+  routes: {
     "DELETE /role/:parentid/users/:id": {
         controller: 'RoleController',
         action: 'remove',
         alias: 'users'
     }
-  })
-
+  }
 };

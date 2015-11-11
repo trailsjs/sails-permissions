@@ -5,6 +5,7 @@
  * Verify that the User fulfills permission 'where' conditions and attribute blacklist restrictions
  */
 var wlFilter = require('waterline-criteria');
+import _ from 'lodash'
 
 module.exports = function(req, res, next) {
   var permissions = req.permissions;
@@ -82,7 +83,6 @@ function bindResponsePolicy(req, res, criteria) {
 }
 
 function responsePolicy(criteria, _data, options) {
-  sails.log.info('responsePolicy');
   var req = this.req;
   var res = this.res;
   var user = req.owner;

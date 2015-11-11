@@ -1,4 +1,3 @@
-var Promise = require('bluebird');
 /**
  * PermissionPolicy
  * @depends OwnerPolicy
@@ -80,49 +79,3 @@ module.exports = function (req, res, next) {
     return res.badRequest({error: e.message});
   });
 };
-
-function bindResponsePolicy (req, res) {
-  res._ok = res.ok;
-
-  res.ok = _.bind(responsePolicy, {
-    req: req,
-    res: res
-  });
-}
-
-function responsePolicy (_data, options) {
-  var req = this.req;
-  var res = this.res;
-  var user = req.owner;
-  var method = PermissionService.getMethod(req);
-
-  var data = _.isArray(_data) ? _data : [_data];
-
-  //sails.log.verbose('data', _data);
-  //sails.log.verbose('options', options);
-
-  // TODO search populated associations
-  Promise.bind(this)
-    .map(data, function (object) {
-      return user.getOwnershipRelation(data);
-    })
-    .then(function (results) {
-      //sails.log.verbose('results', results);
-      var permitted = _.filter(results, function (result) {
-        return _.any(req.permissions, function (permission) {
-          return permission.permits(result.relation, method);
-        });
-      });
-
-      if (permitted.length === 0) {
-        //sails.log.verbose('permitted.length === 0');
-        return res.send(404);
-      }
-      else if (_.isArray(_data)) {
-        return res._ok(permitted, options);
-      }
-      else {
-        res._ok(permitted[0], options);
-      }
-    });
-}
