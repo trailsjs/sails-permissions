@@ -51,7 +51,7 @@
   "dependencies": {
     "fnv-plus": "^1.2.10",
     "lodash": "^3.10.0",
-    "marlinspike": "^0.12",
+    "marlinspike": "^1.0",
     "pluralize": "^1.0.1",
     "sails-auth": "^2.0",
     "sails-generate-entities": "latest",
