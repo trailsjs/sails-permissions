@@ -1,6 +1,6 @@
 {
   "name": "sails-permissions",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "Comprehensive user permissions and entitlements system for sails.js and Waterline. Supports user authentication with passport.js, role-based permissioning, object ownership, and row-level security.",
   "main": "dist/api/hooks/permissions/index.js",
   "scripts": {
