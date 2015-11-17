@@ -29,14 +29,14 @@ module.exports = function (req, res, next) {
     return next();
   }
 
-  PermissionService
+  sails.services.permissionservice
     .findModelPermissions(options)
     .then(function (permissions) {
       sails.log.silly('PermissionPolicy:', permissions.length, 'permissions grant',
           req.method, 'on', req.model.name, 'for', req.user.username);
 
       if (!permissions || permissions.length === 0) {
-        return res.forbidden({ error: PermissionService.getErrorMessage(options) });
+        return res.forbidden({ error: sails.services.permissionservice.getErrorMessage(options) });
       }
 
       req.permissions = permissions;

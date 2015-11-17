@@ -14,13 +14,13 @@ module.exports = function(req, res, next) {
     return next();
   }
 
-  var action = PermissionService.getMethod(req.method);
+  var action = sails.services.permissionservice.getMethod(req.method);
 
   var body = req.body || req.query;
 
   // if we are creating, we don't need to query the db, just check the where clause vs the passed in data
   if (action === 'create') {
-    if (!PermissionService.hasPassingCriteria(body, permissions, body)) {
+    if (!sails.services.permissionservice.hasPassingCriteria(body, permissions, body)) {
       return res.forbidden({
         error: 'Can\'t create this object, because of failing where clause'
       });
@@ -52,7 +52,7 @@ module.exports = function(req, res, next) {
     return next();
   }
 
-  PermissionService.findTargetObjects(req)
+  sails.services.permissionservice.findTargetObjects(req)
     .then(function(objects) {
 
       // attributes are not important for a delete request
@@ -60,7 +60,7 @@ module.exports = function(req, res, next) {
         body = undefined;
       }
 
-      if (!PermissionService.hasPassingCriteria(objects, permissions, body, req.user.id)) {
+      if (!sails.services.permissionservice.hasPassingCriteria(objects, permissions, body, req.user.id)) {
         return res.forbidden({
           error: 'Can\'t ' + action + ', because of failing where clause or attribute permissions'
         });
@@ -84,7 +84,7 @@ function responsePolicy(criteria, _data, options) {
   var req = this.req;
   var res = this.res;
   var user = req.owner;
-  var method = PermissionService.getMethod(req);
+  var method = sails.services.permissionservice.getMethod(req);
   var isResponseArray = _.isArray(_data);
 
   var data = isResponseArray ? _data : [_data];
