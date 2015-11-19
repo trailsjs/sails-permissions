@@ -22,12 +22,12 @@ class Permissions extends Marlinspike {
      * Local cache of Model name -> id mappings to avoid excessive database lookups.
      */
     this.sails.config.blueprints.populate = false
-    this.installModelOwnership()
   }
 
   initialize (next) {
     let config = this.sails.config.permissions
 
+    this.installModelOwnership()
     this.sails.after(config.afterEvent, () => {
       if (!this.validateDependencies()) {
         this.sails.log.error('Cannot find sails-auth hook. Did you "npm install sails-auth --save"?')
