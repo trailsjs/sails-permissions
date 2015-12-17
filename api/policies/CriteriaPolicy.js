@@ -89,9 +89,8 @@ function responsePolicy(criteria, _data, options) {
 
   var data = isResponseArray ? _data : [_data];
 
-  sails.log.silly('data', data);
-  sails.log.silly('options', options);
-  sails.log.silly('criteria!', criteria);
+  // remove undefined, since that is invalid input for waterline-criteria
+  data = data.filter(item => { return item !== undefined })
 
   var permitted = data.reduce(function(memo, item) {
     criteria.some(function(crit) {
