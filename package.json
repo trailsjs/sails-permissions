@@ -4,7 +4,7 @@
   "description": "Comprehensive user permissions and entitlements system for sails.js and Waterline. Supports user authentication with passport.js, role-based permissioning, object ownership, and row-level security.",
   "main": "dist/api/hooks/permissions/index.js",
   "scripts": {
-    "test": "gulp && mocha --reporter spec --compilers js:babel/register",
+    "test": "eslint --parser babel-eslint --rule '{\"no-undef\":2}' --global sails --env node api && gulp && mocha --reporter spec --compilers js:babel/register",
     "prepublish": "gulp"
   },
   "repository": {
@@ -38,6 +38,8 @@
   "homepage": "https://github.com/tjwebb/sails-permissions",
   "devDependencies": {
     "babel": "^5.8.21",
+    "babel-eslint": "^4.1.5",
+    "eslint": "^1.9.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "jshint": "^2.8.0",

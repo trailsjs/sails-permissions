@@ -17,9 +17,9 @@ module.exports = {
    */
   hasForeignObjects: function(objects, user) {
     if (!_.isArray(objects)) {
-      return PermissionService.isForeignObject(user.id)(objects);
+      return sails.services.permissionservice.isForeignObject(user.id)(objects);
     }
-    return _.any(objects, PermissionService.isForeignObject(user.id));
+    return _.any(objects, sails.services.permissionservice.isForeignObject(user.id));
   },
 
   /**
@@ -78,12 +78,12 @@ module.exports = {
    * @param options.user
    */
   findModelPermissions: function(options) {
-    var action = PermissionService.getMethod(options.method);
+    var action = sails.services.permissionservice.getMethod(options.method);
 
     //console.log('findModelPermissions options', options)
     //console.log('findModelPermissions action', action)
 
-    return User.findOne(options.user.id)
+    return sails.models.user.findOne(options.user.id)
       .populate('roles')
       .then(function(user) {
         var permissionCriteria = {
@@ -95,7 +95,7 @@ module.exports = {
           ]
         };
         
-        return Permission.find(permissionCriteria).populate('criteria')
+        return sails.models.permission.find(permissionCriteria).populate('criteria')
       });
   },
 
@@ -154,10 +154,10 @@ module.exports = {
         var match = wlFilter([obj], {
           where: criteria.where
         }).results;
-        var hasUnpermittedAttributes = PermissionService.hasUnpermittedAttributes(attributes, criteria.blacklist);
+        var hasUnpermittedAttributes = sails.services.permissionservice.hasUnpermittedAttributes(attributes, criteria.blacklist);
         var hasOwnership = true; // edge case for scenario where a user has some permissions that are owner based and some that are role based
         if (criteria.owner) {
-          hasOwnership = !PermissionService.isForeignObject(user)(obj);
+          hasOwnership = !sails.services.permissionservice.isForeignObject(user)(obj);
         }
         return match.length === 1 && !hasUnpermittedAttributes && hasOwnership;
       });
@@ -221,7 +221,7 @@ module.exports = {
     // look up the model id based on the model name for each permission, and change it to an id
     ok = ok.then(function() {
       return Promise.all(permissions.map(function(permission) {
-        return Model.findOne({
+        return sails.models.model.findOne({
             name: permission.model
           })
           .then(function(model) {
@@ -234,7 +234,7 @@ module.exports = {
     // look up user ids based on usernames, and replace the names with ids
     ok = ok.then(function(permissions) {
       if (options.users) {
-        return User.find({
+        return sails.models.user.find({
             username: options.users
           })
           .then(function(users) {
@@ -244,7 +244,7 @@ module.exports = {
     });
 
     ok = ok.then(function(users) {
-      return Role.create(options);
+      return sails.models.role.create(options);
     });
 
     return ok;
@@ -270,13 +270,13 @@ module.exports = {
 
     // look up the models based on name, and replace them with ids
     var ok = Promise.all(permissions.map(function(permission) {
-      var findRole = permission.role ? Role.findOne({
+      var findRole = permission.role ? sails.models.role.findOne({
         name: permission.role
       }) : null;
-      var findUser = permission.user ? User.findOne({
+      var findUser = permission.user ? sails.models.user.findOne({
         username: permission.user
       }) : null;
-      return Promise.all([findRole, findUser, Model.findOne({
+      return Promise.all([findRole, findUser, sails.models.model.findOne({
           name: permission.model
         })])
         .then(([ role, user, model]) => {
@@ -292,7 +292,7 @@ module.exports = {
     }));
 
     ok = ok.then(function() {
-      return Permission.create(permissions);
+      return sails.models.permission.create(permissions);
     });
 
     return ok;
@@ -313,10 +313,10 @@ module.exports = {
       usernames = [usernames];
     }
 
-    return Role.findOne({
+    return sails.models.role.findOne({
       name: rolename
     }).populate('users').then(function(role) {
-      return User.find({
+      return sails.models.user.find({
         username: usernames
       }).then(function(users) {
         role.users.add(_.pluck(users, 'id'));
@@ -340,12 +340,12 @@ module.exports = {
       usernames = [usernames];
     }
 
-    return Role.findOne({
+    return sails.models.role.findOne({
         name: rolename
       })
       .populate('users')
       .then(function(role) {
-        return User.find({
+        return sails.models.user.find({
           username: usernames
         }, {
           select: ['id']
@@ -368,13 +368,13 @@ module.exports = {
    * @param options.relation {string} - the type of the relation (owner or role)
    */
   revoke: function(options) {
-    var findRole = options.role ? Role.findOne({
+    var findRole = options.role ? sails.models.role.findOne({
       name: options.role
     }) : null;
-    var findUser = options.user ? User.findOne({
+    var findUser = options.user ? sails.models.user.findOne({
       username: options.user
     }) : null;
-    var ok = Promise.all([findRole, findUser, Model.findOne({
+    var ok = Promise.all([findRole, findUser, sails.models.model.findOne({
       name: options.model
     })]);
 
@@ -394,7 +394,7 @@ module.exports = {
         return Promise.reject(new Error('You must provide either a user or role to revoke the permission from'));
       }
 
-      return Permission.destroy(query);
+      return sails.models.permission.destroy(query);
     });
 
     return ok;
@@ -411,9 +411,9 @@ module.exports = {
    */
   isAllowedToPerformAction: function(objects, user, action, model, body) {
     if (!_.isArray(objects)) {
-      return PermissionService.isAllowedToPerformSingle(user.id, action, model, body)(objects);
+      return sails.services.permissionservice.isAllowedToPerformSingle(user.id, action, model, body)(objects);
     }
-    return Promise.all(objects.map(PermissionService.isAllowedToPerformSingle(user.id, action, model, body)))
+    return Promise.all(objects.map(sails.services.permissionservice.isAllowedToPerformSingle(user.id, action, model, body)))
       .then(function (allowedArray) {
         return allowedArray.every(function (allowed) {
           return allowed === true;
@@ -432,17 +432,17 @@ module.exports = {
   isAllowedToPerformSingle: function(user, action, model, body) {
     return function(obj) {
       return new Promise(function(resolve, reject) {
-        Model.findOne({
+        sails.models.model.findOne({
           identity: model
         }).then(function(model) {
-         return Permission.find({
+         return sails.models.permission.find({
             model: model.id,
             action: action,
             relation: 'user',
             user: user
           }).populate('criteria');
         }).then(function(permission) {
-          if (permission.length > 0 && PermissionService.hasPassingCriteria(obj, permission, body)) {
+          if (permission.length > 0 && sails.services.permissionservice.hasPassingCriteria(obj, permission, body)) {
             resolve(true);
           } else {
             resolve(false);

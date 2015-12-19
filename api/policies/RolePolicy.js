@@ -13,7 +13,7 @@ import _ from 'lodash'
 module.exports = function(req, res, next) {
   var permissions = req.permissions;
   var relations = _.groupBy(permissions, 'relation');
-  var action = PermissionService.getMethod(req.method);
+  var action = sails.services.permissionservice.getMethod(req.method);
 
   // continue if there exist role Permissions which grant the asserted privilege
   if (!_.isEmpty(relations.role)) {
@@ -39,15 +39,15 @@ module.exports = function(req, res, next) {
     _.isObject(req.body) && (req.body.owner = req.user.id);
   }
 
-  PermissionService.findTargetObjects(req)
+  sails.services.permissionservice.findTargetObjects(req)
     .then(function(objects) {
         // PermissionService.isAllowedToPerformAction checks if the user has 'user' based permissions (vs role or owner based permissions)
-      return PermissionService.isAllowedToPerformAction(objects, req.user, action, ModelService.getTargetModelName(req), req.body)
+      return sails.services.permissionservice.isAllowedToPerformAction(objects, req.user, action, sails.services.modelservice.getTargetModelName(req), req.body)
         .then(function(hasUserPermissions) {
           if (hasUserPermissions) {
             return next();
           }
-          if (PermissionService.hasForeignObjects(objects, req.user)) {
+          if (sails.services.permissionservice.hasForeignObjects(objects, req.user)) {
             return res.forbidden({
               error: 'Cannot perform action [' + action + '] on foreign object'
             });
