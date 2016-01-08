@@ -299,24 +299,26 @@ module.exports = {
   },
 
   //Performs checks first so the DB doesn't fill with duplicates
-  grantRole: function(options) {
+    grantRole: function(options) {
 	var action = options.action;
 	var model = options.model;
 	var role = options.role;
 	var where = undefined;
 	var blacklist = undefined;
+	var _this = this;
 	if (typeof options.criteria !== 'undefined' && options.criteria) {
 		where = options.critera.where;
 		blacklist = options.criteria.blacklist;
 	}
+	
 	return this.findRolePermission(action, model, role, where, blacklist).then(function (result) {
 		if (typeof result === 'undefined' || !result) {
 			var criteria = {};
 			criteria.where = where;
 			criteria.blacklist = blacklist;
 			if ((typeof criteria.blacklist === 'undefined' || !criteria.blacklist) && (typeof criteria.where === 'undefined' || !criteria.where))
-				criteria = undefined			
-			return this.grant({action: action, model: model, role: role, criteria : criteria});
+				criteria = undefined		
+			return _this.grant({action: action, model: model, role: role, criteria : criteria});
 		}
 		else
 			return result;
