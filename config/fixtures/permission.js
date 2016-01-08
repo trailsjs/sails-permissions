@@ -40,7 +40,7 @@ var modelRestrictions = {
 exports.create = function (roles, models, admin) {
   return Promise.all([
     grantAdminPermissions(roles, models, admin),
-    grantRegisteredPermissions(roles, models, admin)
+    //grantRegisteredPermissions(roles, models, admin)
   ])
   .then(function (permissions) {
     //sails.log.verbose('created', permissions.length, 'permissions');
