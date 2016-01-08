@@ -298,6 +298,60 @@ module.exports = {
     return ok;
   },
 
+  //Performs checks first so the DB doesn't fill with duplicates
+  grantRole: function(options) {
+	var action = options.action;
+	var model = options.model;
+	var role = options.role;
+	var where = undefined;
+	var blacklist = undefined;
+	if (typeof options.criteria !== 'undefined' && options.criteria) {
+		where = options.critera.where;
+		blacklist = options.criteria.blacklist;
+	}
+	return this.findRolePermission(action, model, role, where, blacklist).then(function (result) {
+		if (typeof result === 'undefined' || !result) {
+			var criteria = {};
+			criteria.where = where;
+			criteria.blacklist = blacklist;
+			if ((typeof criteria.blacklist === 'undefined' || !criteria.blacklist) && (typeof criteria.where === 'undefined' || !criteria.where))
+				criteria = undefined			
+			return this.grant({action: action, model: model, role: role, criteria : criteria});
+		}
+		else
+			return result;
+	});
+  },
+
+  findRolePermission: function(action, model, role, where, blacklist) {
+	var relation = "role";
+	return Model.findOneByName(model).then(function (model) {
+		return Role.findOneByName(role).then(function (role) {
+			if (typeof model === 'undefined' || !model || typeof role === 'undefined' || !role)
+				return Promise.reject(new Error("Role/Model missing. Model: " + model + "Role: " + role));
+			else {
+				var promise = Permission.findOne({action: action, model: model.id, role : role.id, relation : relation});
+				var criteria = {};
+				var hasCriteria = false;
+				if (typeof blacklist !== 'undefined' && blacklist && blacklist.length > 0)
+					criteria.blacklist = blacklist;
+				if (typeof where !== 'undefined' && where && where.length > 0)
+					criteria.where = where;
+				if ((typeof criteria.blacklist !== 'undefined' && criteria.blacklist) || (typeof criteria.where !== 'undefined' && criteria.where)) {
+					promise = query.populate('criteria', criteria);
+					hasCriteria = true;
+				}
+				return promise.then(function (result) {
+					if (hasCriteria && result.criteria.length === 0)
+						return undefined;
+					return result;
+				});
+			}
+		});
+	});
+  },
+
+
   /**
    * add one or more users to a particular role
    * TODO should this work with multiple roles?
