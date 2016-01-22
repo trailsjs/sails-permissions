@@ -37,10 +37,10 @@ var modelRestrictions = {
 /**
  * Create default Role permissions
  */
-exports.create = function (roles, models, admin) {
+exports.create = function (roles, models, admin, config) {
   return Promise.all([
-    grantAdminPermissions(roles, models, admin),
-    grantRegisteredPermissions(roles, models, admin)
+    grantAdminPermissions(roles, models, admin, config),
+    grantRegisteredPermissions(roles, models, admin, config)
   ])
   .then(function (permissions) {
     //sails.log.verbose('created', permissions.length, 'permissions');
@@ -48,10 +48,11 @@ exports.create = function (roles, models, admin) {
   });
 };
 
-function grantAdminPermissions (roles, models, admin) {
+function grantAdminPermissions (roles, models, admin, config) {
   var adminRole = _.find(roles, { name: 'admin' });
   var permissions = _.flatten(_.map(models, function (modelEntity) {
     //var model = sails.models[modelEntity.identity];
+    grants.admin = _.get(config, 'grants.admin') || grants.admin;
 
     return _.map(grants.admin, function (permission) {
       var newPermission = {
@@ -66,7 +67,7 @@ function grantAdminPermissions (roles, models, admin) {
   return Promise.all(permissions);
 }
 
-function grantRegisteredPermissions (roles, models, admin) {
+function grantRegisteredPermissions (roles, models, admin, config) {
   var registeredRole = _.find(roles, { name: 'registered' });
   var basePermissions = [
     {
@@ -76,11 +77,6 @@ function grantRegisteredPermissions (roles, models, admin) {
     },
     {
       model: _.find(models, { name: 'Model' }).id,
-      action: 'read',
-      role: registeredRole.id
-    },
-    {
-      model: _.find(models, { name: 'User' }).id,
       action: 'read',
       role: registeredRole.id
     },
@@ -103,6 +99,8 @@ function grantRegisteredPermissions (roles, models, admin) {
     return !_.contains(modelRestrictions.registered, model.name);
   });
   var grantPermissions = _.flatten(_.map(permittedModels, function (modelEntity) {
+
+    grants.registered = _.get(config, 'grants.registered') || grants.registered;
 
     return _.map(grants.registered, function (permission) {
       return {

@@ -116,7 +116,7 @@ class Permissions extends Marlinspike {
         return user.save()
       })
       .then(admin => {
-        return require(path.resolve(fixturesPath, 'permission')).create(this.roles, this.models, admin)
+        return require(path.resolve(fixturesPath, 'permission')).create(this.roles, this.models, admin, this.sails.config.permissions);
       })
       .catch(error => {
         this.sails.log.error(error)
