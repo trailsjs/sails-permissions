@@ -1,4 +1,4 @@
-# <img src="http://cdn.tjw.io/images/sails-logo.png" height='43px' />-permissions
+# sails-permissions
 
 [![Gitter][gitter-image]][gitter-url]
 [![NPM version][npm-image]][npm-url]
@@ -14,7 +14,7 @@ $ npm install sails-permissions sails-auth --save
 
 ## Quickstart
 
-**Note:** Complete documentation available in the sails-permissions wiki: https://github.com/tjwebb/sails-permissions/wiki
+**Note:** Complete documentation available in the sails-permissions wiki: https://github.com/langateam/sails-permissions/wiki
 
 ### 1. configure sailsrc
 
@@ -82,17 +82,13 @@ You can now login using the aforementioned default login data or the admin setti
 MIT
 
 ## Maintained By
-[<img src='http://i.imgur.com/zM0ynQk.jpg' height='36px'>](http://balderdash.io)
+[<img src='http://i.imgur.com/Y03Jgmf.png' height='36px'>](http://balderdash.io)
 
-<img src='http://i.imgur.com/NsAdNdJ.png'>
-
-[sails-logo]: http://cdn.tjw.io/images/sails-logo.png
-[sails-url]: https://sailsjs.org
 [npm-image]: https://img.shields.io/npm/v/sails-permissions.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/sails-permissions
-[travis-image]: https://img.shields.io/travis/tjwebb/sails-permissions.svg?style=flat-square
-[travis-url]: https://travis-ci.org/tjwebb/sails-permissions
-[daviddm-image]: http://img.shields.io/david/tjwebb/sails-permissions.svg?style=flat-square
-[daviddm-url]: https://david-dm.org/tjwebb/sails-permissions
+[travis-image]: https://img.shields.io/travis/langateam/sails-permissions.svg?style=flat-square
+[travis-url]: https://travis-ci.org/langateam/sails-permissions
+[daviddm-image]: http://img.shields.io/david/langateam/sails-permissions.svg?style=flat-square
+[daviddm-url]: https://david-dm.org/langateam/sails-permissions
 [gitter-image]: http://img.shields.io/badge/+%20GITTER-JOIN%20CHAT%20%E2%86%92-1DCE73.svg?style=flat-square
-[gitter-url]: https://gitter.im/tjwebb/sails-permissions
+[gitter-url]: https://gitter.im/langateam/sails-permissions
