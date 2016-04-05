@@ -82,7 +82,7 @@ You can now login using the aforementioned default login data or the admin setti
 MIT
 
 ## Maintained By
-[<img src='http://i.imgur.com/Y03Jgmf.png' height='64px'>](http://balderdash.io)
+[<img src='http://i.imgur.com/Y03Jgmf.png' height='64px'>](http://langa.io)
 
 [npm-image]: https://img.shields.io/npm/v/sails-permissions.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/sails-permissions
