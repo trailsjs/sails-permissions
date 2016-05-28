@@ -16,7 +16,9 @@ $ npm install sails-permissions sails-auth --save
 
 **Note:** Complete documentation available in the sails-permissions wiki: https://github.com/langateam/sails-permissions/wiki
 
-### 1. configure sailsrc
+### 1. configure .sailsrc
+
+This file can be found in the root of your sails app.
 
 ```json
 {
