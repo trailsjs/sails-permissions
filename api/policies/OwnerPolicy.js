@@ -16,7 +16,7 @@ module.exports = function OwnerPolicy (req, res, next) {
   sails.log.verbose('OwnerPolicy req.body', req.body);
   */
 
-  if (req.options.modelDefinition.autoCreatedBy === false) {
+  if (req.options.modelDefinition !== undefined && req.options.modelDefinition.autoCreatedBy === false) {
     // sails.log.verbose('OwnerPolicy hasOwnershipPolicy: false');
     return next();
   }
