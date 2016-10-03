@@ -1,5 +1,7 @@
 # sails-permissions
 
+[![Looking for maintainers][hacktober-image]][hacktober-url]
+
 [![Gitter][gitter-image]][gitter-url]
 [![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
@@ -92,3 +94,6 @@ MIT
 [daviddm-url]: https://david-dm.org/langateam/sails-permissions
 [gitter-image]: http://img.shields.io/badge/+%20GITTER-JOIN%20CHAT%20%E2%86%92-1DCE73.svg?style=flat-square
 [gitter-url]: https://gitter.im/langateam/sails-permissions
+
+[hacktober-image]: http://i.imgur.com/FM9yVCI.png
+[hacktober-url]: https://twitter.com/langateam/status/782995392212369408
