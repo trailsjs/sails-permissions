@@ -38,7 +38,7 @@ module.exports = function(req, res, next) {
     // if a permission has no criteria then it is always true
     var criteria = _.compact(_.flatten(
       _.map(
-        _.pluck(permissions, 'criteria'),
+        _.pluck(checkPermissions, 'criteria'),
         function(c) {
           if (c.length == 0) {
             return [{where: {}}];
