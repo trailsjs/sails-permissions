@@ -357,6 +357,28 @@ module.exports = {
         });
       });
   },
+  
+  getAllPermissions: function(){
+    ok = Promise.resolve();
+    ok = ok.then(function(){
+      return Permission.find()
+      .populate('role')
+      .populate('model')
+    });
+    
+    ok = ok.then(function(permissions){
+      var results;
+      permissions.forEach(permission, index, permissions){
+        results.push({
+          model: permission.model.name,
+          role: permission.role.name,
+          action: permission.action
+        });
+      }
+      return results
+    });
+    return ok
+  }
 
   /**
    * revoke permission from role
