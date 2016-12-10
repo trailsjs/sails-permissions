@@ -1,7 +1,7 @@
 #api/policies/basicAuth.js
 #api/policies/sessionAuth.js
 #api/services/protocols/basic.js
-dist/
+#dist/
 
 .tmp
 *.sw*
