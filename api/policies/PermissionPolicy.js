@@ -29,7 +29,9 @@ module.exports = function (req, res, next) {
     return next();
   }
 
-  PermissionService
+  var promiseAry = [];
+
+  var modelPromise = PermissionService
     .findModelPermissions(options)
     .then(function (permissions) {
       sails.log.silly('PermissionPolicy:', permissions.length, 'permissions grant',
@@ -41,6 +43,39 @@ module.exports = function (req, res, next) {
 
       req.permissions = permissions;
 
-      next();
     });
+
+  promiseAry.push(modelPromise);
+
+  // If the request action is populate also grab permissions for the model to be populated
+  if (req.options.action === 'populate') {
+
+    var populatePromise = PermissionService
+      .findModelPermissions(_.merge(req.options,{
+        model: req.populateModel,
+        user: options.user
+      }))
+      .then(function (permissions) {
+        sails.log.silly('PermissionPolicy:', permissions.length, 'permissions grant',
+            PermissionService.getAction(options), 'on', req.populateModel.name, 'for', req.user.username);
+
+        if (!permissions || permissions.length === 0) {
+          throw new Error(PermissionService.getErrorMessage(options));
+        }
+
+        req.populatePermissions = permissions;
+
+      });
+
+      promiseAry.push(populatePromise);
+
+  }
+
+  Promise.all(promiseAry)
+  .then(function() {
+    next();
+  })
+  .catch(function(e) {
+    return res.badRequest({error: e.message});
+  });
 };
