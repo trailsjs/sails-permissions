@@ -47,7 +47,18 @@ module.exports = function(req, res, next) {
     ));
 
     if (criteria.length) {
-      bindResponsePolicy(req, res, criteria);
+      if (req.options.alias) {
+        PermissionService.findTargetObjects(req).then(function (data) {
+          if (filterObjectsByCriteria(_.isArray(data) ? data : [data], criteria).length === 0) {
+            return res.notFound();
+          }
+          next();
+        })
+        .catch(next);
+        return;
+      } else {
+        bindResponsePolicy(req, res, criteria);
+      }
     }
     return next();
   }
@@ -71,6 +82,30 @@ module.exports = function(req, res, next) {
     .catch(next);
 };
 
+function filterObjectsByCriteria(objects, criteria) {
+  return objects.reduce(function(memo, item) {
+    criteria.some(function(crit) {
+      var filtered = wlFilter([item], {
+        where: {
+          or: [crit.where || {}]
+        }
+      }).results;
+
+      if (filtered.length) {
+
+        if (crit.blacklist && crit.blacklist.length) {
+          crit.blacklist.forEach(function (term) {
+            delete item[term];
+          });
+        }
+        memo.push(item);
+        return true;
+      }
+    });
+    return memo;
+  }, []);
+}
+
 function bindResponsePolicy(req, res, criteria) {
   res._ok = res.ok;
 
@@ -92,27 +127,7 @@ function responsePolicy(criteria, _data, options) {
   // remove undefined, since that is invalid input for waterline-criteria
   data = data.filter(item => { return item !== undefined })
 
-  var permitted = data.reduce(function(memo, item) {
-    criteria.some(function(crit) {
-      var filtered = wlFilter([item], {
-        where: {
-          or: [crit.where || {}]
-        }
-      }).results;
-
-      if (filtered.length) {
-
-        if (crit.blacklist && crit.blacklist.length) {
-          crit.blacklist.forEach(function (term) {
-            delete item[term];
-          });
-        }
-        memo.push(item);
-        return true;
-      }
-    });
-    return memo;
-  }, []);
+  var permitted = filterObjectsByCriteria(data, criteria);
 
   if (isResponseArray) {
     return res._ok(permitted, options);
