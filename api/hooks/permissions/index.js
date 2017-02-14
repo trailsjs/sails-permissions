@@ -19,9 +19,18 @@ class Permissions extends Marlinspike {
     if (!_.isObject(sails.config.permissions)) sails.config.permissions = { }
 
     /**
-     * Local cache of Model name -> id mappings to avoid excessive database lookups.
+     * workaround for #219:
+     * If your _actually_ want to populate blueprint models, you should set `populateForce` filed in config
      */
-    this.sails.config.blueprints.populate = false
+    var populateForce = this.sails.config.blueprints.populateForce;
+    if (populateForce) {
+      this.sails.config.blueprints.populate = !!populateForce;
+    } else {
+      /**
+       * Local cache of Model name -> id mappings to avoid excessive database lookups.
+       */
+      this.sails.config.blueprints.populate = false
+    }
   }
 
   initialize (next) {
