@@ -3,6 +3,10 @@ var _ = require('lodash');
 var url = require('url');
 
 module.exports = function (req, res, next) {
+  if (!sails.config.permissions.requestLogEnabled) {
+    return next();
+  }
+
   var ipAddress = req.headers['x-forwarded-for'] || (req.connection && req.connection.remoteAddress);
   req.requestId = fnv.hash(new Date().valueOf() + ipAddress, 128).str();
 
