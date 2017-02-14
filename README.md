@@ -1,7 +1,5 @@
 # sails-permissions
 
-[![Looking for maintainers][hacktober-image]][hacktober-url]
-
 [![Gitter][gitter-image]][gitter-url]
 [![NPM version][npm-image]][npm-url]
 [![Build status][travis-image]][travis-url]
