@@ -39,8 +39,10 @@ module.exports = function (req, res, next) {
     // Some parsing must happen on the query down the line,
     // as req.query has no impact on the results from PermissionService.findTargetObjects.
     // I had to look at the actionUtil parseCriteria method to see where to augment the criteria
-    req.params.all().where = req.params.all().where || {};
-    req.params.all().where.owner = req.user.id;
+    //req.params.all().where = req.params.all().where || {};
+    //req.params.all().where.owner = req.user.id;
+    req.params.where = req.params.where || {};
+    req.params.where.owner = req.user.id;
     req.query.owner = req.user.id;
     _lodash2['default'].isObject(req.body) && (req.body.owner = req.user.id);
   }
