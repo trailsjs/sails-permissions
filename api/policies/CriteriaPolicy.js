@@ -118,7 +118,7 @@ function responsePolicy(criteria, _data, options) {
     return res._ok(permitted, options);
   } else if (permitted.length === 0) {
     sails.log.silly('permitted.length === 0');
-    return res.send(404);
+    return res.notFound();
   } else {
     res._ok(permitted[0], options);
   }
