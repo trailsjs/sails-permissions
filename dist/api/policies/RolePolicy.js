@@ -44,6 +44,7 @@ module.exports = function (req, res, next) {
     req.params.where = req.params.where || {};
     req.params.where.owner = req.user.id;
     req.query.owner = req.user.id;
+    req.query.where = req.query.where || {};
     _lodash2['default'].isObject(req.body) && (req.body.owner = req.user.id);
   }
 
