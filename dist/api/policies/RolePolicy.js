@@ -43,8 +43,10 @@ module.exports = function (req, res, next) {
     //req.params.all().where.owner = req.user.id;
     req.params.where = req.params.where || {};
     req.params.where.owner = req.user.id;
+    req.params.owner= req.user.id; // Nuevo
+    req.query.where = req.query.where || {}; // Nuevo
+    req.query.where.owner = req.user.id; // Nuevo
     req.query.owner = req.user.id;
-    req.query.where = req.query.where || {};
     _lodash2['default'].isObject(req.body) && (req.body.owner = req.user.id);
   }
 
