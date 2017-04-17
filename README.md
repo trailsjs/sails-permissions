@@ -9,7 +9,7 @@ Comprehensive sails.js user permissions and entitlements system. Supports user a
 
 ## Install
 ```sh
-$ npm install sails-permissions sails-auth --save
+$ npm install sails-permissions --save
 ```
 
 ## Quickstart
